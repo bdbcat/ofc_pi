@@ -854,7 +854,6 @@ int getChartList( bool bShowErrorDialogs = true){
     loginParms += _T("&device_id=");
     loginParms += kk;
     
-    
     wxCurlHTTPNoZIP post;
     //post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
     
@@ -880,8 +879,10 @@ int getChartList( bool bShowErrorDialogs = true){
          
 //         return checkResult( result, bShowErrorDialogs );
      }
-     else
-         return 0; //checkResponseCode(iResponseCode);
+     else{
+         wxLogMessage(_T("Login Parms: ") + loginParms);
+         return iResponseCode; //checkResponseCode(iResponseCode);
+     }
 }
 
 
