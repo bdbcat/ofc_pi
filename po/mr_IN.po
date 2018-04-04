@@ -1,0 +1,384 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opencpn\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-30 11:49-0400\n"
+"PO-Revision-Date: 2018-03-16 19:13-0400\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Marathi\n"
+"Language: mr_IN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: mr\n"
+"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
+#
+msgid "   Chart File RLL data corrupt on chart "
+msgstr ""
+#
+msgid "   Chart File contains less than 3 PLY points: "
+msgstr ""
+#
+msgid "   Chart File corrupt in PostInit() on chart "
+msgstr ""
+#
+msgid "   Chart projection is UNKNOWN, assuming Mercator: "
+msgstr ""
+#
+msgid "   Error creating Line Index for chart "
+msgstr ""
+#
+msgid "   Line Index corrupt, recreating Index for chart "
+msgstr ""
+#
+msgid "   Result: OK, Internal georef solution used."
+msgstr ""
+#
+msgid "   Trying again with internally calculated georef solution "
+msgstr ""
+#
+msgid ""
+"   VP Final Check with internal georef: Georeference Chart_Error_Factor on "
+"chart "
+msgstr ""
+#
+msgid "   VP Final Check: Georeference Chart_Error_Factor on chart "
+msgstr ""
+#
+msgid "   XTR1_PI: chartInfo or productKey not found: "
+msgstr ""
+#
+msgid ""
+" could not be started.\n"
+"\n"
+msgstr ""
+#
+msgid " create a new System Name for this computer."
+msgstr ""
+#
+#, c-format
+msgid " is %5g"
+msgstr ""
+#
+msgid ""
+" reports Unavailable.\n"
+"\n"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
+msgstr ""
+#
+msgid "A valid System Name is 3 to 15 characters in length."
+msgstr ""
+#
+msgid "Actions"
+msgstr ""
+#
+msgid "Activate Selected Chart"
+msgstr ""
+#
+msgid "Assigment 1"
+msgstr ""
+#
+msgid "Assigment 2"
+msgstr ""
+#
+msgid "Available."
+msgstr ""
+#
+msgid "Cancel"
+msgstr ""
+#
+msgid "Cancel Operation"
+msgstr ""
+#
+msgid "Cannot find the xtr1_pi server utility at \n"
+msgstr ""
+#
+msgid "Chart Edition:"
+msgstr ""
+#
+msgid "Chart Edition: "
+msgstr ""
+#
+msgid "Chart download cancelled."
+msgstr ""
+#
+msgid "Chart download complete."
+msgstr ""
+#
+msgid "Chart download error, missing file."
+msgstr ""
+#
+msgid "Chart download failed."
+msgstr ""
+#
+msgid "Chart installation complete."
+msgstr ""
+#
+msgid "Check your configuration and try again."
+msgstr ""
+#
+msgid "Check your connection and try again."
+msgstr ""
+#
+msgid "Checking server utility at "
+msgstr ""
+#
+msgid "Choose chart install location."
+msgstr ""
+#
+msgid "Continue waiting?"
+msgstr ""
+#
+msgid "Dialog"
+msgstr ""
+#
+msgid "Download Selected Chart"
+msgstr ""
+#
+msgid "Download cancelled."
+msgstr ""
+#
+msgid "Downloaded:  "
+msgstr ""
+#
+msgid "Downloading chart:"
+msgstr ""
+#
+msgid "Downloading..."
+msgstr ""
+#
+msgid "Enter New System Name"
+msgstr ""
+#
+msgid "Error extracting zip file"
+msgstr ""
+#
+msgid "Expiration date:"
+msgstr ""
+#
+msgid "Expiration date: "
+msgstr ""
+#
+msgid "Expired."
+msgstr ""
+#
+msgid "Install Selected Chart"
+msgstr ""
+#
+msgid "Installed edition: "
+msgstr ""
+#
+msgid "Installed, Up-to-date."
+msgstr ""
+#
+msgid "Installed, Update available."
+msgstr ""
+#
+msgid "Installing charts"
+msgstr ""
+#
+msgid "Invalid Login."
+msgstr ""
+#
+msgid "Invalid System Name"
+msgstr ""
+#
+msgid "Invalid user/email name or password."
+msgstr ""
+#
+msgid "Login to xTraverse server"
+msgstr ""
+#
+msgid "My Charts"
+msgstr ""
+#
+msgid "New OpenCPN oeSENC System Name"
+msgstr ""
+#
+msgid "No symbols or spaces are allowed."
+msgstr ""
+#
+msgid "OK"
+msgstr ""
+#
+msgid "Order Reference:"
+msgstr ""
+#
+msgid "Order Reference: "
+msgstr ""
+#
+msgid "Password:"
+msgstr ""
+#
+msgid "Please update Chart List."
+msgstr ""
+#
+msgid "Preparing your charts..."
+msgstr ""
+#
+msgid "Preparing your chartset."
+msgstr ""
+#
+msgid "Proceed to install?"
+msgstr ""
+#
+msgid "Proceed?"
+msgstr ""
+#
+msgid "Purchase date:"
+msgstr ""
+#
+msgid "Purchase date: "
+msgstr ""
+#
+msgid "Ready for Activation Request."
+msgstr ""
+#
+msgid "Ready for download."
+msgstr ""
+#
+msgid "Ready for unzipping chart files."
+msgstr ""
+#
+msgid "Refresh Chart List"
+msgstr ""
+#
+msgid "Reinstall Selected Chart"
+msgstr ""
+#
+msgid "Select OpenCPN/oeSENC System Name"
+msgstr ""
+#
+msgid "Select your System Name from the following list, or "
+msgstr ""
+#
+msgid "Status:"
+msgstr ""
+#
+msgid "Status: "
+msgstr ""
+#
+msgid "Status:  Activation FAILED."
+msgstr ""
+#
+msgid "Status:  Cancelled."
+msgstr ""
+#
+msgid "Status: BZB decrypt FAILED."
+msgstr ""
+#
+msgid "Status: BZB uzip FAILED."
+msgstr ""
+#
+msgid "Status: Chart List Refresh required."
+msgstr ""
+#
+msgid "Status: Communications error."
+msgstr ""
+#
+msgid "Status: Downloading index file..."
+msgstr ""
+#
+msgid "Status: Downloading..."
+msgstr ""
+#
+msgid "Status: Error parsing GetAccount results."
+msgstr ""
+#
+msgid "Status: Error parsing index file..."
+msgstr ""
+#
+msgid "Status: Error reading GetAccount results."
+msgstr ""
+#
+msgid "Status: OK"
+msgstr ""
+#
+msgid "Status: Ready"
+msgstr ""
+#
+msgid "Status: Server unavailable."
+msgstr ""
+#
+msgid "System Name:"
+msgstr ""
+#
+msgid "System Names"
+msgstr ""
+#
+msgid "System: "
+msgstr ""
+#
+msgid "This action will PERMANENTLY assign the chart:"
+msgstr ""
+#
+msgid "Unzipping chart files..."
+msgstr ""
+#
+msgid "Update Selected Chart"
+msgstr ""
+#
+msgid "XTR1"
+msgstr ""
+#
+msgid "XTraverse PlugIn for OpenCPN"
+msgstr ""
+#
+msgid ""
+"XTraverse PlugIn for OpenCPN\n"
+"Provides support of XTraverse raster navigation charts.\n"
+"\n"
+msgstr ""
+#
+msgid ""
+"You may continue to wait, or return to this screen later to complete the "
+"download."
+msgstr ""
+#
+msgid ""
+"You will receive an email message when preparation for download is complete"
+msgstr ""
+#
+msgid "Your chart preparation is not complete."
+msgstr ""
+#
+msgid "email address:"
+msgstr ""
+#
+msgid "internet communications error code: "
+msgstr ""
+#
+msgid "lower case letters and numbers only."
+msgstr ""
+#
+msgid "new..."
+msgstr ""
+#
+msgid "o-charts API error code: "
+msgstr ""
+#
+msgid "oeSENC_PI Message"
+msgstr ""
+#
+msgid "oeSENC_pi Message"
+msgstr ""
+#
+msgid "serverd utility at \n"
+msgstr ""
+#
+msgid "to this system."
+msgstr ""
+#
+msgid "xtr1 Charts"
+msgstr ""
+#
+msgid "xtr1_pi Message"
+msgstr ""

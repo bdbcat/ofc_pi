@@ -1,0 +1,600 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opencpn\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-30 11:49-0400\n"
+"PO-Revision-Date: 2018-03-16 19:12-0400\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Swedish\n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
+#
+msgid "   Chart File RLL data corrupt on chart "
+msgstr ""
+#
+msgid "   Chart File contains less than 3 PLY points: "
+msgstr ""
+#
+msgid "   Chart File corrupt in PostInit() on chart "
+msgstr ""
+#
+msgid "   Chart projection is UNKNOWN, assuming Mercator: "
+msgstr ""
+#
+msgid "   Error creating Line Index for chart "
+msgstr ""
+#
+msgid "   Line Index corrupt, recreating Index for chart "
+msgstr ""
+#
+msgid "   Result: OK, Internal georef solution used."
+msgstr ""
+#
+msgid "   Trying again with internally calculated georef solution "
+msgstr ""
+#
+msgid ""
+"   VP Final Check with internal georef: Georeference Chart_Error_Factor on "
+"chart "
+msgstr ""
+#
+msgid "   VP Final Check: Georeference Chart_Error_Factor on chart "
+msgstr ""
+#
+msgid "   XTR1_PI: chartInfo or productKey not found: "
+msgstr ""
+#
+msgid ""
+" could not be started.\n"
+"\n"
+msgstr ""
+" kunde inte startas.\n"
+"\n"
+#
+msgid " create a new System Name for this computer."
+msgstr " skapa ett nytt enhetsnamn för den här datorn."
+#
+#, c-format
+msgid " is %5g"
+msgstr ""
+#
+msgid ""
+" reports Unavailable.\n"
+"\n"
+msgstr ""
+" är inte tillgänglig.\n"
+"\n"
+#
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
+msgstr ""
+#
+msgid "A valid System Name is 3 to 15 characters in length."
+msgstr "Ett giltigt enhetsnamn är 3-15 tecken långt."
+#
+msgid "Actions"
+msgstr "Åtgärder"
+#
+#, fuzzy
+msgid "Activate Selected Chart"
+msgstr "Uppdatera markerade sjökort"
+#
+msgid "Assigment 1"
+msgstr "Enhet/System 1"
+#
+msgid "Assigment 2"
+msgstr "Enhet/System 2"
+#
+msgid "Available."
+msgstr "Tillgängligt."
+#
+msgid "Cancel"
+msgstr "Avbryt"
+#
+msgid "Cancel Operation"
+msgstr "Avbryt åtgärden"
+#
+#, fuzzy
+msgid "Cannot find the xtr1_pi server utility at \n"
+msgstr "Kan inte hitta nyckelserver \"oserverd\" på\n"
+#
+msgid "Chart Edition:"
+msgstr "Sjökortsutgåva:"
+#
+msgid "Chart Edition: "
+msgstr "Sjökortsutgåva: "
+#
+msgid "Chart download cancelled."
+msgstr "Hämtningen är avbruten."
+#
+msgid "Chart download complete."
+msgstr "Nedladdning är klar."
+#
+msgid "Chart download error, missing file."
+msgstr "Fel vid hämtning, fil(er) saknas."
+#
+#, fuzzy
+msgid "Chart download failed."
+msgstr "Hämtningen är avbruten."
+#
+msgid "Chart installation complete."
+msgstr "Installation är slutförd."
+#
+msgid "Check your configuration and try again."
+msgstr "Kontrollera din konfiguration och försök igen."
+#
+msgid "Check your connection and try again."
+msgstr "Kontrollera din anslutning och försök igen."
+#
+#, fuzzy
+msgid "Checking server utility at "
+msgstr "Kontrollerar nyckelserver \"oeserverd\" på "
+#
+msgid "Choose chart install location."
+msgstr "Välj var korten skall installeras."
+#
+msgid "Continue waiting?"
+msgstr "Fortsätt att vänta?"
+#
+msgid "Dialog"
+msgstr "Dialog"
+#
+msgid "Download Selected Chart"
+msgstr "Ladda ner valda sjökort"
+#
+#, fuzzy
+msgid "Download cancelled."
+msgstr "Hämtningen är avbruten."
+#
+msgid "Downloaded:  "
+msgstr "Hämta:  "
+#
+#, fuzzy
+msgid "Downloading chart:"
+msgstr "Laddar ner..."
+#
+msgid "Downloading..."
+msgstr "Laddar ner..."
+#
+msgid "Enter New System Name"
+msgstr "Ange ett nytt enhetsnamn"
+#
+msgid "Error extracting zip file"
+msgstr "Fel vid uppackning av zip-filen"
+#
+msgid "Expiration date:"
+msgstr "Giltig tom:"
+#
+msgid "Expiration date: "
+msgstr "Giltig tom: "
+#
+msgid "Expired."
+msgstr "Utgånget."
+#
+msgid "Install Selected Chart"
+msgstr "Installera markerade sjökort"
+#
+msgid "Installed edition: "
+msgstr "Installerad utgåva: "
+#
+msgid "Installed, Up-to-date."
+msgstr "Installerat, Uppdaterat."
+#
+msgid "Installed, Update available."
+msgstr "Installerat. Uppdatering är tillgänglig."
+#
+msgid "Installing charts"
+msgstr "Installerar sjökorten"
+#
+msgid "Invalid Login."
+msgstr "Ogiltig inloggning."
+#
+msgid "Invalid System Name"
+msgstr "Ogiltigt systemnamn/ID"
+#
+msgid "Invalid user/email name or password."
+msgstr "Ogiltigt användare/mejl eller lösenord."
+#
+msgid "Login to xTraverse server"
+msgstr ""
+#
+msgid "My Charts"
+msgstr "Mina sjökort"
+#
+msgid "New OpenCPN oeSENC System Name"
+msgstr "Nytt OpenCPN oeSENC system/enhets-namn"
+#
+msgid "No symbols or spaces are allowed."
+msgstr "Inga symboler eller blanksteg kan användas."
+#
+msgid "OK"
+msgstr "OK"
+#
+msgid "Order Reference:"
+msgstr "Orderreferens:"
+#
+msgid "Order Reference: "
+msgstr "Orderreferens: "
+#
+msgid "Password:"
+msgstr "Lösenord:"
+#
+msgid "Please update Chart List."
+msgstr "Uppdatera sjökortslistan."
+#
+msgid "Preparing your charts..."
+msgstr "Förbereder skjökorten..."
+#
+msgid "Preparing your chartset."
+msgstr "Förbereder skjökorten."
+#
+msgid "Proceed to install?"
+msgstr "Fortsätt för att installera?"
+#
+msgid "Proceed?"
+msgstr "Fortsätta?"
+#
+msgid "Purchase date:"
+msgstr "Inköpsdatum:"
+#
+msgid "Purchase date: "
+msgstr "Inköpsdatum: "
+#
+#, fuzzy
+msgid "Ready for Activation Request."
+msgstr "Klart för nedladdning."
+#
+msgid "Ready for download."
+msgstr "Klart att hämta."
+#
+msgid "Ready for unzipping chart files."
+msgstr "Klart att packa upp paketet."
+#
+msgid "Refresh Chart List"
+msgstr "Uppdatera listan"
+#
+msgid "Reinstall Selected Chart"
+msgstr "Installera om markerade sjökort"
+#
+msgid "Select OpenCPN/oeSENC System Name"
+msgstr "Nytt OpenCPN oeSENC system/enhets-namn"
+#
+msgid "Select your System Name from the following list, or "
+msgstr "Välj system/enhet från listan nedan eller "
+#
+msgid "Status:"
+msgstr "Status:"
+#
+msgid "Status: "
+msgstr "Status: "
+#
+msgid "Status:  Activation FAILED."
+msgstr ""
+#
+#, fuzzy
+msgid "Status:  Cancelled."
+msgstr "Status: Klart"
+#
+msgid "Status: BZB decrypt FAILED."
+msgstr ""
+#
+msgid "Status: BZB uzip FAILED."
+msgstr ""
+#
+msgid "Status: Chart List Refresh required."
+msgstr "Status: Kortlistan behöver uppdateras."
+#
+msgid "Status: Communications error."
+msgstr "Status: Kommunikationsfel."
+#
+#, fuzzy
+msgid "Status: Downloading index file..."
+msgstr "Status: nedladdning..."
+#
+msgid "Status: Downloading..."
+msgstr "Status: nedladdning..."
+#
+msgid "Status: Error parsing GetAccount results."
+msgstr ""
+#
+msgid "Status: Error parsing index file..."
+msgstr ""
+#
+msgid "Status: Error reading GetAccount results."
+msgstr ""
+#
+msgid "Status: OK"
+msgstr "Status: OK"
+#
+msgid "Status: Ready"
+msgstr "Status: Klart"
+#
+#, fuzzy
+msgid "Status: Server unavailable."
+msgstr ""
+" är inte tillgänglig.\n"
+"\n"
+#
+msgid "System Name:"
+msgstr "Enhetsnamn:"
+#
+msgid "System Names"
+msgstr "Enhetsnamn"
+#
+msgid "System: "
+msgstr "Enhet: "
+#
+msgid "This action will PERMANENTLY assign the chart:"
+msgstr "Åtgärden kommer att permanent koppla sjökort:"
+#
+msgid "Unzipping chart files..."
+msgstr "Packar upp kortfiler..."
+#
+msgid "Update Selected Chart"
+msgstr "Uppdatera markerade sjökort"
+#
+msgid "XTR1"
+msgstr ""
+#
+#, fuzzy
+msgid "XTraverse PlugIn for OpenCPN"
+msgstr "Plugin oeSENC för OpenCPN"
+#
+#, fuzzy
+msgid ""
+"XTraverse PlugIn for OpenCPN\n"
+"Provides support of XTraverse raster navigation charts.\n"
+"\n"
+msgstr ""
+"PlugIn för OpenCPN \n"
+"för att använda oeSENC sjökort.\n"
+"\n"
+#
+msgid ""
+"You may continue to wait, or return to this screen later to complete the "
+"download."
+msgstr ""
+"Du kan fortsätta att vänta eller gå tillbaka till den här skärmen senare för "
+"att slutföra nedladdningen."
+#
+msgid ""
+"You will receive an email message when preparation for download is complete"
+msgstr "Du får ett e-postmeddelande när förberedelsen för nedladdning är klar"
+#
+msgid "Your chart preparation is not complete."
+msgstr "Kortsammanställningen är inte klar."
+#
+msgid "email address:"
+msgstr "E-postadress:"
+#
+msgid "internet communications error code: "
+msgstr "felkod från Internetkommunikation: "
+#
+msgid "lower case letters and numbers only."
+msgstr "Använd endast små bokstäver eller siffror."
+#
+msgid "new..."
+msgstr "ny..."
+#
+msgid "o-charts API error code: "
+msgstr "o-Charts API felkod: "
+#
+msgid "oeSENC_PI Message"
+msgstr "oeSENC_PI meddelande"
+#
+msgid "oeSENC_pi Message"
+msgstr "oeSENC_PI meddelande"
+#
+#, fuzzy
+msgid "serverd utility at \n"
+msgstr "nyckelserver \"oeserverd\" på\n"
+#
+#, fuzzy
+msgid "to this system."
+msgstr "till denna enhet:"
+#
+#, fuzzy
+msgid "xtr1 Charts"
+msgstr "Mina sjökort"
+#
+#, fuzzy
+msgid "xtr1_pi Message"
+msgstr "oeSENC_PI meddelande"
+#
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ " Fingerprint file is also copied to desktop."
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "ID-filen, ftr, kopieras också till skrivbordet."
+#
+#~ msgid ""
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider."
+#~ msgstr ""
+#~ "En giltig oeSENC licensnyckel har formatet: AAAA-BBBB-CCCC-DDDD-EEEE-FF \n"
+#~ "\n"
+#~ "En oeSENC licensnyckel kan erhållas från din leverantör av sjökorten."
+#
+#~ msgid "Accept"
+#~ msgstr "Godkänn"
+#
+#~ msgid "Add/Update oeSENC chartsets"
+#~ msgstr "Lägg till/uppdatera oeSENC sjökortslista"
+#
+#~ msgid ""
+#~ "Administrator priveleges are required to copy fpr.\n"
+#~ "  Please try again...."
+#~ msgstr ""
+#~ "Administratörsrättigheter krävs för att kopiera \"fingeravtryck\" fpr.   \n"
+#~ " Vänligen försök igen...."
+#
+#~ msgid ""
+#~ "After creating this file, you will need it to obtain your User Key at the "
+#~ "o-charts.org shop.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "När filen är skapad, kommer du att behöva den för få din användarlicens "
+#~ "hos \n"
+#~ "o-charts.org webshop.\n"
+#~ "\n"
+#
+#~ msgid "Available Chart sets:"
+#~ msgstr "Tillgängliga set av sjökort:"
+#
+#~ msgid "Building eSENC"
+#~ msgstr "Formaterar oeSENC"
+#
+#~ msgid "Chart set"
+#~ msgstr "Sjökortset"
+#
+#~ msgid "ChartTexts"
+#~ msgstr "Text på vektorsjökort"
+#
+#~ msgid "Contacting o-charts server..."
+#~ msgstr "Kontaktar o-charts server..."
+#
+#~ msgid "Could not open oesenc_pi EULA: "
+#~ msgstr "Kunde inte öppna oesenc_pi EULA: "
+#
+#~ msgid "Create System Identifier file..."
+#~ msgstr "Skapa system-ID fil..."
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "\n"
+#~ "oeSENC charts will be disabled for this session.\n"
+#~ "Please verify your UserKey and restart OpenCPN.\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "FEL: Den licensnyckel som angetts är inte giltigt för detta set av oeSENC "
+#~ "kort.\n"
+#~ "\n"
+#~ "Dessa oeSENC sjökort kommer att blockeras för denna session.\n"
+#~ "Vänligen kontrollera din licensnyckel och starta om OpenCPN.\n"
+#~ "\n"
+#~ "oeSENC licensnyckel erhålls från din leverantör av sjökorten.\n"
+#~ "\n"
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "Please verify your UserKey and try again.\n"
+#~ "\n"
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "FEL: Den licensnyckel som angetts är inte giltigt för detta set av oeSENC "
+#~ "kort. \n"
+#~ "Vänligen kontrollera din licensnyckel och försök igen.\n"
+#~ "\n"
+#~ "En giltig OESENC-nyckel har formatet: AAAA-BBBB-CCCC-DDDD-EEEE-FF \n"
+#~ "oeSENC licensnyckel erhålls från din leverantör av sjökorten.\n"
+#~ "\n"
+#
+#~ msgid "Enter UserKey"
+#~ msgstr "Skriv in användarlicensen"
+#
+#~ msgid "Fingerprint file created.\n"
+#~ msgstr "Identifieringsfilen har skapas.\n"
+#
+#~ msgid "Here you may order new oeSENC chartsets."
+#~ msgstr "Här kan du beställa licens för nya oeSENC kortset."
+#
+#~ msgid "License"
+#~ msgstr "Licens"
+#
+#~ msgid "Login to o-charts.org"
+#~ msgstr "Logga in till o-charts.org"
+#
+#~ msgid "OpenCPN SENC UserKey Required"
+#~ msgstr "Det krävs en användarlicens för OpenCPN SENC"
+#
+#~ msgid "OpenCPN oeSENC UserKey Required"
+#~ msgstr "Det krävs en användarlicens för OpenCPN oeSENC"
+#
+#~ msgid "PlugIn for OpenCPN oeSENC charts"
+#~ msgstr "PlugIn för oeSENC-sjökort till OpenCPN"
+#
+#~ msgid "Proceed to create Fingerprint file?"
+#~ msgstr "Fortsätta för att skapa identifieringsfilen?"
+#
+#~ msgid "Reject"
+#~ msgstr "Avvisa"
+#
+#~ msgid "Sector angles are True Bearings from Seaward"
+#~ msgstr "Sektorns vinklar är sann bäring från sjösidan"
+#
+#~ msgid "Show In Finder"
+#~ msgstr "Visa i Finder"
+#
+#~ msgid "Show on disk"
+#~ msgstr "Visa på disk"
+#
+#~ msgid "System Identification"
+#~ msgstr "Systemidentifiering"
+#
+#~ msgid ""
+#~ "The fingerprint file contains information to uniquely identifiy this "
+#~ "computer.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Identifieringsfilen innehåller unik information för att identifiera "
+#~ "datorn.\n"
+#~ "\n"
+#
+#~ msgid "The following Chart sets are available:"
+#~ msgstr "Följande set av sjökort finns tillgängliga:"
+#
+#~ msgid "This file is also known as a\"fingerprint\" file.\n"
+#~ msgstr "Denna fil kallas också en identifieringsfil (fingerprint).\n"
+#
+#~ msgid ""
+#~ "To obtain a User Key, you must generate a unique System Identifier File.\n"
+#~ msgstr ""
+#~ "För att erhålla en användarnyckel, måste du generera en fil med ett unik "
+#~ "System-ID.\n"
+#
+#~ msgid ""
+#~ "UserKey accepted.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Användarlicensen är korrekt.\n"
+#~ "\n"
+#
+#~ msgid "Valid until"
+#~ msgstr "är giltiga till"
+#
+#~ msgid "Version"
+#~ msgstr "Version"
+#
+#~ msgid "Visit o-charts.org Website"
+#~ msgstr "Besök o-charts.org hemsida"
+#
+#~ msgid "oeSENC"
+#~ msgstr "oeSENC"
+#
+#~ msgid "oeSENC Charts"
+#~ msgstr "oeSENC Sjökort"
+#
+#~ msgid "oeSENC_PI Information"
+#~ msgstr "oeSENC_PI Information"
+#
+#~ msgid "oeSENC_PI Preferences"
+#~ msgstr "Inställningar för oeSENC_PI"

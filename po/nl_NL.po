@@ -1,0 +1,589 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opencpn\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-30 11:49-0400\n"
+"PO-Revision-Date: 2018-03-16 19:12-0400\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Dutch\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
+#
+msgid "   Chart File RLL data corrupt on chart "
+msgstr ""
+#
+msgid "   Chart File contains less than 3 PLY points: "
+msgstr ""
+#
+msgid "   Chart File corrupt in PostInit() on chart "
+msgstr ""
+#
+msgid "   Chart projection is UNKNOWN, assuming Mercator: "
+msgstr ""
+#
+msgid "   Error creating Line Index for chart "
+msgstr ""
+#
+msgid "   Line Index corrupt, recreating Index for chart "
+msgstr ""
+#
+msgid "   Result: OK, Internal georef solution used."
+msgstr ""
+#
+msgid "   Trying again with internally calculated georef solution "
+msgstr ""
+#
+msgid ""
+"   VP Final Check with internal georef: Georeference Chart_Error_Factor on "
+"chart "
+msgstr ""
+#
+msgid "   VP Final Check: Georeference Chart_Error_Factor on chart "
+msgstr ""
+#
+msgid "   XTR1_PI: chartInfo or productKey not found: "
+msgstr ""
+#
+msgid ""
+" could not be started.\n"
+"\n"
+msgstr ""
+" kon niet worden gestart.\n"
+"\n"
+#
+msgid " create a new System Name for this computer."
+msgstr " maak een nieuwe naam voor deze computer."
+#
+#, c-format
+msgid " is %5g"
+msgstr ""
+#
+msgid ""
+" reports Unavailable.\n"
+"\n"
+msgstr ""
+" rapporten niet beschikbaar.\n"
+"\n"
+#
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
+msgstr ""
+#
+msgid "A valid System Name is 3 to 15 characters in length."
+msgstr "Een geldige naam heeft 3 tot 15 letters."
+#
+msgid "Actions"
+msgstr "Acties"
+#
+#, fuzzy
+msgid "Activate Selected Chart"
+msgstr "Herinstalleren gekozen kaart"
+#
+msgid "Assigment 1"
+msgstr "Toewijzing 1"
+#
+msgid "Assigment 2"
+msgstr "Toewijzing 2"
+#
+msgid "Available."
+msgstr ""
+#
+msgid "Cancel"
+msgstr "Annuleren"
+#
+msgid "Cancel Operation"
+msgstr "Bewerking annuleren"
+#
+#, fuzzy
+msgid "Cannot find the xtr1_pi server utility at \n"
+msgstr "Kan oserverd hulpmiddel niet vinden op \n"
+#
+msgid "Chart Edition:"
+msgstr "Kaart editie:"
+#
+msgid "Chart Edition: "
+msgstr "Kaart editie: "
+#
+msgid "Chart download cancelled."
+msgstr "Download geannuleeerd."
+#
+msgid "Chart download complete."
+msgstr "Downloaden voltooid."
+#
+msgid "Chart download error, missing file."
+msgstr "Kaart download fout, ontbrekende bestand."
+#
+#, fuzzy
+msgid "Chart download failed."
+msgstr "Download geannuleeerd."
+#
+msgid "Chart installation complete."
+msgstr "Kaarten installatie voltooid."
+#
+msgid "Check your configuration and try again."
+msgstr "Controleer uw instellingen en probeer het opnieuw."
+#
+msgid "Check your connection and try again."
+msgstr "Controleer je verbinding en probeer het opnieuw."
+#
+#, fuzzy
+msgid "Checking server utility at "
+msgstr "Controle oeserverd hulpprogramma op "
+#
+msgid "Choose chart install location."
+msgstr "Kies kaart installatie plek."
+#
+msgid "Continue waiting?"
+msgstr "Blijven wachten?"
+#
+msgid "Dialog"
+msgstr "Dialoog"
+#
+msgid "Download Selected Chart"
+msgstr ""
+#
+#, fuzzy
+msgid "Download cancelled."
+msgstr "Download geannuleeerd."
+#
+msgid "Downloaded:  "
+msgstr "Gedownload:  "
+#
+msgid "Downloading chart:"
+msgstr ""
+#
+msgid "Downloading..."
+msgstr ""
+#
+msgid "Enter New System Name"
+msgstr "Voer computernaam in"
+#
+msgid "Error extracting zip file"
+msgstr "Fout bij het uitpakken van het zip-bestand"
+#
+msgid "Expiration date:"
+msgstr "Vervaldatum:"
+#
+msgid "Expiration date: "
+msgstr "Vervaldatum: "
+#
+msgid "Expired."
+msgstr "Verlopen."
+#
+msgid "Install Selected Chart"
+msgstr "Installeren gekozen kaart"
+#
+msgid "Installed edition: "
+msgstr "Geïnstalleerde editie: "
+#
+msgid "Installed, Up-to-date."
+msgstr "Geïnstalleerd, Up-to-date."
+#
+msgid "Installed, Update available."
+msgstr "Geïnstalleerd, maar Update beschikbaar."
+#
+msgid "Installing charts"
+msgstr ""
+#
+msgid "Invalid Login."
+msgstr "Aanmeldgegevens ongeldig."
+#
+msgid "Invalid System Name"
+msgstr ""
+#
+msgid "Invalid user/email name or password."
+msgstr ""
+#
+msgid "Login to xTraverse server"
+msgstr ""
+#
+msgid "My Charts"
+msgstr "Mijn kaarten"
+#
+msgid "New OpenCPN oeSENC System Name"
+msgstr "Nieuwe OpenCPN oeSENC computernaam"
+#
+msgid "No symbols or spaces are allowed."
+msgstr "Symbolen of spaties zijn niet toegestaan."
+#
+msgid "OK"
+msgstr "OK"
+#
+msgid "Order Reference:"
+msgstr "Bestellingreferentie:"
+#
+msgid "Order Reference: "
+msgstr "Bestellingreferentie: "
+#
+msgid "Password:"
+msgstr "Wachtwoord:"
+#
+msgid "Please update Chart List."
+msgstr "Aub eerst kaarten lijst bijwerken."
+#
+msgid "Preparing your charts..."
+msgstr "Uw kaarten worden voorbereid..."
+#
+msgid "Preparing your chartset."
+msgstr ""
+#
+msgid "Proceed to install?"
+msgstr "Doorgaan naar installeren?"
+#
+msgid "Proceed?"
+msgstr "Doorgaan?"
+#
+msgid "Purchase date:"
+msgstr "Aankoopdatum:"
+#
+msgid "Purchase date: "
+msgstr "Aankoopdatum: "
+#
+msgid "Ready for Activation Request."
+msgstr ""
+#
+msgid "Ready for download."
+msgstr ""
+#
+msgid "Ready for unzipping chart files."
+msgstr "Klaar voor uitpakken van de kaart bestanden."
+#
+msgid "Refresh Chart List"
+msgstr ""
+#
+msgid "Reinstall Selected Chart"
+msgstr "Opnieuw installeren van gekozen kaart"
+#
+msgid "Select OpenCPN/oeSENC System Name"
+msgstr "Kies een OpenCPN oeSENC computernaam"
+#
+msgid "Select your System Name from the following list, or "
+msgstr "Selecteer de naam van uw computer uit de volgende lijst, of "
+#
+msgid "Status:"
+msgstr "Status:"
+#
+msgid "Status: "
+msgstr "Status: "
+#
+msgid "Status:  Activation FAILED."
+msgstr ""
+#
+#, fuzzy
+msgid "Status:  Cancelled."
+msgstr "Status: klaar"
+#
+msgid "Status: BZB decrypt FAILED."
+msgstr ""
+#
+msgid "Status: BZB uzip FAILED."
+msgstr ""
+#
+msgid "Status: Chart List Refresh required."
+msgstr ""
+#
+msgid "Status: Communications error."
+msgstr "Status: Communicatiefout."
+#
+#, fuzzy
+msgid "Status: Downloading index file..."
+msgstr "Status: downloaden..."
+#
+msgid "Status: Downloading..."
+msgstr "Status: downloaden..."
+#
+msgid "Status: Error parsing GetAccount results."
+msgstr ""
+#
+msgid "Status: Error parsing index file..."
+msgstr ""
+#
+msgid "Status: Error reading GetAccount results."
+msgstr ""
+#
+msgid "Status: OK"
+msgstr "Status: OK"
+#
+msgid "Status: Ready"
+msgstr "Status: klaar"
+#
+#, fuzzy
+msgid "Status: Server unavailable."
+msgstr ""
+" rapporten niet beschikbaar.\n"
+"\n"
+#
+msgid "System Name:"
+msgstr "Computer naam:"
+#
+msgid "System Names"
+msgstr "Computer namen"
+#
+msgid "System: "
+msgstr "Computer: "
+#
+msgid "This action will PERMANENTLY assign the chart:"
+msgstr "Deze actie zal DEFINITIEF de kaart toewijzen:"
+#
+msgid "Unzipping chart files..."
+msgstr "Uitpakken kaart bestanden..."
+#
+msgid "Update Selected Chart"
+msgstr "Herinstalleren gekozen kaart"
+#
+msgid "XTR1"
+msgstr ""
+#
+#, fuzzy
+msgid "XTraverse PlugIn for OpenCPN"
+msgstr "oeSENC PlugIn voor OpenCPN"
+#
+#, fuzzy
+msgid ""
+"XTraverse PlugIn for OpenCPN\n"
+"Provides support of XTraverse raster navigation charts.\n"
+"\n"
+msgstr ""
+"PlugIn voor OpenCPN.\n"
+"Biedt ondersteuning voor oeSENC-kaarten.\n"
+"\n"
+#
+msgid ""
+"You may continue to wait, or return to this screen later to complete the "
+"download."
+msgstr ""
+"U kunt blijven wachten, of later terug komen naar dit scherm voor het "
+"uitvoeren van de download."
+#
+msgid ""
+"You will receive an email message when preparation for download is complete"
+msgstr ""
+#
+msgid "Your chart preparation is not complete."
+msgstr "De voorbereiding van uw kaarten is niet kompleet."
+#
+msgid "email address:"
+msgstr ""
+#
+msgid "internet communications error code: "
+msgstr "internet communicatie foutcode: "
+#
+msgid "lower case letters and numbers only."
+msgstr "alleen kleine letters en cijfers."
+#
+msgid "new..."
+msgstr "nieuw..."
+#
+msgid "o-charts API error code: "
+msgstr "o-charts API foutcode: "
+#
+msgid "oeSENC_PI Message"
+msgstr "oeSENC_PI bericht"
+#
+msgid "oeSENC_pi Message"
+msgstr "oeSENC_pi bericht"
+#
+#, fuzzy
+msgid "serverd utility at \n"
+msgstr "oeserverd hulpmiddel op\n"
+#
+#, fuzzy
+msgid "to this system."
+msgstr "aan deze computer naam:"
+#
+#, fuzzy
+msgid "xtr1 Charts"
+msgstr "Mijn kaarten"
+#
+#, fuzzy
+msgid "xtr1_pi Message"
+msgstr "oeSENC_pi bericht"
+#
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ " Fingerprint file is also copied to desktop."
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Vingerafdrukbestand wordt ook naar bureaublad gekopieerd."
+#
+#~ msgid ""
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider."
+#~ msgstr ""
+#~ "Een geldige oeSENC 'UserKey' heeft de alfanumerieke indeling: AAAA-BBBB-"
+#~ "CCCC-DDDD-EEEE-FF.\n"
+#~ "\n"
+#~ "U kunt een oeSENC 'UserKey' verkrijgen bij uw kaartenleverancier."
+#
+#~ msgid "Accept"
+#~ msgstr "Accepteren"
+#
+#~ msgid ""
+#~ "Administrator priveleges are required to copy fpr.\n"
+#~ "  Please try again...."
+#~ msgstr ""
+#~ "Administrator privileges zijn vereist voor het kopiëren van fpr.   Probeer "
+#~ "het opnieuw...."
+#
+#~ msgid ""
+#~ "After creating this file, you will need it to obtain your User Key at the "
+#~ "o-charts.org shop.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Na het maken van dit bestand, dient u uw 'User Key' te genereren via de o-"
+#~ "charts.org webwinkel.\n"
+#~ "\n"
+#
+#~ msgid "Available Chart sets:"
+#~ msgstr "Beschikbare kaartensets:"
+#
+#~ msgid "Building eSENC"
+#~ msgstr "Maken van eSENC"
+#
+#~ msgid "Chart set"
+#~ msgstr "Kaartenfolio"
+#
+#~ msgid "ChartTexts"
+#~ msgstr "Kaartteksten"
+#
+#~ msgid "Contacting o-charts server..."
+#~ msgstr "Contact maken met o-charts server..."
+#
+#~ msgid "Could not open oesenc_pi EULA: "
+#~ msgstr "Niet geopend kon worden oesenc_pi EULA: "
+#
+#~ msgid "Create System Identifier file..."
+#~ msgstr "Maak systeemidentificatiebestand ..."
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "\n"
+#~ "oeSENC charts will be disabled for this session.\n"
+#~ "Please verify your UserKey and restart OpenCPN.\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "FOUT: De ingevoerde 'UserKey' is niet geldig voor dit oeSENC "
+#~ "kaartenfolio.\n"
+#~ "\n"
+#~ "oeSENC-kaarten worden uitgeschakeld voor deze sessie.\n"
+#~ "Controleer uw 'UserKey' en herstart OpenCPN.\n"
+#~ "\n"
+#~ "Een oeSENC 'UserKey' kunt u verkrijgen bij uw kaartleverancier.\n"
+#~ "\n"
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "Please verify your UserKey and try again.\n"
+#~ "\n"
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "FOUT: De ingevoerde 'UserKey' is niet geldig voor dit oeSENC "
+#~ "kaartenfolio.\n"
+#~ "Controleer uw 'UserKey' en probeer het opnieuw.\n"
+#~ "\n"
+#~ "Een geldige oeSENC 'UserKey' heeft de alfanumerieke indeling: AAAA-BBBB-"
+#~ "CCCC-DDDD-EEEE-FF\n"
+#~ "U kunt een oeSENC 'UserKey' verkrijgen bij uw kaartenleverancier.\n"
+#~ "\n"
+#
+#~ msgid "Enter UserKey"
+#~ msgstr "Voer 'UserKey' in"
+#
+#~ msgid "Fingerprint file created.\n"
+#~ msgstr "Vingerafdrukbestand gemaakt.\n"
+#
+#~ msgid "License"
+#~ msgstr "Licentie"
+#
+#~ msgid "Login to o-charts.org"
+#~ msgstr "Inloggen op o-charts.org"
+#
+#~ msgid "OpenCPN SENC UserKey Required"
+#~ msgstr "OpenCPN SENC 'UserKey' vereist"
+#
+#~ msgid "OpenCPN oeSENC UserKey Required"
+#~ msgstr "OpenCPN: oeSENC 'UserKey' vereist"
+#
+#~ msgid "PlugIn for OpenCPN oeSENC charts"
+#~ msgstr "PlugIn voor OpenCPN oeSENC-kaarten"
+#
+#~ msgid "Proceed to create Fingerprint file?"
+#~ msgstr "Wilt u nu een vingerafdrukbestand maken?"
+#
+#~ msgid "Reject"
+#~ msgstr "Afwijzen"
+#
+#~ msgid "Sector angles are True Bearings from Seaward"
+#~ msgstr "Sectorrichtingen zijn ware peilingen vanaf zee"
+#
+#~ msgid "Show In Finder"
+#~ msgstr "Toon In 'Finder'"
+#
+#~ msgid "Show on disk"
+#~ msgstr "Reeds aanwezig"
+#
+#~ msgid "System Identification"
+#~ msgstr "Systeemidentificatie"
+#
+#~ msgid ""
+#~ "The fingerprint file contains information to uniquely identifiy this "
+#~ "computer.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Het vingerafdrukbestand bevat informatie die deze computer identificeert.\n"
+#~ "\n"
+#
+#~ msgid "The following Chart sets are available:"
+#~ msgstr "De volgende kaartenfolio's zijn beschikbaar:"
+#
+#~ msgid "This file is also known as a\"fingerprint\" file.\n"
+#~ msgstr "Dit bestand wordt ook wel \"vingerafdrukbestand\" genoemd.\n"
+#
+#~ msgid ""
+#~ "To obtain a User Key, you must generate a unique System Identifier File.\n"
+#~ msgstr ""
+#~ "Om een 'User Key' te verkrijgen, dient u een uniek "
+#~ "systeemidentificatiebestand te maken.\n"
+#
+#~ msgid ""
+#~ "UserKey accepted.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "'UserKey' geaccepteerd.\n"
+#~ "\n"
+#
+#~ msgid "Valid until"
+#~ msgstr "Geldig tot"
+#
+#~ msgid "Version"
+#~ msgstr "Versie"
+#
+#~ msgid "Visit o-charts.org Website"
+#~ msgstr "Bezoek de o-charts.org website"
+#
+#~ msgid "oeSENC"
+#~ msgstr "oeSENC"
+#
+#~ msgid "oeSENC_PI Information"
+#~ msgstr "oeSENC_PI informatie"
+#
+#~ msgid "oeSENC_PI Preferences"
+#~ msgstr "oeSENC_PI voorkeuren"

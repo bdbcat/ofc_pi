@@ -1,0 +1,585 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opencpn\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-30 11:49-0400\n"
+"PO-Revision-Date: 2018-03-20 18:24-0400\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Czech\n"
+"Language: cs_CZ\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: cs\n"
+"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
+#
+msgid "   Chart File RLL data corrupt on chart "
+msgstr ""
+#
+msgid "   Chart File contains less than 3 PLY points: "
+msgstr ""
+#
+msgid "   Chart File corrupt in PostInit() on chart "
+msgstr ""
+#
+msgid "   Chart projection is UNKNOWN, assuming Mercator: "
+msgstr ""
+#
+msgid "   Error creating Line Index for chart "
+msgstr ""
+#
+msgid "   Line Index corrupt, recreating Index for chart "
+msgstr ""
+#
+msgid "   Result: OK, Internal georef solution used."
+msgstr ""
+#
+msgid "   Trying again with internally calculated georef solution "
+msgstr ""
+#
+msgid ""
+"   VP Final Check with internal georef: Georeference Chart_Error_Factor on "
+"chart "
+msgstr ""
+#
+msgid "   VP Final Check: Georeference Chart_Error_Factor on chart "
+msgstr ""
+#
+msgid "   XTR1_PI: chartInfo or productKey not found: "
+msgstr ""
+#
+msgid ""
+" could not be started.\n"
+"\n"
+msgstr " nelze spustit.\n"
+#
+msgid " create a new System Name for this computer."
+msgstr " vytvoř nový název systému pro tento počítač."
+#
+#, c-format
+msgid " is %5g"
+msgstr ""
+#
+msgid ""
+" reports Unavailable.\n"
+"\n"
+msgstr " zprávy nejsou k dispozici.\n"
+#
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
+msgstr ""
+#
+msgid "A valid System Name is 3 to 15 characters in length."
+msgstr "Platný název systému má 3 až 15 znaků."
+#
+msgid "Actions"
+msgstr "Akce"
+#
+#, fuzzy
+msgid "Activate Selected Chart"
+msgstr "Aktualizovat vybranou mapu"
+#
+msgid "Assigment 1"
+msgstr "Přiřazení 1"
+#
+msgid "Assigment 2"
+msgstr "Přiřazení 2"
+#
+msgid "Available."
+msgstr "K dispozici."
+#
+msgid "Cancel"
+msgstr "Zrušit"
+#
+msgid "Cancel Operation"
+msgstr "Zrušit operaci"
+#
+#, fuzzy
+msgid "Cannot find the xtr1_pi server utility at \n"
+msgstr "Nelze najít nástroj oserverd na \n"
+#
+msgid "Chart Edition:"
+msgstr "Vydání mapy:"
+#
+msgid "Chart Edition: "
+msgstr "Vydání mapy: "
+#
+msgid "Chart download cancelled."
+msgstr "Stahování map zrušeno."
+#
+msgid "Chart download complete."
+msgstr "Stahování map dokončeno."
+#
+msgid "Chart download error, missing file."
+msgstr "Chyba stahování mapy, chybějící soubor."
+#
+#, fuzzy
+msgid "Chart download failed."
+msgstr "Stahování map zrušeno."
+#
+msgid "Chart installation complete."
+msgstr "Instalace mapy dokončena."
+#
+msgid "Check your configuration and try again."
+msgstr "Zkontroluj konfiguraci a zkus to znovu."
+#
+msgid "Check your connection and try again."
+msgstr "Zkontroluj připojení k síti a opakuj akci."
+#
+#, fuzzy
+msgid "Checking server utility at "
+msgstr "Kontrola oeserverd nástroje na "
+#
+msgid "Choose chart install location."
+msgstr "Vyber umístění instalace map."
+#
+msgid "Continue waiting?"
+msgstr "Pokračovat v čekání?"
+#
+msgid "Dialog"
+msgstr "Dialogové okno"
+#
+msgid "Download Selected Chart"
+msgstr "Stáhni vybranou mapu"
+#
+#, fuzzy
+msgid "Download cancelled."
+msgstr "Stahování map zrušeno."
+#
+msgid "Downloaded:  "
+msgstr "Staženo:  "
+#
+#, fuzzy
+msgid "Downloading chart:"
+msgstr "Stahování..."
+#
+msgid "Downloading..."
+msgstr "Stahování..."
+#
+msgid "Enter New System Name"
+msgstr "Zadej nový název systému"
+#
+msgid "Error extracting zip file"
+msgstr "Chyba při rozbalení zip souboru"
+#
+msgid "Expiration date:"
+msgstr "Datum expirace:"
+#
+msgid "Expiration date: "
+msgstr "Datum expirace: "
+#
+msgid "Expired."
+msgstr "Platnost vypršela."
+#
+msgid "Install Selected Chart"
+msgstr "Nainstalovat vybranou mapu"
+#
+msgid "Installed edition: "
+msgstr "Nainstalované vydání: "
+#
+msgid "Installed, Up-to-date."
+msgstr "Nainstalované, aktuální."
+#
+msgid "Installed, Update available."
+msgstr "Nainstalované, aktualizace k dispozici."
+#
+msgid "Installing charts"
+msgstr "Instalace map"
+#
+msgid "Invalid Login."
+msgstr "Neplatné přihlášení."
+#
+msgid "Invalid System Name"
+msgstr "Neplatné jméno systému"
+#
+msgid "Invalid user/email name or password."
+msgstr "Neplatné uživatelské jméno nebo heslo."
+#
+msgid "Login to xTraverse server"
+msgstr ""
+#
+msgid "My Charts"
+msgstr "Moje mapy"
+#
+msgid "New OpenCPN oeSENC System Name"
+msgstr "Nový název systému OpenCPN oeSENC"
+#
+msgid "No symbols or spaces are allowed."
+msgstr "Nejsou povoleny žádné symboly ani mezery."
+#
+msgid "OK"
+msgstr "OK"
+#
+msgid "Order Reference:"
+msgstr "Označení objednávky:"
+#
+msgid "Order Reference: "
+msgstr "Označení objednávky: "
+#
+msgid "Password:"
+msgstr "Heslo:"
+#
+msgid "Please update Chart List."
+msgstr "Aktualizuj seznam map, prosím."
+#
+msgid "Preparing your charts..."
+msgstr "Příprava tvých map..."
+#
+msgid "Preparing your chartset."
+msgstr "Příprava tvé sady map."
+#
+msgid "Proceed to install?"
+msgstr "Přejít k instalaci?"
+#
+msgid "Proceed?"
+msgstr "Pokračovat?"
+#
+msgid "Purchase date:"
+msgstr "Datum nákupu:"
+#
+msgid "Purchase date: "
+msgstr "Datum nákupu: "
+#
+#, fuzzy
+msgid "Ready for Activation Request."
+msgstr "Připraveno k požadavku na stažení."
+#
+msgid "Ready for download."
+msgstr "Připraveno ke stažení."
+#
+msgid "Ready for unzipping chart files."
+msgstr "Připraveno k rozbalení souborů map."
+#
+msgid "Refresh Chart List"
+msgstr "Aktualizovat seznam map"
+#
+msgid "Reinstall Selected Chart"
+msgstr "Přeinstalovat vybranou mapu"
+#
+msgid "Select OpenCPN/oeSENC System Name"
+msgstr "Vyber název systému OpenCPN oeSENC"
+#
+msgid "Select your System Name from the following list, or "
+msgstr "Vyber název systému z následujícího seznamu nebo "
+#
+msgid "Status:"
+msgstr "Stav:"
+#
+msgid "Status: "
+msgstr "Stav: "
+#
+msgid "Status:  Activation FAILED."
+msgstr ""
+#
+#, fuzzy
+msgid "Status:  Cancelled."
+msgstr "Stav: Připraveno"
+#
+msgid "Status: BZB decrypt FAILED."
+msgstr ""
+#
+msgid "Status: BZB uzip FAILED."
+msgstr ""
+#
+msgid "Status: Chart List Refresh required."
+msgstr "Stav: Je nutná aktualizace seznamu map."
+#
+msgid "Status: Communications error."
+msgstr "Stav: Chyba komunikace."
+#
+#, fuzzy
+msgid "Status: Downloading index file..."
+msgstr "Stav: Stahování..."
+#
+msgid "Status: Downloading..."
+msgstr "Stav: Stahování..."
+#
+msgid "Status: Error parsing GetAccount results."
+msgstr ""
+#
+msgid "Status: Error parsing index file..."
+msgstr ""
+#
+msgid "Status: Error reading GetAccount results."
+msgstr ""
+#
+msgid "Status: OK"
+msgstr "Stav: OK"
+#
+msgid "Status: Ready"
+msgstr "Stav: Připraveno"
+#
+#, fuzzy
+msgid "Status: Server unavailable."
+msgstr " zprávy nejsou k dispozici.\n"
+#
+msgid "System Name:"
+msgstr "Název systému:"
+#
+msgid "System Names"
+msgstr "Názvy systému"
+#
+msgid "System: "
+msgstr "Systém:"
+#
+msgid "This action will PERMANENTLY assign the chart:"
+msgstr "Tato akce TRVALE přiřadí mapu:"
+#
+msgid "Unzipping chart files..."
+msgstr "Rozbalování souborů map..."
+#
+msgid "Update Selected Chart"
+msgstr "Aktualizovat vybranou mapu"
+#
+msgid "XTR1"
+msgstr ""
+#
+#, fuzzy
+msgid "XTraverse PlugIn for OpenCPN"
+msgstr "oeSENC doplněk pro OpenCPN"
+#
+#, fuzzy
+msgid ""
+"XTraverse PlugIn for OpenCPN\n"
+"Provides support of XTraverse raster navigation charts.\n"
+"\n"
+msgstr ""
+"PlugIn pro OpenCPN poskytující podporu oeSENC map..\n"
+"\n"
+#
+msgid ""
+"You may continue to wait, or return to this screen later to complete the "
+"download."
+msgstr ""
+"Můžeš nadále čekat, nebo se vrať na tuto obrazovku později k dokončení "
+"stahování."
+#
+msgid ""
+"You will receive an email message when preparation for download is complete"
+msgstr "Po dokončení přípravy ke stažení obdržíš e-mailovou zprávu "
+#
+msgid "Your chart preparation is not complete."
+msgstr "Příprava tvých map není dokončena."
+#
+msgid "email address:"
+msgstr "e-mailová adresa:"
+#
+msgid "internet communications error code: "
+msgstr "kód chyby internetové komunikace:"
+#
+msgid "lower case letters and numbers only."
+msgstr "jen malá písmena a číslice."
+#
+msgid "new..."
+msgstr "nový..."
+#
+msgid "o-charts API error code: "
+msgstr "kód chyby API o-charts: "
+#
+msgid "oeSENC_PI Message"
+msgstr "oeSENC_PI zpráva"
+#
+msgid "oeSENC_pi Message"
+msgstr "oeSENC_pi zpráva"
+#
+#, fuzzy
+msgid "serverd utility at \n"
+msgstr "oeserverd nástroj na \n"
+#
+#, fuzzy
+msgid "to this system."
+msgstr "k tomuto systemName:"
+#
+#, fuzzy
+msgid "xtr1 Charts"
+msgstr "Moje mapy"
+#
+#, fuzzy
+msgid "xtr1_pi Message"
+msgstr "oeSENC_pi zpráva"
+#
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ " Fingerprint file is also copied to desktop."
+#~ msgstr ""
+#~ "\n"
+#~ "Soubor otisku je také zkopírován na plochu."
+#
+#~ msgid ""
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider."
+#~ msgstr ""
+#~ "Platný oeSENC UserKey má alfanumerický formát: AAAA-BBBB-CCCC-DDDD-EEEE-"
+#~ "FF\n"
+#~ "\n"
+#~ "Tvůj oeSENC UserKey lze získat od poskytovatele map."
+#
+#~ msgid "Accept"
+#~ msgstr "Přijmout"
+#
+#~ msgid "Add/Update oeSENC chartsets"
+#~ msgstr "Přidat/aktualizovat sady map oeSENC"
+#
+#~ msgid ""
+#~ "Administrator priveleges are required to copy fpr.\n"
+#~ "  Please try again...."
+#~ msgstr ""
+#~ "Ke kopírování fpr jsou nutná oprávnění Správce.\n"
+#~ "  Opakuj akci..."
+#
+#~ msgid ""
+#~ "After creating this file, you will need it to obtain your User Key at the "
+#~ "o-charts.org shop.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Po vytvoření tohoto souboru ho budeš potřebovat k získání svého "
+#~ "uživatelského klíče v obchodě o-charts.org.\n"
+#
+#~ msgid "Available Chart sets:"
+#~ msgstr "Dostupné sady map:"
+#
+#~ msgid "Building eSENC"
+#~ msgstr "Výroba eSENC"
+#
+#~ msgid "Chart set"
+#~ msgstr "Mapová sada"
+#
+#~ msgid "ChartTexts"
+#~ msgstr "Texty map"
+#
+#~ msgid "Contacting o-charts server..."
+#~ msgstr "Připojování k serveru o-charts..."
+#
+#~ msgid "Could not open oesenc_pi EULA: "
+#~ msgstr "Nelze otevřít oesenc_pi EULA: "
+#
+#~ msgid "Create System Identifier file..."
+#~ msgstr "Vytvoř soubor systémového identifikátoru..."
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "\n"
+#~ "oeSENC charts will be disabled for this session.\n"
+#~ "Please verify your UserKey and restart OpenCPN.\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Chyba: Zadaný UserKey není platný pro tuto sadu oeSENC map.\n"
+#~ "\n"
+#~ "oeSENC mapy budou prot toto sezení zablokovány.\n"
+#~ "Prosím zkontroluj svůj UserKey a opakuj akci.\n"
+#~ "\n"
+#~ "Tvůj oeSENC UserKey lze získat od poskytovatele map.\n"
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "Please verify your UserKey and try again.\n"
+#~ "\n"
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Chyba: Zadaný UserKey není platný pro tuto sadu oeSENC map. Prosím "
+#~ "zkontroluj svůj UserKey a opakuj akci.\n"
+#~ "\n"
+#~ "Platný oeSENC UserKey má alfanumerický formát: AAAA-BBBB-CCCC-DDDD-EEEE-"
+#~ "FF\n"
+#~ "Tvůj oeSENC UserKey lze získat od poskytovatele map.\n"
+#
+#~ msgid "Enter UserKey"
+#~ msgstr "Zadej UserKey"
+#
+#~ msgid "Fingerprint file created.\n"
+#~ msgstr "Soubor otisku vytvořen.\n"
+#
+#~ msgid "Here you may order new oeSENC chartsets."
+#~ msgstr "Zde si můžeš objednat nové sady map oeSENC."
+#
+#~ msgid "License"
+#~ msgstr "Licence"
+#
+#~ msgid "Login to o-charts.org"
+#~ msgstr "Přihlášení do o-charts.org"
+#
+#~ msgid "OpenCPN SENC UserKey Required"
+#~ msgstr "Je nutný OpenCPN oeSENC UserKey"
+#
+#~ msgid "OpenCPN oeSENC UserKey Required"
+#~ msgstr "Je nutný OpenCPN oeSENC UserKey"
+#
+#~ msgid "PlugIn for OpenCPN oeSENC charts"
+#~ msgstr "PlugIn OpenCPN pro oeSENC mapy"
+#
+#~ msgid "Proceed to create Fingerprint file?"
+#~ msgstr "Přejít k vytvoření souboru otisku?"
+#
+#~ msgid "Reject"
+#~ msgstr "Odmítnout"
+#
+#~ msgid "Sector angles are True Bearings from Seaward"
+#~ msgstr "Úhly sektorů jsou skutečné náměry z moře"
+#
+#~ msgid "Show In Finder"
+#~ msgstr "Zobrazit ve Finderu"
+#
+#~ msgid "Show on disk"
+#~ msgstr "Zobrazit na disku"
+#
+#~ msgid "System Identification"
+#~ msgstr "Identifikace systému"
+#
+#~ msgid ""
+#~ "The fingerprint file contains information to uniquely identifiy this "
+#~ "computer.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Soubor otisu obsahuje informace, které jednoznačně identifikují tento "
+#~ "počítač.\n"
+#
+#~ msgid "The following Chart sets are available:"
+#~ msgstr "Následující sady map jsou k dispozici:"
+#
+#~ msgid "This file is also known as a\"fingerprint\" file.\n"
+#~ msgstr "Tento soubor je také známý jako \"otisk (fingerprint)\" soubor.\n"
+#
+#~ msgid ""
+#~ "To obtain a User Key, you must generate a unique System Identifier File.\n"
+#~ msgstr ""
+#~ "Chceš-li získat uživatelský klíč (User Key), je nutné generovat soubor s "
+#~ "jedinečným identifikátorem systému.\n"
+#
+#~ msgid ""
+#~ "UserKey accepted.\n"
+#~ "\n"
+#~ msgstr "UserKey přijat.\n"
+#
+#~ msgid "Valid until"
+#~ msgstr "Platná do"
+#
+#~ msgid "Version"
+#~ msgstr "Verze"
+#
+#~ msgid "Visit o-charts.org Website"
+#~ msgstr "Navštiv web o-charts.org"
+#
+#~ msgid "oeSENC"
+#~ msgstr "oeSENC"
+#
+#~ msgid "oeSENC Charts"
+#~ msgstr "Mapy oeSENC"
+#
+#~ msgid "oeSENC_PI Information"
+#~ msgstr "oeSENC_PI informace"
+#
+#~ msgid "oeSENC_PI Preferences"
+#~ msgstr "oeSENC_PI předvolby"

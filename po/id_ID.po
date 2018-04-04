@@ -1,0 +1,552 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opencpn\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-30 11:49-0400\n"
+"PO-Revision-Date: 2018-03-16 19:12-0400\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Indonesian\n"
+"Language: id_ID\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
+#
+msgid "   Chart File RLL data corrupt on chart "
+msgstr ""
+#
+msgid "   Chart File contains less than 3 PLY points: "
+msgstr ""
+#
+msgid "   Chart File corrupt in PostInit() on chart "
+msgstr ""
+#
+msgid "   Chart projection is UNKNOWN, assuming Mercator: "
+msgstr ""
+#
+msgid "   Error creating Line Index for chart "
+msgstr ""
+#
+msgid "   Line Index corrupt, recreating Index for chart "
+msgstr ""
+#
+msgid "   Result: OK, Internal georef solution used."
+msgstr ""
+#
+msgid "   Trying again with internally calculated georef solution "
+msgstr ""
+#
+msgid ""
+"   VP Final Check with internal georef: Georeference Chart_Error_Factor on "
+"chart "
+msgstr ""
+#
+msgid "   VP Final Check: Georeference Chart_Error_Factor on chart "
+msgstr ""
+#
+msgid "   XTR1_PI: chartInfo or productKey not found: "
+msgstr ""
+#
+msgid ""
+" could not be started.\n"
+"\n"
+msgstr ""
+" tidak bisa memulai.\n"
+"\n"
+#
+msgid " create a new System Name for this computer."
+msgstr ""
+#
+#, c-format
+msgid " is %5g"
+msgstr ""
+#
+msgid ""
+" reports Unavailable.\n"
+"\n"
+msgstr ""
+" laporan tidak tersedia.\n"
+"\n"
+#
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
+msgstr ""
+#
+msgid "A valid System Name is 3 to 15 characters in length."
+msgstr ""
+#
+msgid "Actions"
+msgstr ""
+#
+msgid "Activate Selected Chart"
+msgstr ""
+#
+msgid "Assigment 1"
+msgstr ""
+#
+msgid "Assigment 2"
+msgstr ""
+#
+msgid "Available."
+msgstr ""
+#
+msgid "Cancel"
+msgstr "Membatalkan"
+#
+msgid "Cancel Operation"
+msgstr ""
+#
+#, fuzzy
+msgid "Cannot find the xtr1_pi server utility at \n"
+msgstr "Tidak dapat menemukan utilitas oserverd di \n"
+#
+msgid "Chart Edition:"
+msgstr ""
+#
+msgid "Chart Edition: "
+msgstr ""
+#
+msgid "Chart download cancelled."
+msgstr ""
+#
+msgid "Chart download complete."
+msgstr ""
+#
+msgid "Chart download error, missing file."
+msgstr ""
+#
+msgid "Chart download failed."
+msgstr ""
+#
+msgid "Chart installation complete."
+msgstr ""
+#
+msgid "Check your configuration and try again."
+msgstr ""
+#
+msgid "Check your connection and try again."
+msgstr ""
+#
+#, fuzzy
+msgid "Checking server utility at "
+msgstr "Memeriksa utilitas oeserverd di "
+#
+msgid "Choose chart install location."
+msgstr ""
+#
+msgid "Continue waiting?"
+msgstr ""
+#
+msgid "Dialog"
+msgstr "Percakapan"
+#
+msgid "Download Selected Chart"
+msgstr ""
+#
+msgid "Download cancelled."
+msgstr ""
+#
+msgid "Downloaded:  "
+msgstr ""
+#
+msgid "Downloading chart:"
+msgstr ""
+#
+msgid "Downloading..."
+msgstr ""
+#
+msgid "Enter New System Name"
+msgstr ""
+#
+msgid "Error extracting zip file"
+msgstr ""
+#
+msgid "Expiration date:"
+msgstr ""
+#
+msgid "Expiration date: "
+msgstr ""
+#
+msgid "Expired."
+msgstr ""
+#
+msgid "Install Selected Chart"
+msgstr ""
+#
+msgid "Installed edition: "
+msgstr ""
+#
+msgid "Installed, Up-to-date."
+msgstr ""
+#
+msgid "Installed, Update available."
+msgstr ""
+#
+msgid "Installing charts"
+msgstr ""
+#
+msgid "Invalid Login."
+msgstr ""
+#
+msgid "Invalid System Name"
+msgstr ""
+#
+msgid "Invalid user/email name or password."
+msgstr ""
+#
+msgid "Login to xTraverse server"
+msgstr ""
+#
+msgid "My Charts"
+msgstr ""
+#
+msgid "New OpenCPN oeSENC System Name"
+msgstr ""
+#
+msgid "No symbols or spaces are allowed."
+msgstr ""
+#
+msgid "OK"
+msgstr "OK"
+#
+msgid "Order Reference:"
+msgstr ""
+#
+msgid "Order Reference: "
+msgstr ""
+#
+msgid "Password:"
+msgstr ""
+#
+msgid "Please update Chart List."
+msgstr ""
+#
+msgid "Preparing your charts..."
+msgstr ""
+#
+msgid "Preparing your chartset."
+msgstr ""
+#
+msgid "Proceed to install?"
+msgstr ""
+#
+msgid "Proceed?"
+msgstr ""
+#
+msgid "Purchase date:"
+msgstr ""
+#
+msgid "Purchase date: "
+msgstr ""
+#
+msgid "Ready for Activation Request."
+msgstr ""
+#
+msgid "Ready for download."
+msgstr ""
+#
+msgid "Ready for unzipping chart files."
+msgstr ""
+#
+msgid "Refresh Chart List"
+msgstr ""
+#
+msgid "Reinstall Selected Chart"
+msgstr ""
+#
+msgid "Select OpenCPN/oeSENC System Name"
+msgstr ""
+#
+msgid "Select your System Name from the following list, or "
+msgstr ""
+#
+msgid "Status:"
+msgstr ""
+#
+msgid "Status: "
+msgstr ""
+#
+msgid "Status:  Activation FAILED."
+msgstr ""
+#
+msgid "Status:  Cancelled."
+msgstr ""
+#
+msgid "Status: BZB decrypt FAILED."
+msgstr ""
+#
+msgid "Status: BZB uzip FAILED."
+msgstr ""
+#
+msgid "Status: Chart List Refresh required."
+msgstr ""
+#
+msgid "Status: Communications error."
+msgstr ""
+#
+msgid "Status: Downloading index file..."
+msgstr ""
+#
+msgid "Status: Downloading..."
+msgstr ""
+#
+msgid "Status: Error parsing GetAccount results."
+msgstr ""
+#
+msgid "Status: Error parsing index file..."
+msgstr ""
+#
+msgid "Status: Error reading GetAccount results."
+msgstr ""
+#
+msgid "Status: OK"
+msgstr ""
+#
+msgid "Status: Ready"
+msgstr ""
+#
+#, fuzzy
+msgid "Status: Server unavailable."
+msgstr ""
+" laporan tidak tersedia.\n"
+"\n"
+#
+msgid "System Name:"
+msgstr ""
+#
+msgid "System Names"
+msgstr ""
+#
+msgid "System: "
+msgstr ""
+#
+msgid "This action will PERMANENTLY assign the chart:"
+msgstr ""
+#
+msgid "Unzipping chart files..."
+msgstr ""
+#
+msgid "Update Selected Chart"
+msgstr ""
+#
+msgid "XTR1"
+msgstr ""
+#
+#, fuzzy
+msgid "XTraverse PlugIn for OpenCPN"
+msgstr "oeSENC PlugIn untuk OpenCPN"
+#
+#, fuzzy
+msgid ""
+"XTraverse PlugIn for OpenCPN\n"
+"Provides support of XTraverse raster navigation charts.\n"
+"\n"
+msgstr ""
+"PlugIn untuk OpenCPN Menyediakan dukungan untuk bagan oeSENC.\n"
+"\n"
+#
+msgid ""
+"You may continue to wait, or return to this screen later to complete the "
+"download."
+msgstr ""
+#
+msgid ""
+"You will receive an email message when preparation for download is complete"
+msgstr ""
+#
+msgid "Your chart preparation is not complete."
+msgstr ""
+#
+msgid "email address:"
+msgstr ""
+#
+msgid "internet communications error code: "
+msgstr ""
+#
+msgid "lower case letters and numbers only."
+msgstr ""
+#
+msgid "new..."
+msgstr ""
+#
+msgid "o-charts API error code: "
+msgstr ""
+#
+msgid "oeSENC_PI Message"
+msgstr "pesan oeSENC_PI"
+#
+msgid "oeSENC_pi Message"
+msgstr "pesan oeSENC_pi"
+#
+#, fuzzy
+msgid "serverd utility at \n"
+msgstr "Memeriksa utilitas oeserverd di "
+#
+msgid "to this system."
+msgstr ""
+#
+#, fuzzy
+msgid "xtr1 Charts"
+msgstr "Bagan ditetapkan"
+#
+#, fuzzy
+msgid "xtr1_pi Message"
+msgstr "pesan oeSENC_pi"
+#
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ " Fingerprint file is also copied to desktop."
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ " File sidik jari juga disalin ke desktop."
+#
+#~ msgid ""
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider."
+#~ msgstr ""
+#~ "OASENC UserKey yang valid memiliki format alfanumerik: AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF Pengguna Anda mungkin berasal dari penyedia bagan Anda."
+#
+#~ msgid "Accept"
+#~ msgstr "Menerima"
+#
+#~ msgid ""
+#~ "Administrator priveleges are required to copy fpr.\n"
+#~ "  Please try again...."
+#~ msgstr ""
+#~ "Administrator priveleges diminta untuk menyalin fpr.\n"
+#~ "  Silakan coba lagi...."
+#
+#~ msgid ""
+#~ "After creating this file, you will need it to obtain your User Key at the "
+#~ "o-charts.org shop.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Setelah membuat file ini, Anda memerlukannya untuk mendapatkan User Key "
+#~ "Anda di toko o-charts.org.\n"
+#~ "\n"
+#
+#~ msgid "Available Chart sets:"
+#~ msgstr "Kumpulan Bagan yang tersedia:"
+#
+#~ msgid "Building eSENC"
+#~ msgstr "Membangun eSENC"
+#
+#~ msgid "Could not open oesenc_pi EULA: "
+#~ msgstr "Tidak bisa membuka oesenc_pi EULA: "
+#
+#~ msgid "Create System Identifier file..."
+#~ msgstr "Buat file System Identifier..."
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "\n"
+#~ "oeSENC charts will be disabled for this session.\n"
+#~ "Please verify your UserKey and restart OpenCPN.\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "KESALAHAN: UserKey masuk tidak berlaku untuk kumpulan grafik oeSENC ini. "
+#~ "Diagram oeSENC akan dinonaktifkan untuk sesi ini. Harap verifikasi UserKey "
+#~ "Anda dan restart OpenCPN. Pengguna Anda mungkin berasal dari penyedia "
+#~ "bagan Anda.\n"
+#~ "\n"
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "Please verify your UserKey and try again.\n"
+#~ "\n"
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "KESALAHAN: UserKey masuk tidak berlaku untuk kumpulan grafik oeSENC ini. "
+#~ "Harap verifikasi UserKey Anda dan coba lagi. OASENC UserKey yang valid "
+#~ "memiliki format alfanumerik: AAAA-BBBB-CCCC-DDDD-EEEE-FF Pengguna Anda "
+#~ "mungkin berasal dari penyedia bagan Anda.\n"
+#~ "\n"
+#
+#~ msgid "Enter UserKey"
+#~ msgstr "Masukkan UserKey"
+#
+#~ msgid "Fingerprint file created.\n"
+#~ msgstr "File sidik jari dibuat.\n"
+#
+#~ msgid "License"
+#~ msgstr "Lisensi"
+#
+#~ msgid "OpenCPN SENC UserKey Required"
+#~ msgstr "OpenCPN SENC UserKey Diperlukan"
+#
+#~ msgid "OpenCPN oeSENC UserKey Required"
+#~ msgstr "OpenCPN oeSENC UserKey Diperlukan"
+#
+#~ msgid "PlugIn for OpenCPN oeSENC charts"
+#~ msgstr "PlugIn untuk diagram OeSENC OpenCPN"
+#
+#~ msgid "Proceed to create Fingerprint file?"
+#~ msgstr "Lanjutkan untuk membuat file sidik jari?"
+#
+#~ msgid "Reject"
+#~ msgstr "Menolak"
+#
+#~ msgid "Sector angles are True Bearings from Seaward"
+#~ msgstr "Sudut sektor adalah True Bearings dari Seaward"
+#
+#~ msgid "Show In Finder"
+#~ msgstr "Tampilkan pencarian"
+#
+#~ msgid "Show on disk"
+#~ msgstr "Menampilkan pada disk"
+#
+#~ msgid "System Identification"
+#~ msgstr "Identifikasi Sistem"
+#
+#~ msgid ""
+#~ "The fingerprint file contains information to uniquely identifiy this "
+#~ "computer.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "File sidik jari berisi informasi untuk mengidentifikasi secara unik "
+#~ "komputer ini.\n"
+#~ "\n"
+#
+#~ msgid "The following Chart sets are available:"
+#~ msgstr "Bagan berikut tersedia:"
+#
+#~ msgid "This file is also known as a\"fingerprint\" file.\n"
+#~ msgstr "File ini juga dikenal sebagai file \"sidik jari\".\n"
+#
+#~ msgid ""
+#~ "To obtain a User Key, you must generate a unique System Identifier File.\n"
+#~ msgstr ""
+#~ "Untuk mendapatkan User Key, Anda harus membuat File System Identifier yang "
+#~ "unik.\n"
+#
+#~ msgid ""
+#~ "UserKey accepted.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "UserKey diterima.\n"
+#~ "\n"
+#
+#~ msgid "Valid until"
+#~ msgstr "Berlaku hingga"
+#
+#~ msgid "Version"
+#~ msgstr "Versi"
+#
+#~ msgid "Visit o-charts.org Website"
+#~ msgstr "Kunjungi situs o-charts.org"

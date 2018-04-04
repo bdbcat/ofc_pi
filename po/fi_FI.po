@@ -1,0 +1,596 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: opencpn\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-30 11:49-0400\n"
+"PO-Revision-Date: 2018-03-16 19:11-0400\n"
+"Last-Translator: nohal <pavel@kalian.cz>\n"
+"Language-Team: Finnish\n"
+"Language: fi_FI\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: opencpn\n"
+"X-Crowdin-Language: fi\n"
+"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
+#
+msgid "   Chart File RLL data corrupt on chart "
+msgstr ""
+#
+msgid "   Chart File contains less than 3 PLY points: "
+msgstr ""
+#
+msgid "   Chart File corrupt in PostInit() on chart "
+msgstr ""
+#
+msgid "   Chart projection is UNKNOWN, assuming Mercator: "
+msgstr ""
+#
+msgid "   Error creating Line Index for chart "
+msgstr ""
+#
+msgid "   Line Index corrupt, recreating Index for chart "
+msgstr ""
+#
+msgid "   Result: OK, Internal georef solution used."
+msgstr ""
+#
+msgid "   Trying again with internally calculated georef solution "
+msgstr ""
+#
+msgid ""
+"   VP Final Check with internal georef: Georeference Chart_Error_Factor on "
+"chart "
+msgstr ""
+#
+msgid "   VP Final Check: Georeference Chart_Error_Factor on chart "
+msgstr ""
+#
+msgid "   XTR1_PI: chartInfo or productKey not found: "
+msgstr ""
+#
+msgid ""
+" could not be started.\n"
+"\n"
+msgstr ""
+" ei voitu käynnistää.\n"
+"\n"
+#
+msgid " create a new System Name for this computer."
+msgstr " luo uusi järjestelmänimi tälle tietokoneelle."
+#
+#, c-format
+msgid " is %5g"
+msgstr ""
+#
+msgid ""
+" reports Unavailable.\n"
+"\n"
+msgstr ""
+" raportteja ei käytettävissä.\n"
+"\n"
+#
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr ""
+#
+msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
+msgstr ""
+#
+msgid "A valid System Name is 3 to 15 characters in length."
+msgstr "Pätevä järjestelmänimi on 3-15 merkkiä pitkä."
+#
+msgid "Actions"
+msgstr "Toiminnot"
+#
+#, fuzzy
+msgid "Activate Selected Chart"
+msgstr "Päivitä valittu kartta"
+#
+msgid "Assigment 1"
+msgstr "Toimeksianto 1"
+#
+msgid "Assigment 2"
+msgstr "Toimeksianto 2"
+#
+msgid "Available."
+msgstr "Saatavissa."
+#
+msgid "Cancel"
+msgstr "Peruuta"
+#
+msgid "Cancel Operation"
+msgstr "Peruuta operaatio"
+#
+#, fuzzy
+msgid "Cannot find the xtr1_pi server utility at \n"
+msgstr "Ei löydetä Oeserverd apuohjelmaa\n"
+#
+msgid "Chart Edition:"
+msgstr "Karttapainos:"
+#
+msgid "Chart Edition: "
+msgstr "Karttapainos: "
+#
+msgid "Chart download cancelled."
+msgstr "Lataus peruttu."
+#
+msgid "Chart download complete."
+msgstr "Karttalataus on valmis."
+#
+msgid "Chart download error, missing file."
+msgstr "Kartan latausvirhe, tiedosto puuttuu."
+#
+#, fuzzy
+msgid "Chart download failed."
+msgstr "Lataus peruttu."
+#
+msgid "Chart installation complete."
+msgstr "Kartta asennus on valmis."
+#
+msgid "Check your configuration and try again."
+msgstr "Tarkista kokoonpano ja yritä uudelleen."
+#
+msgid "Check your connection and try again."
+msgstr "Tarkista yhteytesi ja kokeile uudelleen."
+#
+#, fuzzy
+msgid "Checking server utility at "
+msgstr "Tarkistetaan Oeserverd apuohjelmaa "
+#
+msgid "Choose chart install location."
+msgstr "Valitse kartan asennuspaikka."
+#
+msgid "Continue waiting?"
+msgstr "Jatka odottamista?"
+#
+msgid "Dialog"
+msgstr "Dialogi"
+#
+msgid "Download Selected Chart"
+msgstr "Lataa valitun kartat"
+#
+#, fuzzy
+msgid "Download cancelled."
+msgstr "Lataus peruttu."
+#
+msgid "Downloaded:  "
+msgstr "Ladatut:  "
+#
+#, fuzzy
+msgid "Downloading chart:"
+msgstr "Ladataan..."
+#
+msgid "Downloading..."
+msgstr "Ladataan..."
+#
+msgid "Enter New System Name"
+msgstr "Kirjoita uusi systeemin nimi"
+#
+msgid "Error extracting zip file"
+msgstr "Virhe ziptiedoston avauksessa"
+#
+msgid "Expiration date:"
+msgstr "Viimeinen käyttöpäivä:"
+#
+msgid "Expiration date: "
+msgstr "Viimeinen käyttöpäivä: "
+#
+msgid "Expired."
+msgstr "Vanhentunut."
+#
+msgid "Install Selected Chart"
+msgstr "Asenna valittu kartta"
+#
+msgid "Installed edition: "
+msgstr "Asennettu painos: "
+#
+msgid "Installed, Up-to-date."
+msgstr "Asennettu, ajan tasalla."
+#
+msgid "Installed, Update available."
+msgstr "Asennettu, päivitys saatavilla."
+#
+msgid "Installing charts"
+msgstr "Asennetaan kartat"
+#
+msgid "Invalid Login."
+msgstr "Virheellinen kirjautuminen."
+#
+msgid "Invalid System Name"
+msgstr "Virheellinen järjestelmänimi"
+#
+msgid "Invalid user/email name or password."
+msgstr "Virheellinen käyttäjätunnus tai salasana."
+#
+msgid "Login to xTraverse server"
+msgstr ""
+#
+msgid "My Charts"
+msgstr "Mun kartat"
+#
+msgid "New OpenCPN oeSENC System Name"
+msgstr "Uusi OpenCPN oeSENC järjestelmänimi"
+#
+msgid "No symbols or spaces are allowed."
+msgstr "Symboolit tai välit eivät ole sallittuja."
+#
+msgid "OK"
+msgstr "OK"
+#
+msgid "Order Reference:"
+msgstr "Tilauksen viite:"
+#
+msgid "Order Reference: "
+msgstr "Tilauksen viite: "
+#
+msgid "Password:"
+msgstr "Salasana:"
+#
+msgid "Please update Chart List."
+msgstr "Tee ensin karttaluettelo päivitys."
+#
+msgid "Preparing your charts..."
+msgstr "Valmistellaan karttojasi..."
+#
+msgid "Preparing your chartset."
+msgstr "Valmistellaan karttasarjojasi."
+#
+msgid "Proceed to install?"
+msgstr "Jatkatko asennusta?"
+#
+msgid "Proceed?"
+msgstr "Jatka?"
+#
+msgid "Purchase date:"
+msgstr "Hankintapäivä:"
+#
+msgid "Purchase date: "
+msgstr "Hankintapäivä: "
+#
+#, fuzzy
+msgid "Ready for Activation Request."
+msgstr "Valmis latauspyyntöön."
+#
+msgid "Ready for download."
+msgstr "Valmiina lataamaan."
+#
+msgid "Ready for unzipping chart files."
+msgstr "Valmiina purkamaan karttatidostot."
+#
+msgid "Refresh Chart List"
+msgstr "Päivitä kartta luettelo"
+#
+msgid "Reinstall Selected Chart"
+msgstr "Asenna uudelleen valittu kartta"
+#
+msgid "Select OpenCPN/oeSENC System Name"
+msgstr "Valitse OpenCPN/oeSENC järjestelmänimi"
+#
+msgid "Select your System Name from the following list, or "
+msgstr "Valitse järjestelmänimi seuraavasta luettelosta, tai "
+#
+msgid "Status:"
+msgstr "Tila:"
+#
+msgid "Status: "
+msgstr "Tila: "
+#
+msgid "Status:  Activation FAILED."
+msgstr ""
+#
+#, fuzzy
+msgid "Status:  Cancelled."
+msgstr "Tila: valmis"
+#
+msgid "Status: BZB decrypt FAILED."
+msgstr ""
+#
+msgid "Status: BZB uzip FAILED."
+msgstr ""
+#
+msgid "Status: Chart List Refresh required."
+msgstr "Tila: Suositellaan Karttaluettelon päivitystä."
+#
+msgid "Status: Communications error."
+msgstr "Tila: Yhteysvirhe."
+#
+#, fuzzy
+msgid "Status: Downloading index file..."
+msgstr "Tila: Ladataan..."
+#
+msgid "Status: Downloading..."
+msgstr "Tila: Ladataan..."
+#
+msgid "Status: Error parsing GetAccount results."
+msgstr ""
+#
+msgid "Status: Error parsing index file..."
+msgstr ""
+#
+msgid "Status: Error reading GetAccount results."
+msgstr ""
+#
+msgid "Status: OK"
+msgstr "Tila: OK"
+#
+msgid "Status: Ready"
+msgstr "Tila: valmis"
+#
+#, fuzzy
+msgid "Status: Server unavailable."
+msgstr ""
+" raportteja ei käytettävissä.\n"
+"\n"
+#
+msgid "System Name:"
+msgstr "Järjestelmänimi:"
+#
+msgid "System Names"
+msgstr "Järjestelmänimet"
+#
+msgid "System: "
+msgstr "Järjestelmä: "
+#
+msgid "This action will PERMANENTLY assign the chart:"
+msgstr "Tämä toiminto liittää PYSYVÄSTI tämän kartan:"
+#
+msgid "Unzipping chart files..."
+msgstr "Puretaan karttatiedostoja..."
+#
+msgid "Update Selected Chart"
+msgstr "Päivitä valittu kartta"
+#
+msgid "XTR1"
+msgstr ""
+#
+#, fuzzy
+msgid "XTraverse PlugIn for OpenCPN"
+msgstr "oeSENC lisäosa OpenCPN:ään"
+#
+#, fuzzy
+msgid ""
+"XTraverse PlugIn for OpenCPN\n"
+"Provides support of XTraverse raster navigation charts.\n"
+"\n"
+msgstr ""
+"OpenCPN karttalisäosa tukee oeSENC karttoja.\n"
+"\n"
+#
+msgid ""
+"You may continue to wait, or return to this screen later to complete the "
+"download."
+msgstr ""
+"Voit jatkaa odottamista, tai palata tähän näyttöön myöhemmin täydentääksesi "
+"latauksen."
+#
+msgid ""
+"You will receive an email message when preparation for download is complete"
+msgstr "Saat sähköpostiviestin, kun Lataus valmistelut on suoritettu"
+#
+msgid "Your chart preparation is not complete."
+msgstr "Karttojesi valmistelu ei ole valmis."
+#
+msgid "email address:"
+msgstr "sähköpostiosoite:"
+#
+msgid "internet communications error code: "
+msgstr "internetyhteyden virhekoodi: "
+#
+msgid "lower case letters and numbers only."
+msgstr "vain pienet kirjaimet ja numerot."
+#
+msgid "new..."
+msgstr "uusi..."
+#
+msgid "o-charts API error code: "
+msgstr "o-karttojen API virhekoodi: "
+#
+msgid "oeSENC_PI Message"
+msgstr "oeSENC_PI viesti"
+#
+msgid "oeSENC_pi Message"
+msgstr "oeSENC_pi viesti"
+#
+#, fuzzy
+msgid "serverd utility at \n"
+msgstr "oeserverd apuohjelma\n"
+#
+#, fuzzy
+msgid "to this system."
+msgstr "tähän systeemiNimeen:"
+#
+#, fuzzy
+msgid "xtr1 Charts"
+msgstr "Mun kartat"
+#
+#, fuzzy
+msgid "xtr1_pi Message"
+msgstr "oeSENC_pi viesti"
+#
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ " Fingerprint file is also copied to desktop."
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Fingerprint tiedosto kopioidaan myös työpöydälle."
+#
+#~ msgid ""
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider."
+#~ msgstr ""
+#~ "Aakkosnumeerinen muoto on kelvollinen oeSENC käyttäjätunnus: AAAA-BBBB-"
+#~ "CCCC-DDDD-EEEE-FF\n"
+#~ "\n"
+#~ "Sinun oeSENC käyttäjätunnus saadaan karttojen toimittajalta."
+#
+#~ msgid "Accept"
+#~ msgstr "Hyväksy"
+#
+#~ msgid "Add/Update oeSENC chartsets"
+#~ msgstr "Lisää/päivitä oesenc karttasarjat"
+#
+#~ msgid ""
+#~ "Administrator priveleges are required to copy fpr.\n"
+#~ "  Please try again...."
+#~ msgstr ""
+#~ "Fpr kopiointiin tarvitaan järjestelmänvalvojan oikeudet.   Yritä "
+#~ "uudelleen...."
+#
+#~ msgid ""
+#~ "After creating this file, you will need it to obtain your User Key at the "
+#~ "o-charts.org shop.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Luotuasi tämän tiedoston, tarvitset sitä, kun muodostat asennusluvan o.-"
+#~ "charts.org shop:ssa.\n"
+#~ "\n"
+#
+#~ msgid "Available Chart sets:"
+#~ msgstr "Saatavissa olevat karttasarjat:"
+#
+#~ msgid "Building eSENC"
+#~ msgstr "Muodostetaan eSENC"
+#
+#~ msgid "Chart set"
+#~ msgstr "Kartta sarja"
+#
+#~ msgid "ChartTexts"
+#~ msgstr "Karttatekstit"
+#
+#~ msgid "Contacting o-charts server..."
+#~ msgstr "Yhdistetään o-karttapalvelimeen..."
+#
+#~ msgid "Could not open oesenc_pi EULA: "
+#~ msgstr "Oesenc_pi Käyttöoikeussopimus ei voitu avata: "
+#
+#~ msgid "Create System Identifier file..."
+#~ msgstr "Luo järjestelmätunniste tiedosto..."
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "\n"
+#~ "oeSENC charts will be disabled for this session.\n"
+#~ "Please verify your UserKey and restart OpenCPN.\n"
+#~ "\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Virhe: Annettu käyttäjätunnus ei kelpaa tähän oeSENC karttasarjaan.\n"
+#~ "\n"
+#~ "oeSENC kartat poistetaan käytöstä tämän istunnon ajaksi.\n"
+#~ "Tarkista käyttäjätunnuksesi ja käynnistä udelleen OpenCPN.\n"
+#~ "\n"
+#~ "Saat oeSENC käyttäjätunnuksen kartan toimittajaltasi.\n"
+#~ "\n"
+#
+#~ msgid ""
+#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
+#~ "Please verify your UserKey and try again.\n"
+#~ "\n"
+#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
+#~ "EEEE-FF\n"
+#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Virhe: Annettu käyttäjätunnus ei kelpaa tähän oeSENC karttasarjaan. "
+#~ "Tarkista oma käyttäjätunnus ja yritä uudelleen.\n"
+#~ "\n"
+#~ "Aakkosnumeerinen muoto on kelvollinen oeSENC käyttäjätunnus: AAAA-BBBB-"
+#~ "CCCC-DDDD-EEEE-FF oeSENC käyttäjätunnus saadaan karttatoimittajalta.\n"
+#~ "\n"
+#
+#~ msgid "Enter UserKey"
+#~ msgstr "Kirjoita UserKey"
+#
+#~ msgid "Fingerprint file created.\n"
+#~ msgstr "Fingerprint tiedosto luotu.\n"
+#
+#~ msgid "Here you may order new oeSENC chartsets."
+#~ msgstr "Täältä voit tilata uusia oesenc karttasarjoja."
+#
+#~ msgid "License"
+#~ msgstr "Lisenssi"
+#
+#~ msgid "Login to o-charts.org"
+#~ msgstr "Kirjaudu o-charts.orgiin"
+#
+#~ msgid "OpenCPN SENC UserKey Required"
+#~ msgstr "OpenCPN oeSENC käyttäjätunnus tarvitaan"
+#
+#~ msgid "OpenCPN oeSENC UserKey Required"
+#~ msgstr "OpenCPN oeSENC käyttäjätunnus tarvitaan"
+#
+#~ msgid "PlugIn for OpenCPN oeSENC charts"
+#~ msgstr "OpenCPN oeSENC karttalisäosa"
+#
+#~ msgid "Proceed to create Fingerprint file?"
+#~ msgstr "Ryhdytkö Fingerprint tiedoston luontiin?"
+#
+#~ msgid "Reject"
+#~ msgstr "Hylkää"
+#
+#~ msgid "Sector angles are True Bearings from Seaward"
+#~ msgstr "Sektorikulmat ovat tosisuuntia merikohteesta"
+#
+#~ msgid "Show In Finder"
+#~ msgstr "Näytä Finderissa"
+#
+#~ msgid "Show on disk"
+#~ msgstr "Näytä levyllä"
+#
+#~ msgid "System Identification"
+#~ msgstr "Järjestelmän tunnistus"
+#
+#~ msgid ""
+#~ "The fingerprint file contains information to uniquely identifiy this "
+#~ "computer.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Sormenjälkitiedosto sisältää tämän tietokoneen yksilöinti tiedot.\n"
+#~ "\n"
+#
+#~ msgid "The following Chart sets are available:"
+#~ msgstr "Seuraavat karttasarjat ovat saatavana:"
+#
+#~ msgid "This file is also known as a\"fingerprint\" file.\n"
+#~ msgstr "Tämä tiedosto tunnetaan myös \"sormenjälki\" tiedostona.\n"
+#
+#~ msgid ""
+#~ "To obtain a User Key, you must generate a unique System Identifier File.\n"
+#~ msgstr ""
+#~ "Saadaksesi käyttäjätunnuksen Sinun on luotava yksilöllinen järjestelmän "
+#~ "tunnistus tiedosto.\n"
+#
+#~ msgid ""
+#~ "UserKey accepted.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Käyttäjätunnus hyväksytty.\n"
+#~ "\n"
+#
+#~ msgid "Valid until"
+#~ msgstr "Voimassa saakka"
+#
+#~ msgid "Version"
+#~ msgstr "Versio"
+#
+#~ msgid "Visit o-charts.org Website"
+#~ msgstr "Käy o-charts.org sivustolla"
+#
+#~ msgid "oeSENC"
+#~ msgstr "oeSENC"
+#
+#~ msgid "oeSENC Charts"
+#~ msgstr "oeSENC kartat"
+#
+#~ msgid "oeSENC_PI Information"
+#~ msgstr "oeSENC_PI tiedot"
+#
+#~ msgid "oeSENC_PI Preferences"
+#~ msgstr "oeSENC_PI asetukset"

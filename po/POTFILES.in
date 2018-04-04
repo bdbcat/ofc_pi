@@ -1,0 +1,5 @@
+src/chart.cpp
+src/ocpn_plugin.h
+src/xtr1_pi.cpp
+src/xtr1_pi.h
+src/xtrShop.cpp
