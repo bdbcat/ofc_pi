@@ -46,7 +46,7 @@
 #endif
 
 wxString ProcessResponse(std::string);
-
+#define N_RETRY 3
 
 class shopPanel;
 class InProgressIndicator;
@@ -107,6 +107,7 @@ public:
     unsigned int indexFileArrayIndex;
     wxString installLocation;      // Where the chartset was installed
     wxString chartInstallLocnFull;
+    wxString installLocationTentative;  // Where the chartset is being installed
     
     wxString indexFileTmp;
     
@@ -264,6 +265,7 @@ public:
     void OnDownloadListChain( wxCommandEvent& event );
     
     void getDownloadList(itemChart *chart);
+    void chainToNextChart(itemChart *chart, int ntry = 0);
     
     int doDownloadGui();
     
@@ -288,6 +290,7 @@ public:
     bool m_bcompleteChain;
     bool m_bAbortingDownload;
     bool m_startedDownload;
+    int dlTryCount;
 };
 
 

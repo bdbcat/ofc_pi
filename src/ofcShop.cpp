@@ -1924,6 +1924,7 @@ void shopPanel::OnButtonIndexChain( wxCommandEvent& event )
     //  OK, the URL Array is populated
     // Now start the download chain
     chart->indexFileArrayIndex = 0;
+    chart->installLocation.Clear();  // Mark as not installed
     
     wxCommandEvent event_next(wxEVT_COMMAND_BUTTON_CLICKED);
     event_next.SetId( ID_CMD_BUTTON_DOWNLOADLIST_PROC );
@@ -1951,46 +1952,32 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
         setStatusText( _("Status: Error parsing index.xml."));
         m_buttonCancelOp->Hide();
         GetButtonUpdate()->Enable();
-        
         g_statusOverride.Clear();
         UpdateChartList();
-        
         return;                              // undetermined error??
-        
     }
     
-    wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
-    
-    //  Create a destination file name for the download.
-    wxURI uri;
-    uri.Create(tUrl);
-    
-    wxString serverFilename = uri.GetPath();
-    wxFileName fn(serverFilename);
-    
-    wxString downloadTmpDir = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
-    if(!::wxDirExists(downloadTmpDir)){
-        ::wxMkdir(downloadTmpDir);
-    }
+    // Advance to the next required download
+    while(chart->indexFileArrayIndex < chart->urlArray.GetCount()){               
+        wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
+        wxURI uri;
+        uri.Create(tUrl);
+        wxString serverFilename = uri.GetPath();
+        wxFileName fn(serverFilename);
         
-    wxString downloadBZBFile = downloadTmpDir + fn.GetName() + _T(".BZB");
-
-    chart->downloadingFile = downloadBZBFile;
+        // Is the next BAP file in place already, and current?
+        wxString BAPfile = chart->installLocationTentative + wxFileName::GetPathSeparator();
+        BAPfile += chart->shortSetName + wxFileName::GetPathSeparator() + fn.GetName() + _T(".BAP");
+        if(::wxFileExists( BAPfile )){
+            chart->indexFileArrayIndex++;               // Skip to the next target
+        }
+        else{
+            break;   // the while
+        }
+    }
     
-    downloadOutStream = new wxFFileOutputStream(downloadBZBFile);
     
-    wxString statIncremental =_("Downloading chart:") + _T(" ") + fn.GetName() + _T(" ");
-    wxString i1;  i1.Printf(_T("(%d/%d) "), chart->indexFileArrayIndex + 1, chart->urlArray.GetCount());
-    g_dlStatPrefix = statIncremental + i1;
-    
-    m_buttonCancelOp->Show();
-    
-    g_downloadChainIdentifier = ID_CMD_BUTTON_DOWNLOADLIST_CHAIN;
-    g_curlDownloadThread = new wxCurlDownloadThread(g_CurlEventHandler);
-    g_curlDownloadThread->SetURL(tUrl);
-    g_curlDownloadThread->SetOutputStream(downloadOutStream);
-    g_curlDownloadThread->Download();
-    
+    return chainToNextChart(chart);
 
 }
 
@@ -2005,6 +1992,9 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
     // Chained through from download end event
     if(m_bcompleteChain){
             
+        wxFileName fn(chart->downloadingFile);
+        wxString installDir = chart->installLocationTentative + wxFileName::GetPathSeparator() + chart->shortSetName;
+        
         m_bcompleteChain = false;
             
         if(m_bAbortingDownload){
@@ -2018,172 +2008,202 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             return;
         }
         
+        bool bSuccess = true;
         if(!wxFileExists( chart->downloadingFile )){
-            OCPNMessageBox_PlugIn(NULL, _("Chart download failed."), _("ofc_pi Message"), wxOK);
-            m_buttonInstall->Enable();
-            
-            g_statusOverride.Clear();
-            UpdateChartList();
-            
-            return;
+            bSuccess = false;
         }
         
         // BZB File is ready
         
-        if(!validate_server()){
-            setStatusText( _("Status: Server unavailable."));
-            m_buttonCancelOp->Hide();
-            GetButtonUpdate()->Enable();
-            
-            g_statusOverride.Clear();
-            UpdateChartList();
-            
-            return;                        
+        if(bSuccess){
+            if(!validate_server()){
+                setStatusText( _("Status: Server unavailable."));
+                m_buttonCancelOp->Hide();
+                GetButtonUpdate()->Enable();
+                g_statusOverride.Clear();
+                UpdateChartList();
+                return;
+            }
             
         }
+        
+        if(bSuccess){
             // location for decrypted BZB file
-        wxFileName fn(chart->downloadingFile);
-        fn.SetExt(_T("zip"));
             
-        xtr1_inStream decoder;
-        bool result = decoder.decryptBZB(chart->downloadingFile, fn.GetFullPath());
+            fn.SetExt(_T("zip"));
             
-        if(!result){
-                setStatusText( _("Status: BZB decrypt FAILED."));
-                m_buttonCancelOp->Hide();
-                GetButtonUpdate()->Enable();
-                
-                g_statusOverride.Clear();
-                UpdateChartList();
-                
-                return;                        
+            xtr1_inStream decoder;
+            bool result = decoder.decryptBZB(chart->downloadingFile, fn.GetFullPath());
+            
+            if(!result){
+                bSuccess = false;
+            }
         }
             
-        // Unzip and extract the .BAP file to target location
-        wxString installDir = chart->installLocation + wxFileName::GetPathSeparator() + chart->shortSetName;
-        bool zipret = ExtractZipFiles( fn.GetFullPath(), installDir, false, wxDateTime::Now(), false);
+        if(bSuccess){
+            // Unzip and extract the .BAP file to target location
+            bool zipret = ExtractZipFiles( fn.GetFullPath(), installDir, false, wxDateTime::Now(), false);
             
-        if(!zipret){
-                setStatusText( _("Status: BZB uzip FAILED."));
-                m_buttonCancelOp->Hide();
-                GetButtonUpdate()->Enable();
-                
-                g_statusOverride.Clear();
-                UpdateChartList();
-                
-                return;                        
+            if(!zipret){
+                bSuccess = false;
+            }
         }
-             
-            // Success for this file...
+         
+//         if(chart->indexFileArrayIndex == 5)
+//             bSuccess = false;
+ 
         // clean up
         ::wxRemoveFile(fn.GetFullPath());               // the decrypted zip file
         ::wxRemoveFile(chart->downloadingFile);         // the downloaded BZB file
-        
-        chart->indexFileArrayIndex++;               // move to the next file
-            
-            
-        bool bContinue = chart->indexFileArrayIndex < chart->urlArray.GetCount();
-        
-        //bool bContinue = chart->indexFileArrayIndex < 10;        /// testing
-        
-        if(!bContinue){
-            // Record the full install location
-            chart->chartInstallLocnFull = installDir;
-            
-            //  Create the chartInfo file
-            wxString infoFile = installDir + wxFileName::GetPathSeparator() + _T("chartInfo.txt");
-            if(wxFileExists( infoFile ))
-                ::wxRemoveFile(infoFile);
+ 
+            // Success for this file...
+        if(bSuccess) {   
+            chart->indexFileArrayIndex++;               // move to the next file
 
-            wxTextFile info;
-            info.Create(infoFile);
-            info.AddLine(_T("productSKU=") + chart->productSKU);
-            info.AddLine(_T("productKey=") + chart->productKey);
-            info.Write();
-            info.Close();
-
-            // Save a copy of the index file
-            if(chart->indexFileTmp.Len()){
-                wxString indexFile = installDir + wxFileName::GetPathSeparator() + _T("index.xml");
-                ::wxCopyFile(chart->indexFileTmp, indexFile);
-            }
-            ::wxRemoveFile(chart->indexFileTmp);
+            while(chart->indexFileArrayIndex < chart->urlArray.GetCount()){               
+                wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
+                wxURI uri;
+                uri.Create(tUrl);
+                wxString serverFilename = uri.GetPath();
+                wxFileName fn(serverFilename);
             
-            //  Add the target install directory to core dir list if necessary
-            //  If the currect core chart directories do not cover this new directory, then add it
-            bool covered = false;
-            for( size_t i = 0; i < GetChartDBDirArrayString().GetCount(); i++ )
-            {
-                if( installDir.StartsWith((GetChartDBDirArrayString().Item(i))) )
-                {
-                    covered = true;
-                    break;
+            // Is the next BAP file in place already, and current?
+                wxString BAPfile = chart->installLocationTentative + wxFileName::GetPathSeparator();
+                BAPfile += chart->shortSetName + wxFileName::GetPathSeparator() + fn.GetName() + _T(".BAP");
+                if(::wxFileExists( BAPfile )){
+                    chart->indexFileArrayIndex++;               // Skip to the next target
+                }
+                else{
+                    break;   // the while
                 }
             }
-            if( !covered )
-            {
-                AddChartDirectory( installDir );
+            
+            return chainToNextChart(chart);
+        }       // bSuccess
+        else {                  // on no success with this file, we might try again
+            dlTryCount++;
+            if(dlTryCount > N_RETRY){
+                setStatusText( _("Status: BZB download FAILED after retry.") + _T("  [") + chart->downloadingFile + _T("]") );
+                m_buttonCancelOp->Hide();
+                GetButtonUpdate()->Enable();
+                g_statusOverride.Clear();
+                UpdateChartList();
+                return;
             }
-            
-            // Clean up the UI
-            g_dlStatPrefix.Clear();
-            setStatusText( _("Status: Ready"));
-            
-            OCPNMessageBox_PlugIn(NULL, _("Chart installation complete."), _("ofc_pi Message"), wxOK);
-            
-            GetButtonUpdate()->Enable();
-            
-            g_statusOverride.Clear();
-            UpdateChartList();
-            
-            saveShopConfig();
-            
-            return;
-        }
-        else{                           // not done yet, carry on with the list
-            m_bcompleteChain = true;
-            m_bAbortingDownload = false;
-    
-            // the target url
-            wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
-    
-            //  Create a destination file name for the download.
-            wxURI uri;
-            uri.Create(tUrl);
-            
-            wxString serverFilename = uri.GetPath();
-            wxFileName fn(serverFilename);
-            
-            wxString downloadTmpDir = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
-            if(!::wxDirExists(downloadTmpDir)){
-                ::wxMkdir(downloadTmpDir);
+            else{
+                chainToNextChart(chart, dlTryCount);            // Retry the same chart
             }
+        }        
             
-            wxString downloadBZBFile = downloadTmpDir + fn.GetName() + _T(".BZB");
-            
-            chart->downloadingFile = downloadBZBFile;
-            
-            downloadOutStream = new wxFFileOutputStream(downloadBZBFile);
-            
-            wxString statIncremental =_("Downloading chart:") + _T(" ") + fn.GetName() + _T(" ");
-            wxString i1;  i1.Printf(_T("(%d/%d) "), chart->indexFileArrayIndex + 1, chart->urlArray.GetCount());
-            g_dlStatPrefix = statIncremental + i1;
-            
-            m_buttonCancelOp->Show();
-            
-            g_downloadChainIdentifier = ID_CMD_BUTTON_DOWNLOADLIST_CHAIN;
-            g_curlDownloadThread = new wxCurlDownloadThread(g_CurlEventHandler);
-            g_curlDownloadThread->SetURL(tUrl);
-            g_curlDownloadThread->SetOutputStream(downloadOutStream);
-            g_curlDownloadThread->Download();
-
-            return;
-        }
         
     }
 }
 
 
+void shopPanel::chainToNextChart(itemChart *chart, int ntry)
+{
+    bool bContinue = chart->indexFileArrayIndex < chart->urlArray.GetCount();
+    
+    //bool bContinue = chart->indexFileArrayIndex < 10;        /// testing
+    
+    if(!bContinue){
+        // Record the full install location
+        chart->installLocation = chart->installLocationTentative;
+        wxString installDir = chart->installLocation + wxFileName::GetPathSeparator() + chart->shortSetName;
+        chart->chartInstallLocnFull = installDir;
+ 
+        
+        //  Create the chartInfo file
+        wxString infoFile = installDir + wxFileName::GetPathSeparator() + _T("chartInfo.txt");
+        if(wxFileExists( infoFile ))
+            ::wxRemoveFile(infoFile);
+        
+        wxTextFile info;
+        info.Create(infoFile);
+        info.AddLine(_T("productSKU=") + chart->productSKU);
+        info.AddLine(_T("productKey=") + chart->productKey);
+        info.Write();
+        info.Close();
+        
+        // Save a copy of the index file
+        if(chart->indexFileTmp.Len()){
+            wxString indexFile = installDir + wxFileName::GetPathSeparator() + _T("index.xml");
+            ::wxCopyFile(chart->indexFileTmp, indexFile);
+        }
+        ::wxRemoveFile(chart->indexFileTmp);
+        
+        //  Add the target install directory to core dir list if necessary
+        //  If the currect core chart directories do not cover this new directory, then add it
+        bool covered = false;
+        for( size_t i = 0; i < GetChartDBDirArrayString().GetCount(); i++ )
+        {
+            if( installDir.StartsWith((GetChartDBDirArrayString().Item(i))) )
+            {
+                covered = true;
+                break;
+            }
+        }
+        if( !covered )
+        {
+            AddChartDirectory( installDir );
+        }
+        
+        // Clean up the UI
+        g_dlStatPrefix.Clear();
+        setStatusText( _("Status: Ready"));
+        
+        OCPNMessageBox_PlugIn(NULL, _("Chart installation complete."), _("ofc_pi Message"), wxOK);
+        
+        GetButtonUpdate()->Enable();
+        
+        g_statusOverride.Clear();
+        UpdateChartList();
+        
+        saveShopConfig();
+        
+        return;
+    }
+    else{                           // not done yet, carry on with the list
+        m_bcompleteChain = true;
+        m_bAbortingDownload = false;
+                
+                // the target url
+        wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
+                
+                //  Create a destination file name for the download.
+        wxURI uri;
+        uri.Create(tUrl);
+                
+        wxString serverFilename = uri.GetPath();
+        wxFileName fn(serverFilename);
+        
+        wxString downloadTmpDir = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
+        if(!::wxDirExists(downloadTmpDir)){
+              ::wxMkdir(downloadTmpDir);
+        }
+                
+        wxString downloadBZBFile = downloadTmpDir + fn.GetName() + _T(".BZB");
+                
+        chart->downloadingFile = downloadBZBFile;
+        dlTryCount = ntry;
+                
+        downloadOutStream = new wxFFileOutputStream(downloadBZBFile);
+                
+        wxString statIncremental =_("Downloading chart:") + _T(" ") + fn.GetName() + _T(" ");
+        wxString i1;  i1.Printf(_T("(%d/%d) "), chart->indexFileArrayIndex + 1, chart->urlArray.GetCount());
+        g_dlStatPrefix = statIncremental + i1;
+                
+        m_buttonCancelOp->Show();
+                
+        g_downloadChainIdentifier = ID_CMD_BUTTON_DOWNLOADLIST_CHAIN;
+        g_curlDownloadThread = new wxCurlDownloadThread(g_CurlEventHandler);
+        g_curlDownloadThread->SetURL(tUrl);
+        g_curlDownloadThread->SetOutputStream(downloadOutStream);
+        g_curlDownloadThread->Download();
+                
+        return;
+    }
+}
 
 
 
@@ -2225,7 +2245,7 @@ void shopPanel::OnButtonInstall( wxCommandEvent& event )
             
             if(result == wxID_OK){
                 chosenInstallDir = dirSelector.GetPath();
-                chart->installLocation = chosenInstallDir;
+                chart->installLocationTentative = chosenInstallDir;
                 g_lastInstallDir = chosenInstallDir;
             }
             else{
