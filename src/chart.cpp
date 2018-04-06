@@ -483,7 +483,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
             RegKey.QueryValue(wxString(_T("nvcdll")), nvcdll);
             if(nvcdll == _T(""))
             {
-                  wxString msg(_T("    NVC_PI: Could not find registry key value (nvcdll) for decryption dll location at key "));
+                wxString msg(_T("    OFC_PI: Could not find registry key value (nvcdll) for decryption dll location at key "));
                   msg += reg_decrypt_dll_key ;
                   wxLogMessage(msg);
                   return (2);
@@ -491,7 +491,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       }
       else
       {
-            wxString msg(_T("   NVC_PI: Could not find registry key for decryption tool location at node "));
+          wxString msg(_T("   OFC_PI: Could not find registry key for decryption tool location at node "));
             msg += reg_decrypt_dll_key ;
             wxLogMessage (msg);
 
@@ -501,13 +501,13 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       //    Try to load the dll
       m_pdyn = new wxDynamicLibrary();
 
-      wxString msg(_T("NVC_PI: Loading decrypt dll : "));
+      wxString msg(_T("OFC_PI: Loading decrypt dll : "));
       msg += nvcdll;
       wxLogMessage (msg);
 
       if(!m_pdyn->Load(nvcdll))
       {
-            wxString msg(_T("   NVC_PI: Could not load decrypt dll : "));
+          wxString msg(_T("   OFC_PI: Could not load decrypt dll : "));
             msg += nvcdll;
             wxLogMessage (msg);
 
@@ -524,7 +524,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
 
       if((NULL == pfn_nvc_init_dll) || (NULL == pfn_nvc_getkeyhandle) || (NULL == pfn_nvc_decrypt_block))
       {
-            wxString msg(_T("   NVC_PI: Could not find decrypt dll procedure entry points : "));
+          wxString msg(_T("   OFC_PI: Could not find decrypt dll procedure entry points : "));
             msg += nvcdll;
             wxLogMessage (msg);
 
@@ -594,7 +594,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       
       wxString key = getKeyAsciiHex(name);
       if(!key.Len()){
-          wxString msg(_("   XTR1_PI: chartInfo or productKey not found: "));
+          wxString msg(_("   OFC_PI: chartInfo or productKey not found: "));
           msg.Append(m_FullPath);
           wxLogMessage(msg);
           
@@ -1329,7 +1329,7 @@ wxString ChartXTR1::getKeyAsciiHex(const wxString& name)
     
     // Extract the directory name
     wxFileName fn(name);
-    wxString infoFile = fn.GetPath(wxPATH_GET_SEPARATOR) + _T("chartInfo.txt");
+    wxString infoFile = fn.GetPath(wxPATH_GET_SEPARATOR + wxPATH_GET_VOLUME) + _T("chartInfo.txt");
     
     wxTextFile info;
     if(info.Open( infoFile)){
@@ -1416,7 +1416,7 @@ void ChartXTR1::ChartBaseBSBDTOR()
 {
       if(m_FullPath.Len())
       {
-            wxString msg(_T("XTR1_PI:  Closing chart "));
+            wxString msg(_T("OFC_PI:  Closing chart "));
             msg += m_FullPath;
             wxLogMessage(msg);
       }
