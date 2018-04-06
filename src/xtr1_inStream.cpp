@@ -207,8 +207,8 @@ void xtr1_inStream::Close()
 bool xtr1_inStream::Open( )
 {
         
-    printf("OPEN()\n");
-    wxLogMessage(_T("xtr1_pi: OPEN"));
+    //printf("OPEN()\n");
+    //wxLogMessage(_T("ofc_pi: OPEN"));
     
              
         wxString tmp_file = wxFileName::CreateTempFileName( _T("") );
@@ -228,7 +228,7 @@ bool xtr1_inStream::Open( )
                 
         // Open the well known public FIFO for writing
         if( (publicfifo = open(PUBLIC, O_WRONLY | O_NDELAY) ) == -1) {
-                    wxLogMessage(_T("xtr1_pi: Could not open PUBLIC pipe"));
+                    wxLogMessage(_T("ofc_pi: Could not open PUBLIC pipe"));
                     return false;
                     //if( errno == ENXIO )
         }
@@ -237,8 +237,8 @@ bool xtr1_inStream::Open( )
 
 bool xtr1_inStream::Load( )
 { 
-    printf("LOAD()\n");
-    wxLogMessage(_T("xtr1_pi: LOAD"));
+    //printf("LOAD()\n");
+    //wxLogMessage(_T("ofc_pi: LOAD"));
     
     if(m_cryptoKey.Length() && m_fileName.length()){
      
@@ -262,7 +262,7 @@ bool xtr1_inStream::Load( )
                 // Open the private FIFO for reading to get output of command
                 // from the server.
         if((privatefifo = open(privatefifo_name, O_RDONLY) ) == -1) {
-              wxLogMessage(_T("xtr1_pi: Could not open private pipe"));
+              wxLogMessage(_T("ofc_pi: Could not open private pipe"));
               return false;
         }
 
@@ -363,7 +363,7 @@ bool xtr1_inStream::SendServerCommand( unsigned char cmd )
         // Open the private FIFO for reading to get output of command
         // from the server.
         if((privatefifo = open(privatefifo_name, O_RDONLY) ) == -1) {
-            wxLogMessage(_T("xtr1_pi SendServerCommand: Could not open private pipe"));
+            wxLogMessage(_T("ofc_pi SendServerCommand: Could not open private pipe"));
             return false;
         }
         
@@ -424,7 +424,7 @@ bool xtr1_inStream::isAvailable(wxString user_key)
 
 wxString xtr1_inStream::getHK()
 {
-    wxLogMessage(_T("hk0"));
+    //wxLogMessage(_T("hk0"));
     
     if(!Open()){
             if(g_debugLevel)printf("getHK Open FAILED\n");
@@ -439,7 +439,7 @@ wxString xtr1_inStream::getHK()
             int nTry = 5;
             do{
                 if( Read(response, 8).IsOk() ){
-                    wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
+                    //wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
                     return( wxString( response, wxConvUTF8 ));
                 }
                 
@@ -498,7 +498,7 @@ bool xtr1_inStream::decryptBZB(wxString &inFile, wxString outFile)
         // Open the private FIFO for reading to get output of command
         // from the server.
         if((privatefifo = open(privatefifo_name, O_RDONLY) ) == -1) {
-            wxLogMessage(_T("xtr1_pi decryptBZB: Could not open private pipe"));
+            wxLogMessage(_T("ofc_pi decryptBZB: Could not open private pipe"));
             return false;
         }
         
@@ -779,8 +779,8 @@ bool xtr1_inStream::Open( )
 
 bool xtr1_inStream::Load( )
 { 
-    printf("LOAD()\n");
-    wxLogMessage(_T("xtr1_pi: LOAD"));
+    //printf("LOAD()\n");
+    //wxLogMessage(_T("ofc_pi: LOAD"));
     
 #if 0    
     if(m_cryptoKey.Length() && m_fileName.length()){
@@ -1166,7 +1166,7 @@ wxString xtr1_inStream::getHK()
         int nTry = 5;
         do{
             if( Read(response, 8).IsOk() ){
-                wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
+                //wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
                 return( wxString( response, wxConvUTF8 ));
             }
             

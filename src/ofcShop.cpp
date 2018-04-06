@@ -87,12 +87,11 @@ int g_downloadChainIdentifier;
 
 // Private class implementations
 
-size_t wxcurl_string_write_UTF8(void* ptr, size_t size, size_t nmemb, void* pcharbuf)
+size_t wxcurl_string_write_UTF8(char* ptr, size_t size, size_t nmemb, void* pcharbuf)
 {
     size_t iRealSize = size * nmemb;
     wxCharBuffer* pStr = (wxCharBuffer*) pcharbuf;
     
-    char *t = pStr->data();
     
     if(pStr)
     {
@@ -102,9 +101,23 @@ size_t wxcurl_string_write_UTF8(void* ptr, size_t size, size_t nmemb, void* pcha
         *pStr = (str1a + str2).mb_str();
 #else        
         wxString str = wxString(*pStr, wxConvUTF8) + wxString((const char*)ptr, wxConvUTF8, iRealSize);
-        *pStr = str.mb_str();
+        *pStr = str.mb_str(wxConvUTF8);
+        
+/* arm testing       
+        wxString str1a = wxString(*pStr, wxConvUTF8);
+        wxString str2 = wxString((const char*)ptr, wxConvUTF8, iRealSize);
+        *pStr = (str1a + str2).mb_str(wxConvUTF8);
+        
+//        char *v = pStr->data();
+//        printf("concat(new): %s\n\n\n", (char *)v);
+        
+//        printf("LOGGING...\n\n\n\n");
+//        wxLogMessage(_T("str1a: ") + str1a);
+//        wxLogMessage(_T("str2: ") + str2);
+*/        
 #endif        
     }
+    
     
     return iRealSize;
 }
@@ -122,6 +135,7 @@ public:
     
    bool Post(wxInputStream& buffer, const wxString& szRemoteFile /*= wxEmptyString*/);
    bool Post(const char* buffer, size_t size, const wxString& szRemoteFile /*= wxEmptyString*/);
+   std::string GetResponseBody() const;
 protected:
     void SetCurlHandleToDefaults(const wxString& relativeURL);
     
@@ -195,6 +209,18 @@ bool wxCurlHTTPNoZIP::Post(wxInputStream& buffer, const wxString& szRemoteFile /
     }
     
     return false;
+}
+
+std::string wxCurlHTTPNoZIP::GetResponseBody() const
+{
+#ifndef ARMHF
+     wxString s = wxString((const char *)m_szResponseBody, wxConvLibc);
+     return std::string(s.mb_str());
+
+#else    
+    return std::string((const char *)m_szResponseBody);
+#endif
+    
 }
 
 // itemChart
@@ -703,7 +729,7 @@ wxString ProcessResponse(std::string body)
         TiXmlDocument * doc = new TiXmlDocument();
         doc->Parse( body.c_str());
     
-        doc->Print();
+        //doc->Print();
         
         wxString queryResult;
         wxString chartOrder;
@@ -838,7 +864,8 @@ int getChartList( bool bShowErrorDialogs = true){
      
      if(!kk.Len())
          return 2;
-    
+
+     
     // We query the server for the list of charts associated with our account
     wxString url = _T("https://fugawi.com/GetAccount_v2.xml");
     
@@ -853,8 +880,11 @@ int getChartList( bool bShowErrorDialogs = true){
     loginParms += _T("&app_id=30000");
     loginParms += _T("&device_id=");
     loginParms += kk;
+
+    //wxLogMessage(_T("getChartList Login Parms: ") + loginParms);
     
     wxCurlHTTPNoZIP post;
+    //wxCurlHTTP post;
     //post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
     
     /*size_t res = */post.Post( loginParms.ToAscii(), loginParms.Len(), url );
@@ -868,10 +898,17 @@ int getChartList( bool bShowErrorDialogs = true){
     std::string c = post.GetResponseBody();
     const char *d = c.c_str();
     
-     //printf("%s", post.GetResponseBody().c_str());
+    //printf("Code %d\n", iResponseCode);
     
-     wxString tt(post.GetResponseBody().data(), wxConvUTF8);
-     wxLogMessage(tt);
+    //printf("%s\n", a.c_str());
+    //printf("%s\n", b.c_str());
+    //printf("%s\n", c.c_str());
+    //printf("%s\n", d);
+    
+    //printf("%s", post.GetResponseBody().c_str());
+    
+     //wxString tt(post.GetResponseBody().data(), wxConvUTF8);
+     //wxLogMessage( _T("Response: \n") + tt);
     
      if(iResponseCode == 200){
          wxString result = ProcessResponse(post.GetResponseBody());
@@ -880,7 +917,7 @@ int getChartList( bool bShowErrorDialogs = true){
 //         return checkResult( result, bShowErrorDialogs );
      }
      else{
-         wxLogMessage(_T("Login Parms: ") + loginParms);
+         //wxLogMessage(_T("Login Parms: ") + loginParms);
          return iResponseCode; //checkResponseCode(iResponseCode);
      }
 }
@@ -940,14 +977,14 @@ int doActivate(itemChart *chart)
     int iResponseCode;
     post.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
     
-    std::string a = post.GetDetailedErrorString();
-    std::string b = post.GetErrorString();
-    std::string c = post.GetResponseBody();
+//     std::string a = post.GetDetailedErrorString();
+//     std::string b = post.GetErrorString();
+//     std::string c = post.GetResponseBody();
     
-    printf("%s", post.GetResponseBody().c_str());
+    //printf("%s", post.GetResponseBody().c_str());
     
-    wxString tt(post.GetResponseBody().data(), wxConvUTF8);
-    wxLogMessage(tt);
+    //wxString tt(post.GetResponseBody().data(), wxConvUTF8);
+    //wxLogMessage(tt);
     
     if(iResponseCode == 200){
         wxString result = ProcessResponse(post.GetResponseBody());
@@ -956,7 +993,7 @@ int doActivate(itemChart *chart)
         //         return checkResult( result, bShowErrorDialogs );
     }
     else
-        return 1; //checkResponseCode(iResponseCode);
+        return iResponseCode; //checkResponseCode(iResponseCode);
 
 
 }
