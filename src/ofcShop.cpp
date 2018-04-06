@@ -1256,47 +1256,43 @@ void oeSencChartPanel::OnEraseBackground( wxEraseEvent &event )
 
 wxArrayString splitLine(wxString &line, wxDC &dc, int widthMax)
 {
-    // Split into two lines...
-    wxString line0;
-    wxString line1;
+    // Split into multiple lines...
     int lenCheck;
     
-    unsigned int i = 0;
-    unsigned int imax = 0;
-    unsigned int iprev = 0;
-    bool bsplit = false;
+    wxArrayString retArray;
+    wxArrayString wordArray;
     
-    bool done = false;
-    while(!done && (i < line.Len() - 1)){
-        while(line[i] != ' '){
-            i++;
-        }
-    
-        wxString test_string = line.Mid(0, i);
-        dc.GetTextExtent(test_string, &lenCheck, NULL);
-        if(lenCheck > widthMax){
-            done = true;
-            imax = iprev;
-            bsplit = true;
-            break;
-        }
-        else{
-            iprev = i++;
-        }
+    wxStringTokenizer tks(line, _T(" ") );
+    while( tks.HasMoreTokens() ){
+        wordArray.Add(tks.GetNextToken());
     }
 
-    if(!bsplit)
-        imax = line.Len();
-
-    line0 = line.Mid(0, imax);
-
-    if(bsplit && (imax < line.Len() - 1))
-        line1 = line.Mid(imax);
-    
-    wxArrayString retArray;
-    retArray.Add(line0);
-    retArray.Add(line1);
-    
+    wxString okString;
+    wxString testString;
+    unsigned int iword = 0;
+    bool done = false;
+    while( !done && (iword < wordArray.GetCount() )){
+        testString.Empty();
+  
+        bool tooLong = false;
+        while(!tooLong && (iword < wordArray.GetCount() )){
+            okString = testString;
+            testString += wordArray.Item(iword) + _T(" ");
+            dc.GetTextExtent(testString, &lenCheck, NULL);
+            if(lenCheck > widthMax){
+                tooLong = true;
+                break;
+            }
+            iword++;
+        }
+        
+        if(okString.IsEmpty())
+            break;
+        
+        retArray.Add(okString);
+    }
+        
+   
     return retArray;
 }
 
@@ -1348,27 +1344,37 @@ void oeSencChartPanel::OnPaint( wxPaintEvent &event )
         
         int text_x = scaledWidth * 12 / 10;
         int y_line0 = height * 5 / 100;
-        
-        // Split into two lines...
-        int lenAvail = width - text_x;
-        
-        wxArrayString array = splitLine(nameString, dc, lenAvail);
-        
-        dc.DrawText(array.Item(0), text_x, y_line0);
         int hTitle = dc.GetCharHeight();
         
-        if(array.Item(1).Len()){
-            dc.DrawText(array.Item(1), text_x + dc.GetCharHeight(), y_line0 + dc.GetCharHeight());
-            hTitle += dc.GetCharHeight();
+        // Split into lines...
+        int lenAvail = width - text_x;
+
+        wxArrayString array = splitLine(nameString, dc, lenAvail);
+        
+        for(unsigned int i=0 ; i < array.GetCount() ; i++){
+            dc.DrawText(array.Item(i), text_x, y_line0);
+            y_line0 += hTitle;
         }
         
         
+        
+//         wxArrayString array = splitLine(nameString, dc, lenAvail);
+//         
+//         dc.DrawText(array.Item(0), text_x, y_line0);
+//         
+//         if(array.Item(1).Len()){
+//             dc.DrawText(array.Item(1), text_x + dc.GetCharHeight(), y_line0 + dc.GetCharHeight());
+//             hTitle += dc.GetCharHeight();
+//         }
+//         
+//         
         int y_line = y_line0 + hTitle;
         dc.DrawLine( text_x, y_line, width - base_offset, y_line);
         
+
         
-        dc.SetFont( *dFont );           // Restore default font
-        //int offset = GetCharHeight();
+        wxFont *lFont = wxTheFontList->FindOrCreateFont( dFont->GetPointSize(), dFont->GetFamily(), dFont->GetStyle(),  wxFONTWEIGHT_BOLD);
+        dc.SetFont( *lFont );
         
         int yPitch = GetCharHeight();
         int yPos = y_line + 4;
@@ -1402,13 +1408,18 @@ void oeSencChartPanel::OnPaint( wxPaintEvent &event )
         yPos += yPitch;
         
         tx = _("Status:");
-        dc.DrawText( tx, text_x, yPos);
+        dc.DrawText( tx, text_x, height - GetCharHeight() - 4);
         tx = m_pChart->getStatusString();
         if(g_statusOverride.Len())
             tx = g_statusOverride;
-        dc.DrawText( tx, text_x_val, yPos);
-        yPos += yPitch;
+        
+        dc.DrawText( tx, text_x_val, height - GetCharHeight() - 4);
+        
+        //dc.DrawText( tx, text_x_val, yPos);
+        //yPos += yPitch;
 
+        dc.SetFont( *dFont );           // Restore default font
+        
     }
     else{
         dc.SetBrush( wxBrush( m_boxColour ) );
@@ -1428,31 +1439,46 @@ void oeSencChartPanel::OnPaint( wxPaintEvent &event )
         }
         
         int scaledWidth = bm.GetWidth() * scaledHeight / bm.GetHeight();
-        
-        
-        wxFont *dFont = GetOCPNScaledFont_PlugIn(_("Dialog"));
-        double font_size = dFont->GetPointSize() * 5/4;
-        wxFont *qFont = wxTheFontList->FindOrCreateFont( font_size, dFont->GetFamily(), dFont->GetStyle(), dFont->GetWeight());
-
-        dc.SetFont( *qFont );
-        dc.SetTextForeground(wxColour(28, 28, 28));
-
         int text_x = scaledWidth * 15 / 10;
-        int text_y_name = height * 25 / 100;
+        int text_y_name = height * 15 / 100;
+        int lenAvail = width - text_x - offset;
+        dc.SetTextForeground(wxColour(28, 28, 28));
+        wxFont *dFont = GetOCPNScaledFont_PlugIn(_("Dialog"));
+        double dialog_font_size = dFont->GetPointSize();
         
-        // Split into two lines...
-        int lenAvail = width - text_x;
+        //  Count the lines, to adjust font size
+        double fontTestSize = dFont->GetPointSize() * 8/4;
+        bool ok = false;
+        while( !ok){
+            wxFont *qFont = wxTheFontList->FindOrCreateFont( fontTestSize, dFont->GetFamily(), dFont->GetStyle(), dFont->GetWeight());
+            dc.SetFont( *qFont );
+            wxArrayString array = splitLine(nameString, dc, lenAvail);
+            if(array.GetCount() > 2){
+                fontTestSize *= 0.8;
+            }
+            else{
+                ok = true;
+            }
+            if(fontTestSize < dialog_font_size * 0.8){
+                fontTestSize *= 1.1;
+                ok = true;
+            }
+        }
+
+        fontTestSize = wxMin(fontTestSize, dialog_font_size * 5 / 4);
         
-        wxArrayString array = splitLine(nameString, dc, lenAvail);
+        wxFont *qFont = wxTheFontList->FindOrCreateFont( fontTestSize, dFont->GetFamily(), dFont->GetStyle(), dFont->GetWeight());
+        dc.SetFont( *qFont );
         
-        dc.DrawText(array.Item(0), text_x, text_y_name);
         int hTitle = dc.GetCharHeight();
         
-        if(array.Item(1).Len()){
-            dc.DrawText(array.Item(1), text_x + dc.GetCharHeight(), text_y_name + dc.GetCharHeight());
-            hTitle += dc.GetCharHeight();
-        }
+        // Split into lines...
+        wxArrayString array = splitLine(nameString, dc, lenAvail);
         
+        for(unsigned int i=0 ; i < array.GetCount() ; i++){
+            dc.DrawText(array.Item(i), text_x, text_y_name);
+            text_y_name += hTitle;
+        }
         
 //         if(m_pContainer->GetSelectedChart())
 //             dc.SetTextForeground(wxColour(220,220,220));
@@ -1461,7 +1487,7 @@ void oeSencChartPanel::OnPaint( wxPaintEvent &event )
         dc.SetFont( *dFont );
         
         wxString tx = _("Status: ") + m_pChart->getStatusString();
-        dc.DrawText( tx, text_x + (4 * GetCharHeight()), text_y_name + hTitle);
+        dc.DrawText( tx, text_x + (4 * GetCharHeight()), height - GetCharHeight() - offset - 2);
         
         
     }
