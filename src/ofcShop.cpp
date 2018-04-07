@@ -1681,6 +1681,7 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     
     SetName(wxT("shopPanel"));
     //SetSize(500,600);
+    Layout();
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }

@@ -247,7 +247,7 @@ public:
     wxButton* GetButtonUpdate() { return m_buttonUpdate; }
     
     
-    shopPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,600), long style = wxTAB_TRAVERSAL);
+    shopPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,600), long style = wxTAB_TRAVERSAL);
     virtual ~shopPanel();
     
     void SelectChart( oeSencChartPanel *chart );

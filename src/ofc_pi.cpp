@@ -239,7 +239,10 @@ void ofc_pi::OnSetupOptions( void )
     m_shoppanel = new shopPanel( m_pOptionsPage, wxID_ANY, wxDefaultPosition, wxDefaultSize );
     
     m_pOptionsPage->InvalidateBestSize();
+    m_shoppanel->InvalidateBestSize();
     sizer->Add( m_shoppanel, 1, wxALL | wxEXPAND );
+    m_pOptionsPage->Layout();
+    
     m_shoppanel->FitInside();
 
 }
