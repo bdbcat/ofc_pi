@@ -2171,6 +2171,7 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
     //bool bContinue = chart->indexFileArrayIndex < 10;        /// testing
     
     if(!bContinue){
+        
         // Record the full install location
         chart->installLocation = chart->installLocationTentative;
         wxString installDir = chart->installLocation + wxFileName::GetPathSeparator() + chart->shortSetName;
@@ -2219,7 +2220,7 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
         OCPNMessageBox_PlugIn(NULL, _("Chart installation complete."), _("ofc_pi Message"), wxOK);
         
         GetButtonUpdate()->Enable();
-        
+        m_buttonCancelOp->Hide();
         g_statusOverride.Clear();
         UpdateChartList();
         
@@ -2634,10 +2635,10 @@ void OESENC_CURL_EvtHandler::onEndEvent(wxCurlEndPerformEvent &evt)
 {
  //   OCPNMessageBox_PlugIn(NULL, _("DLEnd."), _("oeSENC_PI Message"), wxOK);
     
-    g_shopPanel->getInProcessGuage()->SetValue(0);
+    g_shopPanel->getInProcessGuage()->SetValue(100);
     g_shopPanel->setStatusTextProgress(_T(""));
     g_shopPanel->setStatusText( _("Status: OK"));
-    g_shopPanel->m_buttonCancelOp->Hide();
+    //g_shopPanel->m_buttonCancelOp->Hide();
     //g_shopPanel->GetButtonDownload()->Hide();
     g_shopPanel->GetButtonUpdate()->Enable();
     
@@ -2657,7 +2658,6 @@ void OESENC_CURL_EvtHandler::onEndEvent(wxCurlEndPerformEvent &evt)
             }
         }
     }
-            
     //  Send an event to chain back to "Install" button
     wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED);
     event.SetId( g_downloadChainIdentifier/*ID_CMD_BUTTON_INSTALL_CHAIN*/ );
