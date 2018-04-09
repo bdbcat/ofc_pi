@@ -583,17 +583,16 @@ int checkResult(wxString &result, bool bShowErrorDialog = true)
     
     long dresult;
     if(result.ToLong(&dresult)){
-        if(dresult == 1)
-            return 0;
-        else{
+        if(dresult != 200){
             if(bShowErrorDialog){
-                wxString msg = _("API error code: ");
+                wxString msg = _("Fugawi server error: ");
                 wxString msg1;
                 msg1.Printf(_T("{%ld}\n\n"), dresult);
                 msg += msg1;
                 switch(dresult){
-                    case 3:
-                        msg += _("Invalid user/email name or password.");
+                    case 400:
+                    case 403:    
+                        msg += _("Invalid email name or password.");
                         break;
                     default:    
                         msg += _("Check your configuration and try again.");
@@ -604,8 +603,11 @@ int checkResult(wxString &result, bool bShowErrorDialog = true)
             }
             return dresult;
         }
+        else
+            return 0;
     }
-    return 98;
+    else
+        return 0;               // OK, default 200
 }
 
 int checkResponseCode(int iResponseCode)
@@ -772,9 +774,13 @@ wxString ProcessResponse(std::string body)
             for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
                 wxString s = wxString::FromUTF8(child->Value());
                 
-                if(!strcmp(child->Value(), "result")){
+                if(!strcmp(child->Value(), "status")){
                     TiXmlNode *childResult = child->FirstChild();
-                    queryResult =  wxString::FromUTF8(childResult->Value());
+                    //queryResult =  wxString::FromUTF8(childResult->Value());
+                    TiXmlElement *stat = child->ToElement();
+                    if(stat)
+                        queryResult = wxString( stat->Attribute( "status-code" ), wxConvUTF8 );
+                    
                 }
                 
 
@@ -912,18 +918,16 @@ int getChartList( bool bShowErrorDialogs = true){
     
      if(iResponseCode == 200){
          wxString result = ProcessResponse(post.GetResponseBody());
-         return 0;
          
-//         return checkResult( result, bShowErrorDialogs );
+         return checkResult( result, bShowErrorDialogs );
      }
      else{
-         //wxLogMessage(_T("Login Parms: ") + loginParms);
          return iResponseCode; //checkResponseCode(iResponseCode);
      }
 }
 
 
-int doActivate(itemChart *chart)
+int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
 {
     validate_server();
     
@@ -988,9 +992,7 @@ int doActivate(itemChart *chart)
     
     if(iResponseCode == 200){
         wxString result = ProcessResponse(post.GetResponseBody());
-        return 0;
-        
-        //         return checkResult( result, bShowErrorDialogs );
+        return checkResult( result, bShowErrorDialogs );
     }
     else
         return iResponseCode; //checkResponseCode(iResponseCode);
