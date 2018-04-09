@@ -318,6 +318,7 @@ public:
     void OnTimer(wxTimerEvent &evt);
     void Start();
     void Stop();
+    void Reset();
     
     
     wxTimer m_timer;

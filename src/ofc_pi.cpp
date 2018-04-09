@@ -291,7 +291,7 @@ bool validate_server(void)
     if(wxNOT_FOUND != g_server_bin.Find('\"'))
         bin_test = g_server_bin.Mid(1).RemoveLast();
     
-    wxString msg = _("Checking server utility at ");
+    wxString msg = _T("Checking server utility at ");
     msg += _T("{");
     msg += bin_test;
     msg += _T("}");
@@ -382,11 +382,11 @@ bool validate_server(void)
         }
         
         if(!bAvail){
-            wxString msg = _("serverd utility at \n");
+            wxString msg = _T("serverd utility at \n");
             msg += _T("{");
             msg += bin_test;
             msg += _T("}\n");
-            msg += _(" reports Unavailable.\n\n");
+            msg += _T(" reports Unavailable.\n\n");
             //            OCPNMessageBox_PlugIn(NULL, msg, _("oesenc_pi Message"),  wxOK, -1, -1);
             wxLogMessage(_T("ofc_pi: ") + msg);
             

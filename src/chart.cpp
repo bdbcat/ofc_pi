@@ -594,7 +594,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       
       wxString key = getKeyAsciiHex(name);
       if(!key.Len()){
-          wxString msg(_("   OFC_PI: chartInfo or productKey not found: "));
+          wxString msg(_T("   OFC_PI: chartInfo or productKey not found: "));
           msg.Append(m_FullPath);
           wxLogMessage(msg);
           
@@ -658,7 +658,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       
       if(!bp_set)
       {
-          wxString msg(_("   Chart projection is UNKNOWN, assuming Mercator: "));
+          wxString msg(_T("   Chart projection is UNKNOWN, assuming Mercator: "));
           msg.Append(m_FullPath);
           wxLogMessage(msg);
       }
@@ -809,410 +809,6 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       ifs_bitmap = new wxBufferedInputStream(*ifss_bitmap);
 
 
-#if 0
-//    Read and Parse Chart Header, line by line
-      ifs_hdr->SeekI(0, wxFromStart);                                         // rewind
-
-
-      int done_header_parse = 0;
-
-      while(done_header_parse == 0)
-      {
-            if(ReadBSBHdrLine(ifs_hdr, buffer, BUF_LEN_MAX) == 0)
-            {
-                  unsigned char c;
-                  c = ifs_hdr->GetC();
-                  ifs_hdr->Ungetch(c);
-
-                  if(0x1a == c)
-                      done_header_parse = 1;
-                  else
-                      return INIT_FAIL_REMOVE;
-
-                  continue;
-            }
-
-
-            wxString str_buf(buffer,  wxConvUTF8);
-            wxCSConv iso_conv(wxT("ISO-8859-1"));                 // we will need a converter
-
-            if(!strncmp(buffer, "BSB", 3))
-            {
-                  wxString clip_str_buf(&buffer[0],  iso_conv);  // for single byte French encodings of NAme field
-                  wxStringTokenizer tkz(clip_str_buf, _T("/,="));
-                  while ( tkz.HasMoreTokens() )
-                  {
-                        wxString token = tkz.GetNextToken();
-                        if(token.IsSameAs(_T("RA"), TRUE))                  // extract RA=x,y
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              Size_X = atoi(&buffer[i]);
-                              wxString token = tkz.GetNextToken();
-                              i = tkz.GetPosition();
-                              Size_Y = atoi(&buffer[i]);
-                        }
-                        else if(token.IsSameAs(_T("NA"), TRUE))                  // extract NA=str
-                        {
-                          int i = tkz.GetPosition();
-                          char nbuf[81];
-                          int j=0;
-                          while((buffer[i] != ',') && (i < 80))
-                                nbuf[j++] = buffer[i++];
-                          nbuf[j] = 0;
-                          wxString n_str(nbuf,  iso_conv);
-                          m_Name = n_str;
-                        }
-                        else if(token.IsSameAs(_T("NU"), TRUE))                  // extract NU=str
-                        {
-                              int i = tkz.GetPosition();
-                              char nbuf[81];
-                              int j=0;
-                              while((buffer[i] != ',') && (i < 80))
-                                    nbuf[j++] = buffer[i++];
-                              nbuf[j] = 0;
-                              wxString n_str(nbuf,  iso_conv);
-                              m_ID = n_str;
-                        }
-                        else if(token.IsSameAs(_T("DU"), TRUE))                  // extract DU=n
-                        {
-                          token = tkz.GetNextToken();
-                          long temp_du;
-                          if(token.ToLong(&temp_du))
-                                m_Chart_DU = temp_du;
-                        }
-
-                  }
-            }
-
-            else if(!strncmp(buffer, "KNP", 3))
-            {
-                  wxString conv_buf(buffer,  iso_conv);
-                  wxStringTokenizer tkz(conv_buf, _T("/,="));
-                  while ( tkz.HasMoreTokens() )
-                  {
-                        wxString token = tkz.GetNextToken();
-                        if(token.IsSameAs(_T("SC"), TRUE))                  // extract Scale
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              m_Chart_Scale = atoi(&buffer[i]);
-                              if(0 == m_Chart_Scale)
-                                    m_Chart_Scale = 100000000;
-                        }
-                        else if(token.IsSameAs(_T("SK"), TRUE))                  // extract Skew
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              float fcs;
-                              sscanf(&buffer[i], "%f,", &fcs);
-                              m_Chart_Skew = fcs;
-                        }
-                        else if(token.IsSameAs(_T("UN"), TRUE))                  // extract Depth Units
-                        {
-                            int i;
-                            i = tkz.GetPosition();
-                            wxString str(&buffer[i], iso_conv);
-                            m_DepthUnits = str.BeforeFirst(',');
-                        }
-                        else if(token.IsSameAs(_T("GD"), TRUE))                  // extract Datum
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              wxString str(&buffer[i], iso_conv);
-                              m_datum_str = str.BeforeFirst(',').Trim();
-                        }
-                        else if(token.IsSameAs(_T("SD"), TRUE))                  // extract Soundings Datum
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              wxString str(&buffer[i], iso_conv);
-                              m_SoundingsDatum = str.BeforeFirst(',').Trim();
-                        }
-                        else if(token.IsSameAs(_T("PP"), TRUE))                  // extract Projection Parameter
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              double fcs;
-                              wxString str(&buffer[i], iso_conv);
-                              wxString str1 = str.BeforeFirst(',').Trim();
-                              if(str1.ToDouble(&fcs))
-                                    m_proj_parameter = fcs;
-                        }
-                        else if(token.IsSameAs(_T("PR"), TRUE))                  // extract Projection Type
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              wxString str(&buffer[i], iso_conv);
-                              wxString stru = str.MakeUpper();
-                              bool bp_set = false;;
-
-                              if(stru.Matches(_T("*MERCATOR*")))
-                              {
-                                    m_projection = PI_PROJECTION_MERCATOR;
-                                    bp_set = true;
-                              }
-                              if(stru.Matches(_T("*TRANSVERSE*")))
-                              {
-                                    m_projection = PI_PROJECTION_TRANSVERSE_MERCATOR;
-                                    bp_set = true;
-                              }
-                              if(stru.Matches(_T("*POLYCONIC*")))
-                              {
-                                    m_projection = PI_PROJECTION_POLYCONIC;
-                                    bp_set = true;
-                              }
-
-                              if(stru.Matches(_T("*UTM*")))
-                              {
-                                    m_projection = PI_PROJECTION_TRANSVERSE_MERCATOR;
-                                    bp_set = true;
-                              }
-
-                              if(!bp_set)
-                              {
-                                    wxString msg(_("   Chart projection is UNKNOWN, assuming Mercator: "));
-                                    msg.Append(m_FullPath);
-                                    wxLogMessage(msg);
-                              }
-
-                        }
-                        else if(token.IsSameAs(_T("DX"), TRUE))                  // extract Pixel scale parameter, if present
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              float x;
-                              sscanf(&buffer[i], "%f,", &x);
-                              m_dx = x;
-                        }
-                        else if(token.IsSameAs(_T("DY"), TRUE))                  // extract Pixel scale parameter, if present
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              float x;
-                              sscanf(&buffer[i], "%f,", &x);
-                              m_dy = x;
-                        }
-
-
-                 }
-            }
-
-
-            else if (!strncmp(buffer, "RGB", 3))
-                  CreatePaletteEntry(buffer, COLOR_RGB_DEFAULT);
-
-            else if (!strncmp(buffer, "DAY", 3))
-                  CreatePaletteEntry(buffer, DAY);
-
-            else if (!strncmp(buffer, "DSK", 3))
-                  CreatePaletteEntry(buffer, DUSK);
-
-            else if (!strncmp(buffer, "NGT", 3))
-                  CreatePaletteEntry(buffer, NIGHT);
-
-            else if (!strncmp(buffer, "NGR", 3))
-                  CreatePaletteEntry(buffer, NIGHTRED);
-
-            else if (!strncmp(buffer, "GRY", 3))
-                  CreatePaletteEntry(buffer, GRAY);
-
-            else if (!strncmp(buffer, "PRC", 3))
-                  CreatePaletteEntry(buffer, PRC);
-
-            else if (!strncmp(buffer, "PRG", 3))
-                  CreatePaletteEntry(buffer, PRG);
-
-
-            else if (!strncmp(buffer, "REF", 3))
-            {
-                  int i, xr, yr;
-                  float ltr,lnr;
-                  sscanf(&buffer[4], "%d,%d,%d,%f,%f", &i, &xr, &yr, &ltr, &lnr);
-                  pRefTable = (Refpoint *)realloc(pRefTable, sizeof(Refpoint) * (nRefpoint+1));
-                  pRefTable[nRefpoint].xr = xr;
-                  pRefTable[nRefpoint].yr = yr;
-                  pRefTable[nRefpoint].latr = ltr;
-                  pRefTable[nRefpoint].lonr = lnr;
-                  pRefTable[nRefpoint].bXValid = 1;
-                  pRefTable[nRefpoint].bYValid = 1;
-
-                  nRefpoint++;
-
-            }
-
-
-            else if (!strncmp(buffer, "WPX", 3))
-            {
-                int idx = 0;
-                double d;
-                wxStringTokenizer tkz(str_buf.Mid(4), _T(","));
-                wxString token = tkz.GetNextToken();
-
-                if(token.ToLong((long int *)&wpx_type))
-                {
-                    while ( tkz.HasMoreTokens() && (idx < 12) )
-                    {
-                        token = tkz.GetNextToken();
-                        if(token.ToDouble(&d))
-                        {
-                            wpx[idx] = d;
-                            idx++;
-                        }
-                    }
-                }
-                n_wpx = idx;
-            }
-
-            else if (!strncmp(buffer, "WPY", 3))
-            {
-                int idx = 0;
-                double d;
-                wxStringTokenizer tkz(str_buf.Mid(4), _T(","));
-                wxString token = tkz.GetNextToken();
-
-                if(token.ToLong((long int *)&wpy_type))
-                {
-                    while ( tkz.HasMoreTokens() && (idx < 12) )
-                    {
-                        token = tkz.GetNextToken();
-                        if(token.ToDouble(&d))
-                        {
-                            wpy[idx] = d;
-                            idx++;
-                        }
-                    }
-                }
-                n_wpy = idx;
-            }
-
-            else if (!strncmp(buffer, "PWX", 3))
-            {
-                int idx = 0;
-                double d;
-                wxStringTokenizer tkz(str_buf.Mid(4), _T(","));
-                wxString token = tkz.GetNextToken();
-
-                if(token.ToLong((long int *)&pwx_type))
-                {
-                    while ( tkz.HasMoreTokens() && (idx < 12) )
-                    {
-                        token = tkz.GetNextToken();
-                        if(token.ToDouble(&d))
-                        {
-                            pwx[idx] = d;
-                            idx++;
-                        }
-                    }
-                }
-                n_pwx = idx;
-            }
-
-            else if (!strncmp(buffer, "PWY", 3))
-            {
-                int idx = 0;
-                double d;
-                wxStringTokenizer tkz(str_buf.Mid(4), _T(","));
-                wxString token = tkz.GetNextToken();
-
-                if(token.ToLong((long int *)&pwy_type))
-                {
-                    while ( tkz.HasMoreTokens() && (idx < 12) )
-                    {
-                        token = tkz.GetNextToken();
-                        if(token.ToDouble(&d))
-                        {
-                            pwy[idx] = d;
-                            idx++;
-                        }
-                    }
-                }
-                n_pwy = idx;
-            }
-
-
-            else if (!strncmp(buffer, "CPH", 3))
-            {
-                float float_cph;
-                sscanf(&buffer[4], "%f", &float_cph);
-                m_cph = float_cph;
-            }
-
-            else if (!strncmp(buffer, "DTM", 3))
-            {
-                  float fdtmlat, fdtmlon;
-                  sscanf(&buffer[4], "%f,%f", &fdtmlat, &fdtmlon);
-                  m_dtm_lat = fdtmlat;
-                  m_dtm_lon = fdtmlon;
-            }
-
-
-            else if (!strncmp(buffer, "PLY", 3))
-            {
-                  int i;
-                  float ltp,lnp;
-                  sscanf(&buffer[4], "%d,%f,%f", &i, &ltp, &lnp);
-                  pPlyTable = (Plypoint *)realloc(pPlyTable, sizeof(Plypoint) * (nPlypoint+1));
-                  pPlyTable[nPlypoint].ltp = ltp;
-                  pPlyTable[nPlypoint].lnp = lnp;
-
-                  nPlypoint++;
-            }
-
-            else if(!strncmp(buffer, "CED", 3))
-            {
-                wxStringTokenizer tkz(str_buf, _T("/,="));
-                  while ( tkz.HasMoreTokens() )
-                  {
-                        wxString token = tkz.GetNextToken();
-                        if(token.IsSameAs(_T("ED"), TRUE))                  // extract Edition Date
-                        {
-
-                              int i;
-                              i = tkz.GetPosition();
-
-                              char date_string[40];
-                              char date_buf[10];
-                              sscanf(&buffer[i], "%s\r\n", date_string);
-                              wxString date_wxstr(date_string,  wxConvUTF8);
-
-                              wxDateTime dt;
-                              if(dt.ParseDate(date_wxstr))       // successful parse?
-                              {
-                                  int iyear = dt.GetYear(); // GetYear() fails on W98, DMC compiler, wx2.8.3
-//    BSB charts typically list publish date as xx/yy/zz, we want 19zz.
-                                  if(iyear < 100)
-                                  {
-                                      iyear += 1900;
-                                      dt.SetYear(iyear);
-                                  }
-                                  sprintf(date_buf, "%d", iyear);
-
-                              //    Initialize the wxDateTime menber for Edition Date
-                                  m_EdDate = dt;
-                              }
-                              else
-                              {
-                                 sscanf(date_string, "%s", date_buf);
-                                 m_EdDate.Set(1, wxDateTime::Jan, 2000);                    //Todo this could be smarter
-                              }
-
-                              m_PubYear = wxString(date_buf,  wxConvUTF8);
-                        }
-                        else if(token.IsSameAs(_T("SE"), TRUE))                  // extract Source Edition
-                        {
-                              int i;
-                              i = tkz.GetPosition();
-                              wxString str(&buffer[i], iso_conv);
-                              m_SE = str.BeforeFirst(',');
-                        }
-
-                  }
-            }
-
-      }
-#endif
-
       //    If imbedded coefficients are found,
       //    then use the polynomial georeferencing algorithms
       if(pwx[0] && pwy[0] && wpx[0] && pwy[0])
@@ -1236,7 +832,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
 
       if(nPlypoint < 3)
       {
-            wxString msg(_("   Chart File contains less than 3 PLY points: "));
+            wxString msg(_T("   Chart File contains less than 3 PLY points: "));
             msg.Append(m_FullPath);
             wxLogMessage(msg);
 
@@ -1272,42 +868,10 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       if(init_flags == HEADER_ONLY)
             return INIT_OK;
 
-#if 0
-      //    Advance to the data
-      unsigned char c;
-      bool bcorrupt = false;
-
-      if((c = ifs_hdr->GetC()) != 0x1a){ bcorrupt = true; }
-      if((c = ifs_hdr->GetC()) == 0x0d)
-      {
-            if((c = ifs_hdr->GetC()) != 0x0a){ bcorrupt = true; }
-            if((c = ifs_hdr->GetC()) != 0x1a){ bcorrupt = true; }
-            if((c = ifs_hdr->GetC()) != 0x00){ bcorrupt = true; }
-      }
-
-      else if(c != 0x00){ bcorrupt = true; }
-
-
-      if(bcorrupt)
-      {
-            wxString msg(_("   Chart File RLL data corrupt on chart "));
-            msg.Append(m_FullPath);
-            wxLogMessage(msg);
-
-            return INIT_FAIL_REMOVE;
-      }
-
-
-//    Read the Color table bit size
-      nColorSize = ifs_hdr->GetC();
-
-#endif      
-      //nFileOffsetDataStart = ifs_hdr->TellI();
 
 //    Perform common post-init actions in ChartBaseBSB
       InitReturn pi_ret = PostInit();
 
-//      FillLineCache();
 
       if( pi_ret  != INIT_OK)
             return pi_ret;
@@ -1663,101 +1227,7 @@ InitReturn ChartXTR1::PostInit(void)
 
 #endif
 
-#if 0
-      //    Try to validate the line index
 
-      m_nLineOffset = 0;
-
-      for(int iplt=0 ; iplt<Size_Y - 1 ; iplt++)
-      {
-            if( wxInvalidOffset == ifs_bitmap->SeekI(pline_table[iplt], wxFromStart))
-            {
-                  wxString msg(_("   Chart File corrupt in PostInit() on chart "));
-                  msg.Append(m_FullPath);
-                  wxLogMessage(msg);
-
-                  return INIT_FAIL_REMOVE;
-            }
-
-            int thisline_size = pline_table[iplt+1] - pline_table[iplt] ;
-
-            if(thisline_size < 0)
-            {
-                  wxString msg(_("   Chart File corrupt in PostInit() on chart "));
-                  msg.Append(m_FullPath);
-                  wxLogMessage(msg);
-
-                  return INIT_FAIL_REMOVE;
-            }
-
-            if(thisline_size > ifs_bufsize)
-            {
-                  wxString msg(_T("   ifs_bufsize too small PostInit() on chart "));
-                  msg.Append(m_FullPath);
-                  wxLogMessage(msg);
-
-                  return INIT_FAIL_REMOVE;
-            }
-
-#if 0 //bsb4
-            ifs_bitmap->Read(ifs_buf, thisline_size);
-
-            unsigned char *lp = ifs_buf;
-
-            unsigned char byNext;
-            int nLineMarker = 0;
-            do
-            {
-                  byNext = *lp++;
-                  nLineMarker = nLineMarker * 128 + (byNext & 0x7f);
-            } while( (byNext & 0x80) != 0 );
-
-
-            //  Linemarker Correction factor needed here
-            //  Some charts start with LineMarker = 0, some with LineMarker = 1
-            //  Assume the first LineMarker found is the index base, and use
-            //  as a correction offset
-
-            if(iplt == 0)
-                m_nLineOffset = nLineMarker;
-
-            if(nLineMarker != iplt + m_nLineOffset)
-            {
-                bline_index_ok = false;
-                break;
-            }
-#endif
-      }
-#endif      
-
-/*
-      if(!bline_index_ok)
-      {
-            wxString msg(_T("   Line Index corrupt on chart "));
-            msg.Append(m_FullPath);
-            wxLogMessage(msg);
-
-            wxLogMessage(_T("   Assuming chart data is otherwise OK."));
-            bline_index_ok = true;
-      }
-*/
-
-#if 0       //bsb4
-        // Recreate the scan line index if the embedded version seems corrupt
-      if(!bline_index_ok)
-      {
-          wxString msg(_("   Line Index corrupt, recreating Index for chart "));
-          msg.Append(m_FullPath);
-          wxLogMessage(msg);
-          if(!CreateLineIndex())
-          {
-                wxString msg(_("   Error creating Line Index for chart "));
-                msg.Append(m_FullPath);
-                wxLogMessage(msg);
-                return INIT_FAIL_REMOVE;
-          }
-      }
-#endif
 
 
       //    Allocate the Line Cache
@@ -4371,7 +3841,7 @@ int   ChartXTR1::AnalyzeRefpoints(void)
         //        Good enough for navigation?
         if(m_Chart_Error_Factor > .02)
         {
-                    wxString msg = _("   VP Final Check: Georeference Chart_Error_Factor on chart ");
+                    wxString msg = _T("   VP Final Check: Georeference Chart_Error_Factor on chart ");
                     msg.Append(m_FullPath);
                     wxString msg1;
                     msg1.Printf(_T(" is %5g"), m_Chart_Error_Factor);
@@ -4386,7 +3856,7 @@ int   ChartXTR1::AnalyzeRefpoints(void)
         //  This problem was found on NOAA 514_1.KAP.  The embedded coefficients are just wrong....
         if((m_Chart_Error_Factor > .02) && bHaveEmbeddedGeoref)
         {
-              wxString msg = _("   Trying again with internally calculated georef solution ");
+              wxString msg = _T("   Trying again with internally calculated georef solution ");
               wxLogMessage(msg);
 
               bHaveEmbeddedGeoref = false;
@@ -4435,10 +3905,10 @@ int   ChartXTR1::AnalyzeRefpoints(void)
         //        Good enough for navigation?
               if(m_Chart_Error_Factor > .02)
               {
-                    wxString msg = _("   VP Final Check with internal georef: Georeference Chart_Error_Factor on chart ");
+                    wxString msg = _T("   VP Final Check with internal georef: Georeference Chart_Error_Factor on chart ");
                     msg.Append(m_FullPath);
                     wxString msg1;
-                    msg1.Printf(_(" is %5g"), m_Chart_Error_Factor);
+                    msg1.Printf(_T(" is %5g"), m_Chart_Error_Factor);
                     msg.Append(msg1);
 
                     wxLogMessage(msg);
@@ -4447,7 +3917,7 @@ int   ChartXTR1::AnalyzeRefpoints(void)
               }
               else
               {
-                    wxString msg = _("   Result: OK, Internal georef solution used.");
+                    wxString msg = _T("   Result: OK, Internal georef solution used.");
 
                     wxLogMessage(msg);
               }

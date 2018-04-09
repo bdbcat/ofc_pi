@@ -587,7 +587,7 @@ int checkResult(wxString &result, bool bShowErrorDialog = true)
             return 0;
         else{
             if(bShowErrorDialog){
-                wxString msg = _("o-charts API error code: ");
+                wxString msg = _("API error code: ");
                 wxString msg1;
                 msg1.Printf(_T("{%ld}\n\n"), dresult);
                 msg += msg1;
@@ -933,7 +933,7 @@ int doActivate(itemChart *chart)
     if(!kk.Len())
         return 1;
     
-    wxString msg = _("This action will PERMANENTLY assign the chart:");
+    wxString msg = _("This action will PERMANENTLY assign the chartset:");
     msg += _T("\n        ");
     msg += chart->productName;
     msg += _T("\n\n");
@@ -2216,6 +2216,8 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
         // Clean up the UI
         g_dlStatPrefix.Clear();
         setStatusText( _("Status: Ready"));
+        getInProcessGuage()->Reset();
+        getInProcessGuage()->Stop();
         
         OCPNMessageBox_PlugIn(NULL, _("Chart installation complete."), _("ofc_pi Message"), wxOK);
         
@@ -2611,6 +2613,10 @@ void InProgressIndicator::Stop()
      SetValue(0);
 }
 
+void InProgressIndicator::Reset() 
+{
+    SetValue(0);
+}
 
 //-------------------------------------------------------------------------------------------
 OESENC_CURL_EvtHandler::OESENC_CURL_EvtHandler()
