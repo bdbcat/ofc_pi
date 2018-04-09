@@ -472,6 +472,20 @@ bool gs_binit_msg_shown;
 
 int ChartXTR1::Init( const wxString& name, int init_flags )
 {
+    
+#ifdef __MSVC__    
+    __asm{
+        push eax
+        mov eax, 0
+        mov DWORD PTR [ebx+500h], eax   // m_ppm_avg
+        mov eax,  404b8000h //  55.0
+        mov DWORD PTR [ebx+504h], eax
+        pop eax
+    }
+#endif    
+    
+    
+    
 
 #ifdef __WXMSWOLDSTUFF__
       // Look in the registry to validate the existence of decryption tools
