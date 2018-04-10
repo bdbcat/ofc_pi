@@ -268,6 +268,7 @@ public:
     
     void getDownloadList(itemChart *chart);
     void chainToNextChart(itemChart *chart, int ntry = 0);
+    void advanceToNextChart(itemChart *chart);
     
     int doDownloadGui();
     

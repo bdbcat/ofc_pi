@@ -2033,6 +2033,16 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
     }
     
     // Advance to the next required download
+    
+    advanceToNextChart(chart);
+
+    return chainToNextChart(chart);
+
+}
+
+void shopPanel::advanceToNextChart(itemChart *chart)
+{
+    // Advance to the next required download
     while(chart->indexFileArrayIndex < chart->urlArray.GetCount()){               
         wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
         wxURI uri;
@@ -2041,8 +2051,13 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
         wxFileName fn(serverFilename);
         
         // Is the next BAP file in place already, and current?
+        wxString fileName = fn.GetName();
+        fileName.Replace("%27", "'");
+        fileName.Replace("%28", "(");
+        fileName.Replace("%29", ")");
+        
         wxString BAPfile = chart->installLocationTentative + wxFileName::GetPathSeparator();
-        BAPfile += chart->shortSetName + wxFileName::GetPathSeparator() + fn.GetName() + _T(".BAP");
+        BAPfile += chart->shortSetName + wxFileName::GetPathSeparator() + fileName + _T(".BAP");
         if(::wxFileExists( BAPfile )){
             chart->indexFileArrayIndex++;               // Skip to the next target
         }
@@ -2050,13 +2065,7 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
             break;   // the while
         }
     }
-    
-    
-    return chainToNextChart(chart);
-
 }
-
-
 
 void shopPanel::OnDownloadListChain( wxCommandEvent& event )
 {
@@ -2135,23 +2144,8 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
         if(bSuccess) {   
             chart->indexFileArrayIndex++;               // move to the next file
 
-            while(chart->indexFileArrayIndex < chart->urlArray.GetCount()){               
-                wxString tUrl = chart->urlArray.Item(chart->indexFileArrayIndex);
-                wxURI uri;
-                uri.Create(tUrl);
-                wxString serverFilename = uri.GetPath();
-                wxFileName fn(serverFilename);
-            
-            // Is the next BAP file in place already, and current?
-                wxString BAPfile = chart->installLocationTentative + wxFileName::GetPathSeparator();
-                BAPfile += chart->shortSetName + wxFileName::GetPathSeparator() + fn.GetName() + _T(".BAP");
-                if(::wxFileExists( BAPfile )){
-                    chart->indexFileArrayIndex++;               // Skip to the next target
-                }
-                else{
-                    break;   // the while
-                }
-            }
+            // Advance to the next required download
+            advanceToNextChart(chart);
             
             return chainToNextChart(chart);
         }       // bSuccess
