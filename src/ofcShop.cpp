@@ -2435,6 +2435,19 @@ void shopPanel::OnButtonCancelOp( wxCommandEvent& event )
 }
 
 
+void shopPanel::StopAllDownloads()
+{
+    if(g_curlDownloadThread){
+        m_bAbortingDownload = true;
+        
+        m_ChartSelected = NULL;                 // stop chart update
+        g_downloadChainIdentifier = 0;          // stop chain-through
+        
+        g_curlDownloadThread->Abort();
+    }
+    
+}
+
 
 void shopPanel::UpdateChartList( )
 {
@@ -2677,8 +2690,10 @@ void OESENC_CURL_EvtHandler::onEndEvent(wxCurlEndPerformEvent &evt)
     }
     //  Send an event to chain back to "Install" button
     wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED);
-    event.SetId( g_downloadChainIdentifier/*ID_CMD_BUTTON_INSTALL_CHAIN*/ );
-    g_shopPanel->GetEventHandler()->AddPendingEvent(event);
+    if(g_downloadChainIdentifier){
+        event.SetId( g_downloadChainIdentifier );
+        g_shopPanel->GetEventHandler()->AddPendingEvent(event);
+    }
     
 }
 

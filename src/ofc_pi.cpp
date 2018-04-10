@@ -100,6 +100,8 @@ int ofc_pi::Init(void)
     vs.Printf(_T("%d.%d.%d"), PLUGIN_VERSION_MAJOR, PLUGIN_VERSION_MINOR, PLUGIN_VERSION_PATCH);
     g_versionString = vs;
 
+    m_shoppanel = NULL;
+    
     AddLocaleCatalog( _T("opencpn-ofc_pi") );
 
       //    Build an arraystring of dynamically loadable chart class names
@@ -247,6 +249,13 @@ void ofc_pi::OnSetupOptions( void )
 
 }
 
+void ofc_pi::OnCloseToolboxPanel(int page_sel, int ok_apply_cancel)
+{
+    if(m_shoppanel){
+        m_shoppanel->StopAllDownloads();
+    }
+    
+}
 
 
 bool validate_server(void)

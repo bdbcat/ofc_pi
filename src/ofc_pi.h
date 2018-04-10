@@ -86,7 +86,8 @@ public:
 //       bool RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp){ return false; }
 
       void OnSetupOptions( void );
-
+      void OnCloseToolboxPanel(int page_sel, int ok_apply_cancel);
+      
 
       wxArrayString     m_class_name_array;
 

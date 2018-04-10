@@ -227,6 +227,8 @@ protected:
 protected:
     
 public:
+    void StopAllDownloads();
+    
     wxButton* GetButton37() { return m_button37; }
     wxButton* GetButton39() { return m_button39; }
     wxButton* GetButton41() { return m_button41; }
