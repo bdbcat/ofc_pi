@@ -420,33 +420,21 @@ wxString itemChart::getStatusString()
 wxBitmap& itemChart::GetChartThumbnail(int size)
 {
     if(!m_ChartImage.IsOk()){
-        // Look for cached copy
-        wxString fileKey = _T("ChartImage-");
+        // Look for it
+        
+        wxString s =wxFileName::GetPathSeparator();
+        wxString dataDir = *GetpSharedDataLocation() + _T("plugins") + s;
+        dataDir += _T("ofc_pi") + s + _T("data") + s;
+        
+        wxString fileKey; // = _T("ChartImage-");
         fileKey += productSKU;
         fileKey += _T(".jpg");
  
-        wxString file = g_PrivateDataDir + fileKey;
+        wxString file = dataDir + fileKey;
         if(::wxFileExists(file)){
             m_ChartImage = wxImage( file, wxBITMAP_TYPE_ANY);
         }
-        else{
-            if(g_chartListUpdatedOK && thumbnailURL.Length()){  // Do not access network until after first "getList"
-                wxCurlHTTP get;
-                get.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
-                /*bool getResult = */get.Get(file, thumbnailURL);
-
-            // get the response code of the server
-                int iResponseCode;
-                get.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
-            
-                if(iResponseCode == 200){
-                    if(::wxFileExists(file)){
-                        m_ChartImage = wxImage( file, wxBITMAP_TYPE_ANY);
-                    }
-                }
-            }
-        }
-    }
+     }
     
     if(m_ChartImage.IsOk()){
         int scaledHeight = size;
