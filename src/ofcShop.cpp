@@ -1620,6 +1620,16 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     wxBoxSizer* boxSizerTop = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizerTop);
     
+    wxString titleString = _T("OFC Plugin");
+    titleString += _T(" [ Version: ") + g_versionString + _T(" ]");
+    
+    wxBoxSizer* boxSizerTitle = new wxBoxSizer(wxVERTICAL);
+    boxSizerTop->Add(boxSizerTitle, 0, wxEXPAND );
+    
+    wxStaticText *title = new wxStaticText(this, wxID_ANY,   titleString );
+    boxSizerTitle->Add(title, 0, wxALIGN_CENTER);
+    
+    
     wxStaticBoxSizer* staticBoxSizerChartList = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, _("My Charts")), wxVERTICAL);
     boxSizerTop->Add(staticBoxSizerChartList, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1643,8 +1653,7 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     staticBoxSizerChartList->SetMinSize(wxSize(-1,16 * GetCharHeight()));
     
     wxString actionString = _("Actions");
-    actionString += _T(" [ Version: ") + g_versionString + _T(" ]");
-    
+        
     wxStaticBoxSizer* staticBoxSizerAction = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, actionString), wxVERTICAL);
     boxSizerTop->Add(staticBoxSizerAction, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
 
