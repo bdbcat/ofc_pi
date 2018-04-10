@@ -1279,7 +1279,10 @@ wxArrayString splitLine(wxString &line, wxDC &dc, int widthMax)
         if(okString.IsEmpty())
             break;
         
-        retArray.Add(okString);
+        if(tooLong)
+            retArray.Add(okString);
+        else
+            retArray.Add(testString);
     }
         
    
