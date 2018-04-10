@@ -482,13 +482,6 @@ protected:
 
       PlugIn_ViewPort  m_vp_render_last;
 
-//    Decryption dll support
-      wxDynamicLibrary  *m_pdyn;
-      void              *pfn_nvc_init_dll;
-      void              *pfn_nvc_getkeyhandle;
-      void              *pfn_nvc_decrypt_block;
-      int               m_decrypthandle;
-
 
 };
 

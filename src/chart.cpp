@@ -434,12 +434,7 @@ ChartXTR1::ChartXTR1()
 
       m_pBMPThumb = NULL;
 
-      m_pdyn = NULL;
-
-      pfn_nvc_init_dll = NULL;
-      pfn_nvc_getkeyhandle = NULL;
-      pfn_nvc_decrypt_block = NULL;
-
+ 
 }
 
 ChartXTR1::~ChartXTR1()
@@ -455,7 +450,6 @@ ChartXTR1::~ChartXTR1()
 
       delete m_pBMPThumb;
 
-      delete m_pdyn;
 
       ChartBaseBSBDTOR();
 }
@@ -484,112 +478,6 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
     }
 #endif    
     
-    
-    
-
-#ifdef __WXMSWOLDSTUFF__
-      // Look in the registry to validate the existence of decryption tools
-      wxString nvcdll;
-      wxString reg_decrypt_dll_key(_T("HKEY_LOCAL_MACHINE\\SOFTWARE\\NV-Filedatabase"));
-      wxRegKey RegKey(reg_decrypt_dll_key);
-      if( RegKey.Exists() )
-      {
-            RegKey.QueryValue(wxString(_T("nvcdll")), nvcdll);
-            if(nvcdll == _T(""))
-            {
-                wxString msg(_T("    OFC_PI: Could not find registry key value (nvcdll) for decryption dll location at key "));
-                  msg += reg_decrypt_dll_key ;
-                  wxLogMessage(msg);
-                  return (2);
-            }
-      }
-      else
-      {
-          wxString msg(_T("   OFC_PI: Could not find registry key for decryption tool location at node "));
-            msg += reg_decrypt_dll_key ;
-            wxLogMessage (msg);
-
-            return (2);             //INIT_FAIL_REMOVE
-      }
-
-      //    Try to load the dll
-      m_pdyn = new wxDynamicLibrary();
-
-      wxString msg(_T("OFC_PI: Loading decrypt dll : "));
-      msg += nvcdll;
-      wxLogMessage (msg);
-
-      if(!m_pdyn->Load(nvcdll))
-      {
-          wxString msg(_T("   OFC_PI: Could not load decrypt dll : "));
-            msg += nvcdll;
-            wxLogMessage (msg);
-
-            return (2);
-      }
-
-
-
-  // get function pointers from DLL
-      pfn_nvc_init_dll = m_pdyn->GetSymbol(_T("nvc_init_dll"));
-      pfn_nvc_getkeyhandle = m_pdyn->GetSymbol(_T("nvc_getkeyhandle"));
-      pfn_nvc_decrypt_block = m_pdyn->GetSymbol(_T("nvc_decrypt_block"));
-
-
-      if((NULL == pfn_nvc_init_dll) || (NULL == pfn_nvc_getkeyhandle) || (NULL == pfn_nvc_decrypt_block))
-      {
-          wxString msg(_T("   OFC_PI: Could not find decrypt dll procedure entry points : "));
-            msg += nvcdll;
-            wxLogMessage (msg);
-
-            return (2);
-      }
-
-  // Init DDL with OpenCPN Mfg key
-      void* ( *g ) ( void *, void*);
-      g= ( void * ( * ) ( void*, void * ) ) pfn_nvc_init_dll;
-
-      char *init = (char *)g((void *)"OpenCPN", (void *)nvc_dll_authcheck);
-
-      if(!init)
-      {
-            wxString msg(_T("   NVC_PI: Could not initialize nvcdll : "));
-            msg += nvcdll;
-            wxLogMessage (msg);
-
-            return (2);
-      }
-      else
-      {
-            if(!gs_binit_msg_shown)
-            {
-              wxString msg(_T("NVC_PI: Initialized nvcdll : "));
-              msg += nvcdll;
-              msg += _T("\n             Init return message is:\n             ");
-              msg += wxString(init,  wxConvUTF8);
-              wxLogMessage (msg);
-              gs_binit_msg_shown = true;
-            }
-      }
-
-      void* ( *f ) ( void *);
-      f = (void * (*)(void *))pfn_nvc_getkeyhandle;
-
-      char sname[200];
-      strncpy(sname, name.mb_str(), 199);
-
-      m_decrypthandle = (int)f((void *)sname);
-      if (m_decrypthandle < 1)
-      {
-            wxString msg(_T("   NVC_PI: Could not get decrypt handle for : "));
-            msg += name;
-            wxLogMessage (msg);
-
-            return (2);
-      }
-
-
-#endif
 
       int nPlypoint = 0;
       Plypoint *pPlyTable = (Plypoint *)malloc(sizeof(Plypoint));
@@ -3367,18 +3255,7 @@ int   ChartXTR1::BSBGetScanline( unsigned char *pLineBuf, int y, int xs, int xl,
 
 //    At this point, the unexpanded, raw line is at *lp, and the expansion destination is xtemp_line
 
-//    Decrypt
-            if(pfn_nvc_decrypt_block)
-            {
-                  int ( *f ) ( int, int, void*, void*);
-                  f= ( int ( * ) ( int, int, void*, void* ) ) pfn_nvc_decrypt_block;
-
-                  f(m_decrypthandle,thisline_size, ifs_buf_decrypt, ifs_buf); // decrypt to memory
-
-                  lp = ifs_buf;
-            }
-            else
-                  lp = ifs_buf_decrypt;
+            lp = ifs_buf_decrypt;
 
 //      Read the line number.
             nLineMarker = 0;
