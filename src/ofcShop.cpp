@@ -980,7 +980,10 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     
     if(iResponseCode == 200){
         wxString result = ProcessResponse(post.GetResponseBody());
-        return checkResult( result, bShowErrorDialogs );
+        
+        int iRet = checkResult( result, bShowErrorDialogs );
+        return iRet;
+
     }
     else
         return iResponseCode; //checkResponseCode(iResponseCode);
@@ -2368,6 +2371,12 @@ void shopPanel::OnButtonInstall( wxCommandEvent& event )
     m_ipGauge->Stop();
     
     UpdateChartList();
+    
+    {              // Success
+        wxString msg = _("Activation succeeded.\n");
+        msg += _("You may now proceed to install the chartset");
+        OCPNMessageBox_PlugIn(NULL, msg, _("ofc_pi Message"), wxOK);
+    }
     
     return;
     
