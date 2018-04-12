@@ -19,8 +19,8 @@ PROJECT(ofc_pi)
 SET(PLUGIN_SOURCE_DIR .)
 
 SET(PACKAGE_NAME ofc_pi)
-SET(VERBOSE_NAME FugawiChartsPlugin)
-SET(TITLE_NAME FugawiChartsPlugin)
+SET(VERBOSE_NAME FugawiCharts)
+SET(TITLE_NAME FugawiCharts)
 SET(CPACK_PACKAGE_CONTACT "Dave Register")
 
 MESSAGE (STATUS "*** Building ${PACKAGE_NAME} ***")
@@ -135,9 +135,9 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 IF(NOT WIN32)
  ADD_DEFINITIONS( "-Wall -g -fexceptions -O2 -Wno-unused -fno-strict-aliasing")
 
- #IF(CMAKE_BUILD_TYPE MATCHES "Debug")
+ IF(CMAKE_BUILD_TYPE MATCHES "Debug")
     ADD_DEFINITIONS( " -O0")
- #ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug")
+ ENDIF(CMAKE_BUILD_TYPE MATCHES "Debug")
 
  IF(NOT APPLE)
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,-Bsymbolic")
@@ -321,13 +321,32 @@ INSTALL(FILES "buildosx/ofcserverd/ofcserverd"
        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ WORLD_EXECUTE
        DESTINATION "ofc_pi/ofc_pi")
 
-INSTALL(FILES "src/rrc_eula_ChartSetsForOpenCPN.txt"
-      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-      DESTINATION "ofc_pi/ofc_pi" )
+#INSTALL(FILES "src/rrc_eula_ChartSetsForOpenCPN.txt"
+#      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
+#      DESTINATION "ofc_pi/ofc_pi" )
 
   # We also need to copy the helper utility to the binary build directory so that the PACKAGES scripts will find it.
+  
 configure_file(${PROJECT_SOURCE_DIR}/buildosx/ofcserverd/ofcserverd
             ${CMAKE_CURRENT_BINARY_DIR}/ofcserverd COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/data/TD-CHS-RM-ATL05.jpg
+            ${CMAKE_CURRENT_BINARY_DIR}/TD-CHS-RM-ATL05.jpg COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/data/TD-EXC-BAH.jpg
+            ${CMAKE_CURRENT_BINARY_DIR}/TD-EXC-BAH.jpg COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/data/TD-DK-S12.jpg
+            ${CMAKE_CURRENT_BINARY_DIR}/TD-DK-S12.jpg COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/data/TD-DK-S21.jpg
+            ${CMAKE_CURRENT_BINARY_DIR}/TD-DK-S21.jpg COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/data/TD-NV-KK-2015.jpg
+            ${CMAKE_CURRENT_BINARY_DIR}/TD-NV-KK-2015.jpg COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/data/TD-ST-HG.jpg
+            ${CMAKE_CURRENT_BINARY_DIR}/TD-ST-HG.jpg COPYONLY)
 
 
 ENDIF(APPLE)
