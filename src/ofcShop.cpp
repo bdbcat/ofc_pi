@@ -1651,8 +1651,8 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     wxStaticBoxSizer* staticBoxSizerAction = new wxStaticBoxSizer( new wxStaticBox(this, wxID_ANY, actionString), wxVERTICAL);
     boxSizerTop->Add(staticBoxSizerAction, 0, wxALL|wxEXPAND, WXC_FROM_DIP(2));
 
-    m_staticLine121 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxLI_HORIZONTAL);
-    staticBoxSizerAction->Add(m_staticLine121, 1, wxTOP|wxEXPAND, WXC_FROM_DIP(2));
+//    m_staticLine121 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxLI_HORIZONTAL);
+//    staticBoxSizerAction->Add(m_staticLine121, 1, wxTOP|wxEXPAND, WXC_FROM_DIP(2));
     
     ///Buttons
     wxGridSizer* gridSizerActionButtons = new wxGridSizer(1, 2, 0, 0);
@@ -1665,8 +1665,8 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     m_buttonCancelOp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(shopPanel::OnButtonCancelOp), NULL, this);
     gridSizerActionButtons->Add(m_buttonCancelOp, 1, wxTOP | wxBOTTOM, WXC_FROM_DIP(1));
 
-    wxStaticLine* sLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxLI_HORIZONTAL);
-    staticBoxSizerAction->Add(sLine1, 1, wxEXPAND, WXC_FROM_DIP(2));
+//    wxStaticLine* sLine1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxLI_HORIZONTAL);
+//    staticBoxSizerAction->Add(sLine1, 1, wxEXPAND, WXC_FROM_DIP(2));
     
     
     ///Status
