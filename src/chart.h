@@ -114,14 +114,25 @@ class Plypoint
             float lnp;
 };
 
+struct TileOffsetCache
+{
+    int offset; // offset from start of line pointer
+    int pixel; // offset from current pixel
+};
 
 class CachedLine
 {
 public:
-      int               xstart;
-      int               xlength;
-      unsigned char     *pPix;
+      //int               xstart;
+      //int               xlength;
+      //unsigned char     *pPix;
+      //bool              bValid;
+      
+      unsigned char    *pPix;
+      TileOffsetCache  *pTileOffset; // entries for random access
+      
       bool              bValid;
+      
 };
 
 class opncpnPalette
@@ -481,7 +492,8 @@ protected:
       int               m_thumbcs;
 
       PlugIn_ViewPort  m_vp_render_last;
-
+      wxCriticalSection m_critSect;
+      
 
 };
 

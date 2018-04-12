@@ -467,18 +467,6 @@ bool gs_binit_msg_shown;
 int ChartXTR1::Init( const wxString& name, int init_flags )
 {
     
-#ifdef __MSVC__    
-    __asm{
-        push eax
-        mov eax, 0
-        mov DWORD PTR [ebx+500h], eax   // m_ppm_avg
-        mov eax,  404b8000h //  55.0
-        mov DWORD PTR [ebx+504h], eax
-        pop eax
-    }
-#endif    
-    
-
       int nPlypoint = 0;
       Plypoint *pPlyTable = (Plypoint *)malloc(sizeof(Plypoint));
 
@@ -1131,7 +1119,7 @@ InitReturn ChartXTR1::PostInit(void)
 
 
 
-
+#if 0
       //    Allocate the Line Cache
       if(bUseLineCache)
       {
@@ -1149,7 +1137,24 @@ InitReturn ChartXTR1::PostInit(void)
       }
       else
             pLineCache = NULL;
-
+#endif
+            
+      if(bUseLineCache)
+      {
+          pLineCache = (CachedLine *)malloc(Size_Y * sizeof(CachedLine));
+          CachedLine *pt;
+          
+          for(int ylc = 0 ; ylc < Size_Y ; ylc++)
+          {
+              pt = &pLineCache[ylc];
+              pt->bValid = false;
+              pt->pPix = NULL;        //(unsigned char *)malloc(1);
+              pt->pTileOffset = NULL;
+          }
+      }
+      else
+          pLineCache = NULL;
+      
 
       //    Validate/Set Depth Unit Type
       wxString test_str = m_DepthUnits.Upper();
@@ -2939,6 +2944,8 @@ bool ChartXTR1::GetAndScaleData(unsigned char *ppn, wxRect& source, int source_s
 
 bool ChartXTR1::GetChartBits(wxRect& source, unsigned char *pPix, int sub_samp)
 {
+    wxCriticalSectionLocker locker(m_critSect);
+    
     // temporarily change the palette direction
 #ifdef __NEED_PALETTE_REV__
     palette_direction = PaletteRev;
@@ -3196,6 +3203,7 @@ void ChartXTR1::FillLineCache( void )
 }
 
 
+#if 0
 //-----------------------------------------------------------------------
 //    Get a BSB Scan Line Using Cache and scan line index if available
 //-----------------------------------------------------------------------
@@ -3362,7 +3370,422 @@ int   ChartXTR1::BSBGetScanline( unsigned char *pLineBuf, int y, int xs, int xl,
       return 1;
 }
 
+#endif
 
+// could use a larger value for slightly less ram but slower random access,
+// this is chosen as it is also the opengl tile size so should work well
+#define TILE_SIZE 512
+
+#define FAIL \
+do { \
+    free(pt->pTileOffset); \
+    pt->pTileOffset = NULL; \
+    free(pt->pPix); \
+    pt->pPix = NULL; \
+    pt->bValid = false; \
+    return 0; \
+    } while(0)
+    
+    
+//-----------------------------------------------------------------------
+//    Get a BSB Scan Line Using Cache and scan line index if available
+//-----------------------------------------------------------------------
+int   ChartXTR1::BSBGetScanline( unsigned char *pLineBuf, int y, int xs, int xl, int sub_samp)
+
+{
+      unsigned char *prgb = pLineBuf;
+      int nValueShift, iPixel = 0;
+      unsigned char byValueMask, byCountMask;
+      unsigned char byNext;
+      CachedLine *pt = NULL, cached_line;
+      unsigned char *pCL;
+      int rgbval;
+      unsigned char *lp;
+      register int ix = xs;
+
+      if(bUseLineCache && pLineCache)
+      {
+//    Is the requested line in the cache, and valid?
+          pt = &pLineCache[y];
+      } else {
+          pt = &cached_line;
+          pt->bValid = false;
+      }
+
+
+      if(!pt->bValid) // not valid, allocate
+      {
+          off_t rll_y = ifs_hdr->GetBitmapOffset( y );
+          off_t rll_y1 = ifs_hdr->GetBitmapOffset( y + 1 );
+          
+          if(rll_y == 0)
+              FAIL;
+          
+          if(rll_y1 == 0)
+              FAIL;
+          
+          int thisline_size = rll_y1 - rll_y;
+          
+#ifdef USE_OLD_CACHE
+          pt->pPix = (unsigned char *)malloc(Size_X);
+#else
+          pt->pTileOffset = (TileOffsetCache *)calloc(sizeof(TileOffsetCache)*(Size_X/TILE_SIZE + 1), 1);
+          pt->pPix = (unsigned char *)malloc(thisline_size);
+#endif
+
+          // as of 2015, in wxWidgets buffered streams don't test for a zero seek
+          // so we check here to possibly avoid this seek with a measured performance gain
+          if(ifs_bitmap->TellI() != rll_y &&
+              wxInvalidOffset == ifs_bitmap->SeekI(rll_y, wxFromStart))
+              FAIL;
+
+#ifdef USE_OLD_CACHE
+          if(thisline_size > ifs_bufsize)
+          {
+              unsigned char * tmp = ifs_buf;
+              if(!(ifs_buf = (unsigned char *)realloc(ifs_buf, thisline_size))) {
+                  free(tmp);
+                  FAIL;
+              }
+              ifs_bufsize = thisline_size;
+          }
+
+          lp = ifs_buf;
+#else
+          lp = pt->pPix;
+#endif
+          ifs_bitmap->Read(lp, thisline_size);
+
+#ifdef USE_OLD_CACHE
+          pCL = pt->pPix;
+#else
+          if(!bUseLineCache) {
+              ix = 0;
+              //      skip the line number.
+              do byNext = *lp++; while( (byNext & 0x80) != 0 );
+              goto nocachestart;
+          }
+          pCL = ifs_buf;
+
+          if(Size_X > ifs_bufsize)
+          {
+              unsigned char * tmp = ifs_buf;
+              if(!(ifs_buf = (unsigned char *)realloc(ifs_buf, Size_X))) {
+                  free(tmp);
+                  FAIL;
+              }
+              ifs_bufsize = Size_X;
+          }
+#endif
+          //    At this point, the unexpanded, raw line is at *lp, and the expansion destination is pCL
+          
+          //      skip the line number.
+          do byNext = *lp++; while( (byNext & 0x80) != 0 );
+
+          //      Setup masking values.
+          nValueShift = 7 - nColorSize;
+          byValueMask = (((1 << nColorSize)) - 1) << nValueShift;
+          byCountMask = (1 << (7 - nColorSize)) - 1;
+
+          //      Read and expand runs.
+          unsigned int iPixel = 0;
+
+#ifndef USE_OLD_CACHE
+          pt->pTileOffset[0].offset = lp - pt->pPix;
+          pt->pTileOffset[0].pixel = 0;
+          unsigned int tileindex = 1, nextTile = TILE_SIZE;
+#endif
+          unsigned int nRunCount;
+          unsigned char *end = pt->pPix+thisline_size;
+          while(iPixel < (unsigned int)Size_X)
+#ifdef USE_OLD_CACHE
+          {
+              nPixValue = (byNext & byValueMask) >> nValueShift;
+
+              nRunCount = byNext & byCountMask;
+
+              while( (byNext & 0x80) != 0 )
+              {
+                  byNext = *lp++;
+                  nRunCount = nRunCount * 128 + (byNext & 0x7f);
+              }
+
+              nRunCount++;
+
+              if( iPixel + nRunCount > (unsigned int)Size_X ) // protection against corrupt data
+                  nRunCount = nRunCount - iPixel;
+
+              //          Store nPixValue in the destination
+              memset_short(pCL + iPixel, nPixValue, nRunCount);
+              iPixel += nRunCount;
+          }
+#else
+          // build tile offset table for faster random access
+          {
+              byNext = *lp++;
+              unsigned char *offset = lp - 1;
+              if(byNext == 0 || lp == end) {
+                  // finished early...corrupt?
+                  while(tileindex < (unsigned int)Size_X/TILE_SIZE + 1) {
+                      pt->pTileOffset[tileindex].offset = pt->pTileOffset[0].offset;
+                      pt->pTileOffset[tileindex].pixel = 0;
+                      tileindex++;
+                  }
+                  break;
+              }
+
+              nRunCount = byNext & byCountMask;
+
+              while( (byNext & 0x80) != 0 )
+              {
+                  byNext = *lp++;
+                  nRunCount = nRunCount * 128 + (byNext & 0x7f);
+              }
+
+              nRunCount++;
+
+              if( iPixel + nRunCount > (unsigned int)Size_X ) // protection against corrupt data
+                  nRunCount = Size_X - iPixel;
+
+              while( iPixel + nRunCount > nextTile) {
+                  pt->pTileOffset[tileindex].offset = offset - pt->pPix;
+                  pt->pTileOffset[tileindex].pixel = iPixel;
+                  tileindex++;
+                  nextTile += TILE_SIZE;
+              }
+              iPixel += nRunCount;
+          }
+#endif
+
+          pt->bValid = true;
+      }
+
+//          Line is valid, de-reference thru proper pallete directly to target
+
+      if(xl > Size_X)
+            xl = Size_X;
+
+#ifdef USE_OLD_CACHE
+      pCL = pt->pPix + xs;
+
+      //    Optimization for most usual case
+      if((BPP == 24) && (1 == sub_samp))
+      {
+            ix = xs;
+            while(ix < xl-1)
+            {
+                  unsigned char cur_by = *pCL;
+                  rgbval = (int)(pPalette[cur_by]);
+                  while((ix < xl-1))
+                  {
+                        if(cur_by != *pCL)
+                              break;
+                        *((int *)prgb) = rgbval;
+                        prgb += 3;
+                        pCL ++;
+                        ix  ++;
+                  }
+            }
+      }
+      else
+      {
+            int dest_inc_val_bytes = (BPP/8) * sub_samp;
+            ix = xs;
+            while(ix < xl-1)
+            {
+                  unsigned char cur_by = *pCL;
+                  rgbval = (int)(pPalette[cur_by]);
+                  while((ix < xl-1))
+                  {
+                        if(cur_by != *pCL)
+                              break;
+                        *((int *)prgb) = rgbval;
+                        prgb+=dest_inc_val_bytes ;
+                        pCL += sub_samp;
+                        ix  += sub_samp;
+                  }
+            }
+      }
+
+// Get the last pixel explicitely
+//  irrespective of the sub_sampling factor
+
+      if(xs < xl-1)
+      {
+        unsigned char *pCLast = pt->pPix + (xl - 1);
+        unsigned char *prgb_last = pLineBuf + ((xl - 1)-xs) * BPP/8;
+
+        rgbval = (int)(pPalette[*pCLast]);        // last pixel
+        unsigned char a = rgbval & 0xff;
+        *prgb_last++ = a;
+        a = (rgbval >> 8) & 0xff;
+        *prgb_last++ = a;
+        a = (rgbval >> 16) & 0xff;
+        *prgb_last = a;
+      }
+#else
+      {
+          int tileindex = xs / TILE_SIZE;
+          int tileoffset = pt->pTileOffset[tileindex].offset;
+
+          lp = pt->pPix + tileoffset;
+          ix = pt->pTileOffset[tileindex].pixel;
+      }
+
+nocachestart:
+      unsigned int i = 0;
+
+      nValueShift = 7 - nColorSize;
+      byValueMask = (((1 << nColorSize)) - 1) << nValueShift;
+      byCountMask = (1 << (7 - nColorSize)) - 1;
+      int nPixValue = 0; // satisfy stupid compiler warning
+      bool bLastPixValueValid = false;
+
+      while(ix < xl - 1 ) {
+          byNext = *lp++;
+
+          nPixValue = (byNext & byValueMask) >> nValueShift;
+          unsigned int nRunCount;
+
+          if(byNext == 0)
+              nRunCount = xl - ix; // corrupted chart, just run to the end
+          else {
+              nRunCount = byNext & byCountMask;
+              while( (byNext & 0x80) != 0 )
+              {
+                  byNext = *lp++;
+                  nRunCount = nRunCount * 128 + (byNext & 0x7f);
+              }
+
+              nRunCount++;
+          }
+
+          if(ix < xs) {
+              if(ix + nRunCount <= (unsigned int)xs) {
+                  ix += nRunCount;
+                  continue;
+              }
+              nRunCount -= xs - ix;
+              ix = xs;
+          }
+
+          if(ix + nRunCount >= (unsigned int)xl) {
+              nRunCount = xl - 1 - ix;
+              bLastPixValueValid = true;
+          }
+
+          rgbval = (int)(pPalette[nPixValue]);
+
+          //    Optimization for most usual case
+// currently this is the only case possible...
+//          if((BPP == 24) && (1 == sub_samp))
+          {
+              int count = nRunCount;
+              if( count < 16 ) {
+                  // for short runs, use simple loop
+                  while(count--) {
+                      *(uint32_t*)prgb = rgbval;
+                      prgb += 3;
+                  } 
+              } else if(rgbval == 0 || rgbval == 0xffffff) {
+                  // optimization for black or white (could work for any gray too)
+                  memset(prgb, rgbval, nRunCount*3);
+                  prgb += nRunCount*3;
+              } else {
+                  // note: this may not be optimal for all processors and compilers
+                  // I optimized for x86_64 using gcc with -O3
+                  // it is probably possible to gain even faster performance by ensuring alignment
+                  // to 16 or 32byte boundary (depending on processor) then using inline assembly
+
+#ifdef __ARM_ARCH
+//  ARM needs 8 byte alignment for *(uint64_T *x) = *(uint64_T *y)
+//  because the compiler will (probably) use the ldrd/strd instuction pair.
+//  So, advance the prgb pointer until it is 8-byte aligned,
+//  and then carry on if enough bytes are left to process as 64 bit elements
+                  
+                  if((long)prgb & 7){
+                    while(count--) {
+                        *(uint32_t*)prgb = rgbval;
+                        prgb += 3;
+                        if( !((long)prgb & 7) ){
+                            if(count >= 8)
+                                break;
+                        }
+                    }
+                  }
+#endif                  
+                  
+
+                  // fill first 24 bytes
+                  uint64_t *b = (uint64_t*)prgb;
+                  for(int i=0; i < 8; i++) {
+                      *(uint32_t*)prgb = rgbval;
+                      prgb += 3;
+                  }
+                  count -= 8;
+
+                  // fill in blocks of 24 bytes
+                  uint64_t *y = (uint64_t*)prgb;
+                  int count_d8 = count >> 3;
+                  prgb += 24*count_d8;
+                  while(count_d8--) {
+                      *y++ = b[0];
+                      *y++ = b[1];
+                      *y++ = b[2];
+                  }
+
+                  // fill remaining bytes
+                  int rcount = count & 0x7;
+                  while(rcount--) {
+                      *(uint32_t*)prgb = rgbval;
+                      prgb += 3;
+                  }
+              }
+          }
+
+          ix += nRunCount;
+      }
+
+// Get the last pixel explicitely
+//  irrespective of the sub_sampling factor
+
+    if(ix < xl) {
+        if(!bLastPixValueValid) {
+            byNext = *lp++;
+            nPixValue = (byNext & byValueMask) >> nValueShift;
+        }
+        rgbval = (int)(pPalette[nPixValue]);        // last pixel
+        unsigned char a = rgbval & 0xff;
+
+        *prgb++ = a;
+        a = (rgbval >> 8) & 0xff;
+        *prgb++ = a;
+        a = (rgbval >> 16) & 0xff;
+        *prgb = a;
+    }
+#endif
+
+#ifdef PRINT_TIMINGS
+    ttime += sw.Time();
+
+    if(cnt == 500000) {
+        static int d;
+        printf("cache time: %d %f\n", d, ttime / 1000.0);
+        cnt = 0;
+        d++;
+//        ttime = 0;
+    }
+#endif
+
+    if(!bUseLineCache) {
+#ifndef USE_OLD_CACHE
+        free(pt->pTileOffset);
+#endif
+        free(pt->pPix);
+    }
+
+    return 1;
+}
 
 
 
