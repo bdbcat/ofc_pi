@@ -1720,11 +1720,28 @@ void shopPanel::SelectChart( oeSencChartPanel *chart )
 
 void shopPanel::SelectChartByID( wxString& sku, int index)
 {
+    bool bfound = false;
     for(unsigned int i = 0 ; i < m_panelArray.GetCount() ; i++){
         itemChart *chart = m_panelArray.Item(i)->m_pChart;
         if(sku.IsSameAs(chart->productSKU) && (index == chart->indexSKU)){
             SelectChart(m_panelArray.Item(i));
             MakeChartVisible(m_ChartSelected);
+            bfound = true;
+            break;
+        }
+    }
+    
+    //  It is possible that the index value is wrong, and so nothing was found.
+    //  In this case, try again with just the SKU
+    if(!bfound){
+        for(unsigned int i = 0 ; i < m_panelArray.GetCount() ; i++){
+            itemChart *chart = m_panelArray.Item(i)->m_pChart;
+            if(sku.IsSameAs(chart->productSKU)){
+                SelectChart(m_panelArray.Item(i));
+                MakeChartVisible(m_ChartSelected);
+                bfound = true;
+                break;
+            }
         }
     }
 }
@@ -1804,6 +1821,8 @@ void shopPanel::getDownloadList(itemChart *chart)
     
     int flen;
     unsigned char *decodedBody = unbase64( chart->productBody.mb_str(),  chart->productBody.Len(), &flen );
+    
+    //printf("%s\n", decodedBody);
     
     // Parse the xml
     
@@ -2286,37 +2305,37 @@ void shopPanel::OnButtonInstall( wxCommandEvent& event )
     // Is chart already in "download" state for me?
         if((chart->getChartStatus() == STAT_READY_DOWNLOAD) || (chart->getChartStatus() == STAT_CURRENT)) {   
         
-        // Get the target install directory
-        wxString installDir = chart->installLocation;
-        wxString chosenInstallDir;
-        
-        if(1/*!installDir.Length()*/){
+            // Get the target install directory
+            wxString installDir = chart->installLocation;
+            wxString chosenInstallDir;
             
-            wxString installLocn = g_PrivateDataDir;
-            if(installDir.Length())
-                installLocn = installDir;
-            else if(g_lastInstallDir.Length())
-                installLocn = g_lastInstallDir;
-            
-            wxDirDialog dirSelector( NULL, _("Choose chart install location."), installLocn, wxDD_DEFAULT_STYLE  );
-            int result = dirSelector.ShowModal();
-            
-            if(result == wxID_OK){
-                chosenInstallDir = dirSelector.GetPath();
-                chart->installLocationTentative = chosenInstallDir;
-                g_lastInstallDir = chosenInstallDir;
-            }
-            else{
-                setStatusText( _("Status:  Cancelled."));
-                m_buttonCancelOp->Hide();
-                GetButtonUpdate()->Enable();
+            if(1/*!installDir.Length()*/){
                 
-                g_statusOverride.Clear();
-                UpdateChartList();
+                wxString installLocn = g_PrivateDataDir;
+                if(installDir.Length())
+                    installLocn = installDir;
+                else if(g_lastInstallDir.Length())
+                    installLocn = g_lastInstallDir;
                 
-                return;
+                wxDirDialog dirSelector( NULL, _("Choose chart install location."), installLocn, wxDD_DEFAULT_STYLE  );
+                int result = dirSelector.ShowModal();
+                
+                if(result == wxID_OK){
+                    chosenInstallDir = dirSelector.GetPath();
+                    chart->installLocationTentative = chosenInstallDir;
+                    g_lastInstallDir = chosenInstallDir;
+                }
+                else{
+                    setStatusText( _("Status:  Cancelled."));
+                    m_buttonCancelOp->Hide();
+                    GetButtonUpdate()->Enable();
+                    
+                    g_statusOverride.Clear();
+                    UpdateChartList();
+                    
+                    return;
+                }
             }
-        }
         
         m_startedDownload = false;
         getDownloadList(chart);
@@ -2432,12 +2451,21 @@ void shopPanel::StopAllDownloads()
         g_curlDownloadThread->Abort();
     }
     
+    m_ChartSelected = NULL;                 // clear list selection
+    setStatusText( _("Status: OK"));
+    m_buttonCancelOp->Hide();
+    
+    g_statusOverride.Clear();
+    m_buttonInstall->Enable();
+    
+    UpdateChartList();
 }
 
 
 void shopPanel::UpdateChartList( )
 {
     // Capture the state of any selected chart
+    m_ChartSelectedSKU.Clear();
     if(m_ChartSelected){
         itemChart *chart = m_ChartSelected->m_pChart;
         if(chart){
@@ -2516,7 +2544,8 @@ void shopPanel::UpdateChartList( )
         } 
     }
     
-    SelectChartByID(m_ChartSelectedSKU, m_ChartSelectedIndex);
+    if(m_ChartSelectedSKU.Len())
+        SelectChartByID(m_ChartSelectedSKU, m_ChartSelectedIndex);
     
     m_scrollWinChartList->ClearBackground();
     m_scrollWinChartList->GetSizer()->Layout();
@@ -2664,6 +2693,8 @@ void OESENC_CURL_EvtHandler::onEndEvent(wxCurlEndPerformEvent &evt)
         downloadOutStream = NULL;
     }
     
+    g_curlDownloadThread->Wait();
+    delete g_curlDownloadThread;
     g_curlDownloadThread = NULL;
 
     if(g_shopPanel->m_bAbortingDownload){
