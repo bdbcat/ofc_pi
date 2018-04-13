@@ -524,7 +524,9 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       m_proj_parameter = pHeader->ProjParm;
       
       bool bp_set = false;;
-      wxString stru = wxString(pHeader->Projection);
+      wxString strl = wxString(pHeader->Projection);
+      wxString stru = strl.MakeUpper();
+      
       if(stru.Matches(_T("*MERCATOR*")))
       {
           m_projection = PI_PROJECTION_MERCATOR;
