@@ -2424,6 +2424,8 @@ void shopPanel::OnButtonCancelOp( wxCommandEvent& event )
     if(g_curlDownloadThread){
         m_bAbortingDownload = true;
         g_curlDownloadThread->Abort();
+        g_curlDownloadThread = NULL;
+        
         m_ipGauge->SetValue(0);
         setStatusTextProgress(_T(""));
         m_bcompleteChain = true;
@@ -2449,6 +2451,8 @@ void shopPanel::StopAllDownloads()
         g_downloadChainIdentifier = 0;          // stop chain-through
         
         g_curlDownloadThread->Abort();
+        g_curlDownloadThread = NULL;
+        
     }
     
     m_ChartSelected = NULL;                 // clear list selection
@@ -2693,9 +2697,13 @@ void OESENC_CURL_EvtHandler::onEndEvent(wxCurlEndPerformEvent &evt)
         downloadOutStream = NULL;
     }
     
-    g_curlDownloadThread->Wait();
-    delete g_curlDownloadThread;
-    g_curlDownloadThread = NULL;
+    if(!g_shopPanel->m_bAbortingDownload){
+        if(g_curlDownloadThread){
+            g_curlDownloadThread->Wait();
+            delete g_curlDownloadThread;
+            g_curlDownloadThread = NULL;
+        }
+    }
 
     if(g_shopPanel->m_bAbortingDownload){
         if(g_shopPanel->GetSelectedChart()){
