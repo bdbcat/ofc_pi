@@ -64,12 +64,30 @@ enum{
         STAT_NEED_REFRESH
 };
         
-        
+//      A single chart info container
+class chartMetaInfo
+{
+public:
+    chartMetaInfo(){ flag_found = false; }
+    ~chartMetaInfo(){}
+    
+    wxString title;
+    wxString raster_edition;
+    wxString bzb_name;
+    bool flag_found;
+};
+
+WX_DECLARE_OBJARRAY(chartMetaInfo *, ArrayOfchartMetaInfo);    
+
+
+
+
 //      A single chart(set) container
 class itemChart
 {
 public:    
-    itemChart() { m_downloading = false; m_bEnabled = true; bActivated = false; device_ok = false; }
+    itemChart() { m_downloading = false; m_bEnabled = true; bActivated = false; device_ok = false; pendingUpdateFlag = false; }
+    itemChart( wxString &product_sku, int index);
     ~itemChart() {};
 
     void setDownloadPath(int slot, wxString path);
@@ -80,7 +98,6 @@ public:
     bool isChartsetDontShow();
     bool isMatch(itemChart *thatItemChart);
     
-    itemChart( wxString &product_sku, int index);
     
 public:    
     bool isEnabled(){ return m_bEnabled; }
@@ -113,12 +130,8 @@ public:
     
     int display_flags;
     
+    wxString indexFileURL;
     //
-//    wxString orderRef;
-//    wxString purchaseDate;
-//    wxString chartID;
-//    wxString quantityId;
-//    wxString currentChartEdition;
     wxString thumbnailURL;
     
     
@@ -132,7 +145,14 @@ public:
     
     wxString lastInstall;          // For updates, the full path of installed chartset
     int m_status;
-        
+    
+    ArrayOfchartMetaInfo chartElementArray;
+    
+    wxArrayString updatedChartsURLArray;
+    wxArrayString deletedChartsNameArray;
+    bool pendingUpdateFlag;
+    bool bSkipDuplicates;
+    
 };
 
 WX_DECLARE_OBJARRAY(itemChart *,      ArrayOfCharts);    
@@ -257,9 +277,10 @@ public:
     
     oeSencChartPanel *GetSelectedChart(){ return m_ChartSelected; }
     
-    void OnButtonUpdate( wxCommandEvent& event );
+    void OnButtonRefresh( wxCommandEvent& event );
     void OnButtonCancelOp( wxCommandEvent& event );
     void OnButtonInstall( wxCommandEvent& event );
+    void OnButtonUpdate( wxCommandEvent& event );
     void OnButtonInstallChain( wxCommandEvent& event );
     void OnButtonIndexChain( wxCommandEvent& event );
     
@@ -270,11 +291,16 @@ public:
     void chainToNextChart(itemChart *chart, int ntry = 0);
     void advanceToNextChart(itemChart *chart);
     
+    void downloadList(itemChart *chart, wxArrayString &targetURLArray);
+    void doFullSetDownload(itemChart *chart);
+    
     int doDownloadGui();
     
     void UpdateChartList();
-    void OnGetNewSystemName( wxCommandEvent& event );
-    void OnChangeSystemName( wxCommandEvent& event );
+    int checkUpdateStatus();
+        
+    //void OnGetNewSystemName( wxCommandEvent& event );
+    //void OnChangeSystemName( wxCommandEvent& event );
     void UpdateActionControls();
     void setStatusText( const wxString &text ){ m_staticTextStatus->SetLabel( text );  m_staticTextStatus->Refresh(); }
     void setStatusTextProgress( const wxString &text ){ m_staticTextStatus/*m_staticTextStatusProgress*/->SetLabel( text );  /*m_staticTextStatusProgress->Refresh();*/ }

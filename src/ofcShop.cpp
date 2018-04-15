@@ -51,13 +51,15 @@
 #include <wx/arrimpl.cpp> 
 WX_DEFINE_OBJARRAY(ArrayOfCharts);
 WX_DEFINE_OBJARRAY(ArrayOfChartPanels);
+WX_DEFINE_OBJARRAY(ArrayOfchartMetaInfo);
 
 WX_DECLARE_STRING_HASH_MAP( int, ProdSKUIndexHash );
+
 
 //  Static variables
 ArrayOfCharts g_ChartArray;
 
-int g_timeout_secs = 5;
+int g_timeout_secs = 10;
 
 wxArrayString g_systemNameChoiceArray;
 wxArrayString g_systemNameServerArray;
@@ -232,6 +234,7 @@ itemChart::itemChart( wxString &product_sku, int index) {
     productSKU = product_sku;
     indexSKU = index; 
     m_status = STAT_UNKNOWN;
+    pendingUpdateFlag = false;
 }
 
 
@@ -316,6 +319,9 @@ int itemChart::getChartStatus()
     if(!bActivated){
         m_status = STAT_REQUESTABLE;
         return m_status;
+    }
+    else if(pendingUpdateFlag){
+        m_status = STAT_STALE;
     }
     else if(installLocation.Length()){
         m_status = STAT_CURRENT;
@@ -637,68 +643,6 @@ bool doLogin()
     g_loginPass = login.m_PasswordCtl->GetValue();
     
     return true;
-    
-#if 0    
-    
-    wxString url = userURL;
-    if(g_admin)
-        url = adminURL;
-    
-    url +=_T("?fc=module&module=occharts&controller=api");
-    
-    wxString loginParms;
-    loginParms += _T("taskId=login");
-    loginParms += _T("&username=") + g_loginUser;
-    loginParms += _T("&password=") + pass;
-    
-    wxCurlHTTPNoZIP post;
-    post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
-    size_t res = post.Post( loginParms.ToAscii(), loginParms.Len(), url );
-    
-    // get the response code of the server
-    int iResponseCode;
-    post.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
-    
-    if(iResponseCode == 200){
-        TiXmlDocument * doc = new TiXmlDocument();
-        const char *rr = doc->Parse( post.GetResponseBody().c_str());
-        
-        wxString queryResult;
-        wxString loginKey;
-        
-        if( res )
-        {
-            TiXmlElement * root = doc->RootElement();
-            if(!root){
-                wxString r = _T("50");
-                checkResult(r);                              // undetermined error??
-                return false;
-            }
-            
-            wxString rootName = wxString::FromUTF8( root->Value() );
-            TiXmlNode *child;
-            for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
-                wxString s = wxString::FromUTF8(child->Value());
-                
-                if(!strcmp(child->Value(), "result")){
-                    TiXmlNode *childResult = child->FirstChild();
-                    queryResult =  wxString::FromUTF8(childResult->Value());
-                }
-                else if(!strcmp(child->Value(), "key")){
-                    TiXmlNode *childResult = child->FirstChild();
-                    loginKey =  wxString::FromUTF8(childResult->Value());
-                }
-            }
-        }
-        
-        if(queryResult == _T("1"))
-            g_loginKey = loginKey;
-        
-        return (checkResult(queryResult) == 0);
-    }
-    else
-        return false;
-#endif    
 }
 
 /*
@@ -713,6 +657,68 @@ app_id_ok="false"
 device_id_ok="false">
 </product>
 */
+
+
+void processBody(itemChart *chart){
+    // Decode the productBody from MIME64 block in GetAccount.XML response
+    
+    if(!chart->productBody.Len())
+        return;
+    
+    int flen;
+    unsigned char *decodedBody = unbase64( chart->productBody.mb_str(),  chart->productBody.Len(), &flen );
+    
+    //printf("%s\n", decodedBody);
+    
+    // Parse the xml
+    
+    TiXmlDocument * doc = new TiXmlDocument();
+    doc->Parse( (const char *)decodedBody );
+    
+    
+    TiXmlElement * root = doc->RootElement();
+    if(!root)
+        return;
+    
+    wxString code;
+    wxString compilation_date;
+    wxString name;
+    wxString basedir;
+    wxString indexFileURL;
+    
+    wxString rootName = wxString::FromUTF8( root->Value() );
+    TiXmlNode *child;
+    for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
+        
+        if(!strcmp(child->Value(), "maplib")){
+            TiXmlElement *product = child->ToElement();
+            code = wxString( product->Attribute( "code" ), wxConvUTF8 );
+            compilation_date = wxString( product->Attribute( "compilation_date" ), wxConvUTF8 );
+            name = wxString( product->Attribute( "name" ), wxConvUTF8 );
+            basedir = wxString( product->Attribute( "basedir" ), wxConvUTF8 );
+            indexFileURL = wxString( product->Attribute( "index" ), wxConvUTF8 );
+        }
+    }
+    
+    if(!indexFileURL.Len())
+        return;
+    
+    if(!basedir.Len())
+        return;
+    
+    if(!indexFileURL.Len())
+        return;
+    
+    // Sometimes the baseDir has trailing "/", sometimes not...
+        //  Let us be sure that it does.    
+        if(basedir.Last() != '/')    
+            basedir += _T("/");
+        
+        chart->indexBaseDir = basedir;
+        chart->shortSetName = code;
+        chart->indexFileURL = indexFileURL;
+}
+
 
 wxString ProcessResponse(std::string body)
 {
@@ -836,6 +842,8 @@ wxString ProcessResponse(std::string body)
                             pItem->productBody = product_body;
                             pItem->device_ok = device_id_ok.IsSameAs(_T("TRUE"), false);
                             pItem->bActivated = activated.IsSameAs(_T("TRUE"), false);
+                            
+                            processBody(pItem);
                         }
                     }
                     
@@ -879,7 +887,7 @@ int getChartList( bool bShowErrorDialogs = true){
     
     wxCurlHTTPNoZIP post;
     //wxCurlHTTP post;
-    //post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
+    post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
     
     /*size_t res = */post.Post( loginParms.ToAscii(), loginParms.Len(), url );
     
@@ -1580,8 +1588,6 @@ void chartScroller::OnPaint( wxPaintEvent &WXUNUSED(event) )
 
 BEGIN_EVENT_TABLE( shopPanel, wxPanel )
 EVT_BUTTON( ID_CMD_BUTTON_INSTALL, shopPanel::OnButtonInstall )
-EVT_BUTTON( ID_CMD_BUTTON_INSTALL_CHAIN, shopPanel::OnButtonInstallChain )
-EVT_BUTTON( ID_CMD_BUTTON_INDEX_CHAIN, shopPanel::OnButtonIndexChain )
 EVT_BUTTON( ID_CMD_BUTTON_DOWNLOADLIST_CHAIN, shopPanel::OnDownloadListChain )
 EVT_BUTTON( ID_CMD_BUTTON_DOWNLOADLIST_PROC, shopPanel::OnDownloadListProc )
 END_EVENT_TABLE()
@@ -1628,7 +1634,7 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     boxSizerTop->Add(staticBoxSizerChartList, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
 
     m_buttonUpdate = new wxButton(this, wxID_ANY, _("Refresh Chart List"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
-    m_buttonUpdate->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(shopPanel::OnButtonUpdate), NULL, this);
+    m_buttonUpdate->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(shopPanel::OnButtonRefresh), NULL, this);
     staticBoxSizerChartList->Add(m_buttonUpdate, 1, wxBOTTOM | wxRIGHT | wxALIGN_RIGHT, WXC_FROM_DIP(5));
     
     wxPanel *cPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxBG_STYLE_ERASE );
@@ -1768,7 +1774,7 @@ void shopPanel::MakeChartVisible(oeSencChartPanel *chart)
 }
 
 
-void shopPanel::OnButtonUpdate( wxCommandEvent& event )
+void shopPanel::OnButtonRefresh( wxCommandEvent& event )
 {
     if(!doLogin())
         return;
@@ -1791,215 +1797,34 @@ void shopPanel::OnButtonUpdate( wxCommandEvent& event )
     }
     g_chartListUpdatedOK = true;
 
-    setStatusText( _("Status: Ready"));
+    setStatusText( _("Status: Checking for updates."));
     m_ipGauge->Stop();
+    
+    int rv = checkUpdateStatus();
+    if(rv != 0){                  // Some error
+        wxString ec;
+        ec.Printf(_T(" { %d }"), err_code);
+        setStatusText( _("Status: Chartset index download failed.") + ec);
+        return;
+    }
+    
+    setStatusText( _("Status: Ready"));
     
     UpdateChartList();
     
     saveShopConfig();
 }
 
-void shopPanel::getDownloadList(itemChart *chart)
+void shopPanel::downloadList(itemChart *chart, wxArrayString &targetURLArray)
 {
-    if(!chart)
-        return;
     
+    // Fill the URL array with desired file downloads
     chart->urlArray.Clear();
     
-    // Decode the productBody from MIME64 block in GetAccount.XML response
-    
-    if(!chart->productBody.Len()){
-        setStatusText( _("Status: Error reading GetAccount results."));
-        m_buttonCancelOp->Hide();
-        GetButtonUpdate()->Enable();
-        
-        g_statusOverride.Clear();
-        UpdateChartList();
-        
-        return;
-    }
-    
-    int flen;
-    unsigned char *decodedBody = unbase64( chart->productBody.mb_str(),  chart->productBody.Len(), &flen );
-    
-    //printf("%s\n", decodedBody);
-    
-    // Parse the xml
-    
-    TiXmlDocument * doc = new TiXmlDocument();
-    doc->Parse( (const char *)decodedBody );
-    
-    
-    TiXmlElement * root = doc->RootElement();
-    if(!root)
-    {
-        setStatusText( _("Status: Error parsing GetAccount results."));
-        m_buttonCancelOp->Hide();
-        GetButtonUpdate()->Enable();
-        
-        g_statusOverride.Clear();
-        UpdateChartList();
-        
-        return;                              // undetermined error??
-    }
-    
-    wxString code;
-    wxString compilation_date;
-    wxString name;
-    wxString basedir;
-    wxString indexFileURL;
-    
-    wxString rootName = wxString::FromUTF8( root->Value() );
-    TiXmlNode *child;
-    for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
-        
-        if(!strcmp(child->Value(), "maplib")){
-            TiXmlElement *product = child->ToElement();
-            code = wxString( product->Attribute( "code" ), wxConvUTF8 );
-            compilation_date = wxString( product->Attribute( "compilation_date" ), wxConvUTF8 );
-            name = wxString( product->Attribute( "name" ), wxConvUTF8 );
-            basedir = wxString( product->Attribute( "basedir" ), wxConvUTF8 );
-            indexFileURL = wxString( product->Attribute( "index" ), wxConvUTF8 );
-        }
-    }
-
-    if(!indexFileURL.Len())
-        return;
-
-    if(!basedir.Len())
-        return;
-    
-    if(!indexFileURL.Len())
-        code;
-    
-    // Sometimes the baseDir has trailing "/", sometimes not...
-    //  Let us be sure that it does.    
-    if(basedir.Last() != '/')    
-        basedir += _T("/");
-    
-    chart->indexBaseDir = basedir;
-    chart->shortSetName = code;
-    
-    // Fetch the chart index XML file
-    setStatusText( _("Status: Downloading index file..."));
-    m_buttonCancelOp->Show();
-    GetButtonUpdate()->Disable();
-    
-    g_statusOverride = _("Downloading...");
-    UpdateChartList();
-    
-    wxYield();
-    
-    m_bcompleteChain = true;
-    m_bAbortingDownload = false;
-    
-    //  Create a destination file name for the download.
-    wxURI uri;
-    uri.Create(indexFileURL);
-    
-    wxString serverFilename = uri.GetPath();
-    wxFileName fn(serverFilename);
-    
-    wxString downloadIndexDir = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
-    if(!::wxDirExists(downloadIndexDir)){
-        ::wxMkdir(downloadIndexDir);
+    for(unsigned int i=0 ; i < targetURLArray.GetCount() ; i++){
+        chart->urlArray.Add( targetURLArray.Item(i) );
     }
         
-    wxString downloadIndexFile = downloadIndexDir + fn.GetFullName();
-
-    chart->downloadingFile = downloadIndexFile;
-    
-    downloadOutStream = new wxFFileOutputStream(downloadIndexFile);
-//     if(downloadOutStream->IsOk()){
-//         int dd = 4;
-//     }
-    
-    g_downloadChainIdentifier = ID_CMD_BUTTON_INDEX_CHAIN;
-    g_curlDownloadThread = new wxCurlDownloadThread(g_CurlEventHandler);
-    g_curlDownloadThread->SetURL(indexFileURL);
-    g_curlDownloadThread->SetOutputStream(downloadOutStream);
-    g_curlDownloadThread->Download();
-    
-    
-}
-
-void shopPanel::OnButtonIndexChain( wxCommandEvent& event )
-{
-    itemChart *chart = m_ChartSelected->m_pChart;
-    if(!chart)
-        return;
-    
-    // Chained through from download end event
-    if(m_bcompleteChain){
-            
-            
-            m_bcompleteChain = false;
-            
-            if(m_bAbortingDownload){
-                m_bAbortingDownload = false;
-                OCPNMessageBox_PlugIn(NULL, _("Download cancelled."), _("ofc_pi Message"), wxOK);
-                m_buttonInstall->Enable();
-                return;
-            }
-            
-            //  Download is apparently done.
-            g_statusOverride.Clear();
-            
-            // Read the index file into memory
-            
-            unsigned char *readBuffer = NULL;
-            wxFile indexFile(chart->downloadingFile.mb_str());
-            if(indexFile.IsOpened()){
-                int unsigned flen = indexFile.Length();
-                if(( flen > 0 )  && (flen < 1e7 ) ){                      // Place 10 Mb upper bound on index size 
-                    readBuffer = (unsigned char *)malloc( 2 * flen);     // be conservative
-                    
-                    size_t nRead = indexFile.Read(readBuffer, flen);
-                    if(nRead == flen){
-                        indexFile.Close();
-                        
-                        // Good Read, so parse the XML and populate the Array in the chrt item
-                        TiXmlDocument * doc = new TiXmlDocument();
-                        doc->Parse( (const char *)readBuffer );
-                        
-                        TiXmlElement * root = doc->RootElement();
-                        if(!root){
-                            setStatusText( _("Status: Error parsing index file..."));
-                            m_buttonCancelOp->Hide();
-                            GetButtonUpdate()->Enable();
-                            
-                            g_statusOverride.Clear();
-                            UpdateChartList();
-                            
-                            return;                        
-                        }
-                        
-                        TiXmlNode *child;
-                        for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
-                            const char * t = child->Value();
-                            
-                            if(!strcmp(child->Value(), "chart")){
-                                TiXmlNode *chartx;
-                                for ( chartx = child->FirstChild(); chartx != 0; chartx = chartx->NextSibling()){
-                                    const char * s = chartx->Value();
-                                    if(!strcmp(s, "x_fugawi_bzb_name")){
-                                        TiXmlNode *bzb = chartx->FirstChild();
-                                        wxString bzbFileName =  wxString::FromUTF8(bzb->Value());
-                                        wxString fullBZBUrl = chart->indexBaseDir + bzbFileName;
-                                        chart->urlArray.Add( fullBZBUrl );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            free(readBuffer);
-
-            // save a reference to the index file, will be relocated and cleared later
-            chart->indexFileTmp = chart->downloadingFile;
-            
-    }
     
     //  OK, the URL Array is populated
     // Now start the download chain
@@ -2013,7 +1838,143 @@ void shopPanel::OnButtonIndexChain( wxCommandEvent& event )
     
     
     return;
+    
 }
+
+
+
+
+
+void shopPanel::doFullSetDownload(itemChart *chart)
+{
+    if(!chart)
+        return;
+    
+    //  Get the full list of download URLs from the index file
+        
+    if(!chart->chartElementArray.GetCount()){           //nead to download the index file, and create the URL list, etc
+    
+        if(chart->indexFileURL.Len()){
+            
+            bool bUpdate = false;    
+            
+            //  Create a destination file name for the download.
+            wxURI uri;
+            uri.Create(chart->indexFileURL);
+            wxString serverFilename = uri.GetPath();
+            wxFileName fn(serverFilename);
+            
+            wxString downloadIndexDir = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
+            if(!::wxDirExists(downloadIndexDir)){
+                ::wxMkdir(downloadIndexDir);
+            }
+            
+            downloadIndexDir += chart->shortSetName + wxFileName::GetPathSeparator();
+            if(!::wxDirExists(downloadIndexDir)){
+                ::wxMkdir(downloadIndexDir);
+            }
+            
+            wxString downloadIndexFile = downloadIndexDir + fn.GetFullName();
+            
+            #ifdef __OCPN__ANDROID__
+            wxString file_URI = _T("file://") + downloadIndexFile;
+            #else
+            wxString file_URI = downloadIndexFile;
+            #endif    
+            
+            
+            _OCPN_DLStatus ret = OCPN_downloadFile( chart->indexFileURL, file_URI, _("Downloading index file"), _("Reading Index: "), wxNullBitmap, this,
+                                                    OCPN_DLDS_ELAPSED_TIME|OCPN_DLDS_ESTIMATED_TIME|OCPN_DLDS_REMAINING_TIME|OCPN_DLDS_SPEED|OCPN_DLDS_SIZE|OCPN_DLDS_URL|OCPN_DLDS_CAN_PAUSE|OCPN_DLDS_CAN_ABORT|OCPN_DLDS_AUTO_CLOSE,
+                                                    10);
+            
+            
+            if(OCPN_DL_NO_ERROR == ret){
+                
+                // save a reference to the downloaded index file, will be relocated and cleared later
+                chart->indexFileTmp = downloadIndexFile;
+                
+                // We parse the index file, building an array of useful information as chartMetaInfo ptrs.
+                
+                unsigned char *readBuffer = NULL;
+                wxFile indexFile(downloadIndexFile.mb_str());
+                if(indexFile.IsOpened()){
+                    int unsigned flen = indexFile.Length();
+                    if(( flen > 0 )  && (flen < 1e7 ) ){                      // Place 10 Mb upper bound on index size 
+                        readBuffer = (unsigned char *)malloc( 2 * flen);     // be conservative
+                        
+                        size_t nRead = indexFile.Read(readBuffer, flen);
+                        if(nRead == flen){
+                            indexFile.Close();
+                            
+                            // Good Read, so parse the XML 
+                            TiXmlDocument * doc = new TiXmlDocument();
+                            doc->Parse( (const char *)readBuffer );
+                            
+                            TiXmlElement * root = doc->RootElement();
+                            if(root){
+                                
+                                
+                                TiXmlNode *child;
+                                for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
+                                    const char * t = child->Value();
+                                    
+                                    chartMetaInfo *pinfo = new chartMetaInfo();
+                                    
+                                    if(!strcmp(child->Value(), "chart")){
+                                        TiXmlNode *chartx;
+                                        for ( chartx = child->FirstChild(); chartx != 0; chartx = chartx->NextSibling()){
+                                            const char * s = chartx->Value();
+                                            if(!strcmp(s, "raster_edition")){
+                                                TiXmlNode *re = chartx->FirstChild();
+                                                pinfo->raster_edition =  wxString::FromUTF8(re->Value());
+                                            }
+                                            if(!strcmp(s, "title")){
+                                                TiXmlNode *title = chartx->FirstChild();
+                                                pinfo->title =  wxString::FromUTF8(title->Value());
+                                            }
+                                            if(!strcmp(s, "x_fugawi_bzb_name")){
+                                                TiXmlNode *bzbName = chartx->FirstChild();
+                                                pinfo->bzb_name = wxString::FromUTF8(bzbName->Value());
+                                            }
+                                            
+                                        }
+                                        
+                                        // Got everything we need, so add the element
+                                        chart->chartElementArray.Add(pinfo);
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                free(readBuffer);
+                readBuffer = NULL;
+            }
+        }
+    }
+    
+    chart->bSkipDuplicates = true;
+    chart->installLocation.Clear();  // Mark as not installed
+    
+    // Fill a target URL array with desired file downloads,
+    // Which in this case is everything gleaned from the index file
+    wxArrayString fullArray;
+    
+    for(unsigned int i=0 ; i < chart->chartElementArray.GetCount() ; i++){
+        chartMetaInfo *p_info = chart->chartElementArray.Item(i);
+        wxString fullBZBUrl = chart->indexBaseDir + p_info->bzb_name;
+        fullArray.Add( fullBZBUrl );
+    }
+    
+    
+    downloadList(chart, fullArray);
+}
+
+
+
+
+
 
 
 void shopPanel::OnDownloadListProc( wxCommandEvent& event )
@@ -2039,7 +2000,8 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
     
     // Advance to the next required download
     
-    advanceToNextChart(chart);
+    if(chart->bSkipDuplicates)
+        advanceToNextChart(chart);
 
     return chainToNextChart(chart);
 
@@ -2150,8 +2112,9 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             chart->indexFileArrayIndex++;               // move to the next file
 
             // Advance to the next required download
-            advanceToNextChart(chart);
-            
+            if(chart->bSkipDuplicates)
+                advanceToNextChart(chart);
+                
             return chainToNextChart(chart);
         }       // bSuccess
         else {                  // on no success with this file, we might try again
@@ -2206,6 +2169,9 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
             ::wxCopyFile(chart->indexFileTmp, indexFile);
         }
         ::wxRemoveFile(chart->indexFileTmp);
+        
+        // We can always celar the updatePending flag if we got this far
+        chart->pendingUpdateFlag = false;
         
         //  Add the target install directory to core dir list if necessary
         //  If the currect core chart directories do not cover this new directory, then add it
@@ -2286,9 +2252,46 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
 
 
 
-void shopPanel::OnButtonInstallChain( wxCommandEvent& event )
+
+void shopPanel::OnButtonUpdate( wxCommandEvent& event )
 {
-    return;
+
+    itemChart *chart = m_ChartSelected->m_pChart;
+    if(!chart)
+        return;
+    
+    // First, we delete any charts indicated by the proper array
+    for(unsigned int i=0 ; i < chart->deletedChartsNameArray.GetCount() ; i++){
+        wxFileName fn(chart->deletedChartsNameArray.Item(i));
+        
+        wxString delTarget = chart->chartInstallLocnFull + wxFileName::GetPathSeparator() + fn.GetName() + _T(".BAP");
+        ::wxRemoveFile(delTarget);
+        delTarget = chart->chartInstallLocnFull + wxFileName::GetPathSeparator() +  fn.GetName() + _T(".BSB");
+        ::wxRemoveFile(delTarget);
+    }
+        
+    
+    
+    m_startedDownload = false;
+    chart->bSkipDuplicates = false;     // Force overwrite
+    
+    
+    // Fill a target URL array with desired file downloads,
+    // Which in this case is the update list
+    wxArrayString targetURLArray;
+    
+    for(unsigned int i=0 ; i < chart->updatedChartsURLArray.GetCount() ; i++){
+        wxString fullBZBUrl = chart->indexBaseDir + chart->updatedChartsURLArray.Item(i);
+        targetURLArray.Add( fullBZBUrl );
+    }
+    
+    // Use existing install location
+    chart->installLocationTentative = chart->installLocation;
+    
+    
+    return downloadList(chart, targetURLArray);
+    
+    
 }
 
 
@@ -2300,10 +2303,15 @@ void shopPanel::OnButtonInstall( wxCommandEvent& event )
     itemChart *chart = m_ChartSelected->m_pChart;
     if(!chart)
         return;
+
+    //  If an update is pending, branch here.
+    if(chart->pendingUpdateFlag)
+        return OnButtonUpdate(event);
+    
     
    
     // Is chart already in "download" state for me?
-        if((chart->getChartStatus() == STAT_READY_DOWNLOAD) || (chart->getChartStatus() == STAT_CURRENT)) {   
+    if((chart->getChartStatus() == STAT_READY_DOWNLOAD) || (chart->getChartStatus() == STAT_CURRENT)) {   
         
             // Get the target install directory
             wxString installDir = chart->installLocation;
@@ -2338,8 +2346,7 @@ void shopPanel::OnButtonInstall( wxCommandEvent& event )
             }
         
         m_startedDownload = false;
-        getDownloadList(chart);
-        return;
+        return doFullSetDownload(chart);
     }
     
     // Otherwise, do the activate step
@@ -2606,6 +2613,251 @@ void shopPanel::UpdateActionControls()
     }
     
 }
+
+
+// Update management
+
+int shopPanel::checkUpdateStatus()
+{
+
+    int ret_code = 0;
+    
+    // get a list of chartsets presently installed
+    ArrayOfCharts installedChartList;
+ 
+    for(unsigned int i=0 ; i < g_ChartArray.GetCount() ; i++){
+        itemChart *c1 = g_ChartArray.Item(i);
+        if( STAT_CURRENT == c1->getChartStatus())
+            installedChartList.Add(c1);
+    }
+    
+    // Presumably, the chartlist has been built once, so the URL of the index file is known
+    //  For each chartset, download the index file
+    
+    for(unsigned int i=0 ; i < installedChartList.GetCount() ; i++){
+        itemChart *c1 = g_ChartArray.Item(i);
+        
+        if(c1->indexFileURL.Len()){
+            
+            bool bUpdate = false;    
+            
+            //  Create a destination file name for the download.
+            wxURI uri;
+            uri.Create(c1->indexFileURL);
+            wxString serverFilename = uri.GetPath();
+            wxFileName fn(serverFilename);
+            
+            wxString downloadIndexDir = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
+            if(!::wxDirExists(downloadIndexDir)){
+                ::wxMkdir(downloadIndexDir);
+            }
+            
+            downloadIndexDir += c1->shortSetName + wxFileName::GetPathSeparator();
+            if(!::wxDirExists(downloadIndexDir)){
+                ::wxMkdir(downloadIndexDir);
+            }
+            
+            
+            wxString downloadIndexFile = downloadIndexDir + fn.GetFullName();
+            
+            #ifdef __OCPN__ANDROID__
+            wxString file_URI = _T("file://") + downloadIndexFile;
+            #else
+            wxString file_URI = downloadIndexFile;
+            #endif    
+            
+            
+            _OCPN_DLStatus ret = OCPN_downloadFile( c1->indexFileURL, file_URI, _("Downloading index file"), _("Reading Index: "), wxNullBitmap, this,
+                                                    OCPN_DLDS_ELAPSED_TIME|OCPN_DLDS_ESTIMATED_TIME|OCPN_DLDS_REMAINING_TIME|OCPN_DLDS_SPEED|OCPN_DLDS_SIZE|OCPN_DLDS_URL|OCPN_DLDS_CAN_PAUSE|OCPN_DLDS_CAN_ABORT|OCPN_DLDS_AUTO_CLOSE,
+                                                    10);
+            
+             
+            if(OCPN_DL_NO_ERROR == ret){
+                
+                // save a reference to the downloaded index file, will be relocated and cleared later
+                c1->indexFileTmp = downloadIndexFile;
+                
+                // We parse the index file, building an array of useful information as chartMetaInfo ptrs.
+                
+                unsigned char *readBuffer = NULL;
+                wxFile indexFile(downloadIndexFile.mb_str());
+                if(indexFile.IsOpened()){
+                    int unsigned flen = indexFile.Length();
+                    if(( flen > 0 )  && (flen < 1e7 ) ){                      // Place 10 Mb upper bound on index size 
+                        readBuffer = (unsigned char *)malloc( 2 * flen);     // be conservative
+                        
+                        size_t nRead = indexFile.Read(readBuffer, flen);
+                        if(nRead == flen){
+                            indexFile.Close();
+                            
+                            // Good Read, so parse the XML 
+                            TiXmlDocument * doc = new TiXmlDocument();
+                            doc->Parse( (const char *)readBuffer );
+                            
+                            TiXmlElement * root = doc->RootElement();
+                            if(root){
+                            
+                                
+                                TiXmlNode *child;
+                                for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
+                                    const char * t = child->Value();
+                                    
+                                    chartMetaInfo *pinfo = new chartMetaInfo();
+                                    
+                                    if(!strcmp(child->Value(), "chart")){
+                                        TiXmlNode *chartx;
+                                        for ( chartx = child->FirstChild(); chartx != 0; chartx = chartx->NextSibling()){
+                                            const char * s = chartx->Value();
+                                            if(!strcmp(s, "raster_edition")){
+                                                TiXmlNode *re = chartx->FirstChild();
+                                                pinfo->raster_edition =  wxString::FromUTF8(re->Value());
+                                            }
+                                            if(!strcmp(s, "title")){
+                                                TiXmlNode *title = chartx->FirstChild();
+                                                pinfo->title =  wxString::FromUTF8(title->Value());
+                                            }
+                                            if(!strcmp(s, "x_fugawi_bzb_name")){
+                                                TiXmlNode *bzbName = chartx->FirstChild();
+                                                pinfo->bzb_name = wxString::FromUTF8(bzbName->Value());
+                                            }
+                                            
+                                        }
+                                        
+                                        // Got everything we need, so add the element
+                                        c1->chartElementArray.Add(pinfo);
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                free(readBuffer);
+                readBuffer = NULL;
+                
+                if(c1->chartElementArray.GetCount()){
+                    //  Now read the installed chartset index file...
+                    
+                    ArrayOfchartMetaInfo installedMetaInfo;
+                    
+                    wxString installedIndexName = c1->chartInstallLocnFull;
+                    installedIndexName += wxFileName::GetPathSeparator() + _("index.xml");
+                    
+                    if( wxFileExists(installedIndexName)){
+                        wxFile indexFile(installedIndexName.mb_str());
+                        if(indexFile.IsOpened()){
+                            int unsigned flen = indexFile.Length();
+                            if(( flen > 0 )  && (flen < 1e7 ) ){                      // Place 10 Mb upper bound on index size 
+                                readBuffer = (unsigned char *)malloc( 2 * flen);     // be conservative
+                        
+                                size_t nRead = indexFile.Read(readBuffer, flen);
+                                if(nRead == flen){
+                                    indexFile.Close();
+                            
+                                    // Good Read, so parse the XML 
+                                    TiXmlDocument * doc = new TiXmlDocument();
+                                    doc->Parse( (const char *)readBuffer );
+                            
+                                    TiXmlElement * root = doc->RootElement();
+                                    if(root){
+                                        TiXmlNode *child;
+                                        for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
+                                            const char * t = child->Value();
+                                            
+                                            chartMetaInfo *pinfo = new chartMetaInfo();
+                                            
+                                            if(!strcmp(child->Value(), "chart")){
+                                                TiXmlNode *chartx;
+                                                for ( chartx = child->FirstChild(); chartx != 0; chartx = chartx->NextSibling()){
+                                                    const char * s = chartx->Value();
+                                                    if(!strcmp(s, "raster_edition")){
+                                                        TiXmlNode *re = chartx->FirstChild();
+                                                        pinfo->raster_edition =  wxString::FromUTF8(re->Value());
+                                                    }
+                                                    if(!strcmp(s, "title")){
+                                                        TiXmlNode *title = chartx->FirstChild();
+                                                        pinfo->title =  wxString::FromUTF8(title->Value());
+                                                    }
+                                                    if(!strcmp(s, "x_fugawi_bzb_name")){
+                                                        TiXmlNode *bzbName = chartx->FirstChild();
+                                                        pinfo->bzb_name = wxString::FromUTF8(bzbName->Value());
+                                                    }
+                                                    
+                                                }
+                                                
+                                                // Got everything we need, so add the element
+                                                installedMetaInfo.Add(pinfo);
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        free(readBuffer);
+                        readBuffer = NULL;
+                    }
+                    
+                    //  Now merge/compare the metaInfo arrays...
+                    //  This will be a 2D search
+                    
+                    c1->updatedChartsURLArray.Clear();
+                    c1->deletedChartsNameArray.Clear();
+                    
+                    for(unsigned int i=0 ; i < c1->chartElementArray.GetCount() ; i++){
+                        chartMetaInfo *pnew_info = c1->chartElementArray.Item(i);
+
+                        wxString newTitleHash = pnew_info->title + pnew_info->bzb_name;
+                        
+                        bool bFound = false;
+                        for(unsigned int j=0 ; j < installedMetaInfo.GetCount() ; j++){
+                            chartMetaInfo *pold_info = installedMetaInfo.Item(j);
+
+                            wxString oldTitleHash = pold_info->title + pold_info->bzb_name;
+                            
+                            if(newTitleHash.IsSameAs(oldTitleHash)){
+                                pold_info->flag_found = true;           // Mark the installed array item to show that it exists in the new array
+                                bFound = true;
+                                if(!pnew_info->raster_edition.IsSameAs(pold_info->raster_edition)){      // An update to "raster_edition"
+                                    c1->updatedChartsURLArray.Add(pnew_info->bzb_name);
+                                    bUpdate = true;    
+                                }
+                                break;
+                            }
+                        }
+                        if(!bFound){           // New chart was not found in the old list, so we add it to update array
+                            c1->updatedChartsURLArray.Add(pnew_info->bzb_name);
+                            bUpdate = true;    
+                        }
+                    }
+                    
+                    // Check for deleted charts
+                    // indicated by charts in the installed array that have flag_found clear, meaning not found in new array
+                    
+                    for(unsigned int j=0 ; j < installedMetaInfo.GetCount() ; j++){
+                        chartMetaInfo *pold_info = installedMetaInfo.Item(j);
+                        if(!pold_info->flag_found){
+                            c1->deletedChartsNameArray.Add(pold_info->bzb_name);
+                        }
+                    }
+                    c1->deletedChartsNameArray.Add(_T("ddd.zip"));
+                    
+                    // Post results
+                    c1->pendingUpdateFlag = bUpdate;
+                }
+            }
+            else{
+                ret_code = ret;
+            }
+            
+                                                    
+        }
+    }
+    
+    return ret_code;
+        
+}    
+
 
 
 
