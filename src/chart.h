@@ -318,7 +318,7 @@ class  ChartXTR1 : public PlugInChartBase
 
       wxImage *GetImage();
 
-      double GetRasterScaleFactor() { return m_raster_scale_factor; }
+      double GetRasterScaleFactor() { return m_piraster_scale_factor; }
 
 
 protected:
@@ -337,7 +337,7 @@ protected:
 
       double GetClosestValidNaturalScalePPM(double target_scale, double scale_factor_min, double scale_factor_max);
 
-      double GetPPM(){ return m_ppm_avg;}
+      double GetPPM(){ return m_pi_ppm_avg;}
       int GetSize_X(){ return Size_X;}
       int GetSize_Y(){ return Size_Y;}
 
@@ -448,10 +448,10 @@ protected:
 
       bool        bGeoErrorSent;
 
-      double      m_ppm_avg;              // Calculated true scale factor of the 1X chart,
+      double      m_pi_ppm_avg;              // Calculated true scale factor of the 1X chart,
                                           // pixels per meter
 
-      double      m_raster_scale_factor;        // exact scaling factor for pixel oversampling calcs
+      double      m_piraster_scale_factor;        // exact scaling factor for pixel oversampling calcs
 
       bool      m_bIDLcross;
 
