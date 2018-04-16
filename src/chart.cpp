@@ -532,22 +532,32 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
           m_projection = PI_PROJECTION_MERCATOR;
           bp_set = true;
       }
-      else if(stru.Matches(_T("*TRANSVERSE*")))
-      {
-          m_projection = PI_PROJECTION_TRANSVERSE_MERCATOR;
-          bp_set = true;
-      }
-      else if(stru.Matches(_T("*POLYCONIC*")))
-      {
-          m_projection = PI_PROJECTION_POLYCONIC;
-          bp_set = true;
-      }
-      else if(stru.Matches(_T("*UTM*")))
+      
+      if(stru.Matches(_T("*TRANSVERSE*")))
       {
           m_projection = PI_PROJECTION_TRANSVERSE_MERCATOR;
           bp_set = true;
       }
       
+      if(stru.Matches(_T("*CONIC*")))
+      {
+          m_projection = PI_PROJECTION_POLYCONIC;
+          bp_set = true;
+      }
+      
+      if(stru.Matches(_T("*TM*")))
+      {
+          m_projection = PI_PROJECTION_TRANSVERSE_MERCATOR;
+          bp_set = true;
+      }
+      
+      if(stru.Matches(_T("*GAUSS CONFORMAL*")))
+      {
+          m_projection = PI_PROJECTION_TRANSVERSE_MERCATOR;
+          bp_set = true;
+      }
+      
+       
       if(!bp_set)
       {
           wxString msg(_T("   Chart projection is UNKNOWN, assuming Mercator: "));
@@ -941,15 +951,15 @@ void ChartXTR1::ChartBaseBSBDTOR()
 double ChartXTR1::GetNormalScaleMin(double canvas_scale_factor, bool b_allow_overzoom)
 {
       if(b_allow_overzoom)
-            return (canvas_scale_factor / m_ppm_avg) / 32;         // allow wide range overzoom overscale
+          return (canvas_scale_factor / m_pi_ppm_avg) / 32;         // allow wide range overzoom overscale
       else
-            return (canvas_scale_factor / m_ppm_avg) / 2;         // don't suggest too much overscale
+          return (canvas_scale_factor / m_pi_ppm_avg) / 2;         // don't suggest too much overscale
 
 }
 
 double ChartXTR1::GetNormalScaleMax(double canvas_scale_factor, int canvas_width)
 {
-      return (canvas_scale_factor / m_ppm_avg) * 4.0;        // excessive underscale is slow, and unreadable
+    return (canvas_scale_factor / m_pi_ppm_avg) * 4.0;        // excessive underscale is slow, and unreadable
 }
 
 
@@ -2031,9 +2041,9 @@ void ChartXTR1::ComputeSourceRectangle(const PlugIn_ViewPort &vp, wxRect *pSourc
 //    if((binary_scale_factor > 1.0) && (fabs(binary_scale_factor - wxRound(binary_scale_factor)) < 1e-2))
 //          binary_scale_factor = wxRound(binary_scale_factor);
 
-    m_raster_scale_factor = binary_scale_factor;
+    m_piraster_scale_factor = binary_scale_factor;
 
-    if(m_b_cdebug)printf(" ComputeSourceRect... PPM: %g  vp.view_scale_ppm: %g   m_raster_scale_factor: %g\n", GetPPM(), vp.view_scale_ppm, m_raster_scale_factor);
+    if(m_b_cdebug)printf(" ComputeSourceRect... PPM: %g  vp.view_scale_ppm: %g   m_piraster_scale_factor: %g\n", GetPPM(), vp.view_scale_ppm, m_piraster_scale_factor);
 
       double xd, yd;
       latlong_to_chartpix(vp.clat, vp.clon, xd, yd);
@@ -2185,7 +2195,7 @@ bool ChartXTR1::AdjustVP(PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_proposed)
                               int dx = (rprop.x - cache_rect.x) % cs1d;
                               if(dx)
                               {
-                                    fromSM((double)-dx / m_ppm_avg, 0., vp_proposed.clat, vp_proposed.clon, &new_lat, &new_lon);
+                                  fromSM((double)-dx / m_pi_ppm_avg, 0., vp_proposed.clat, vp_proposed.clon, &new_lat, &new_lon);
                                     vp_proposed.clon = new_lon;
                                     ret_val++;
 
@@ -2195,7 +2205,7 @@ bool ChartXTR1::AdjustVP(PlugIn_ViewPort &vp_last, PlugIn_ViewPort &vp_proposed)
                               int dy = (rprop.y - cache_rect.y) % cs1d;
                               if(dy)
                               {
-                                    fromSM(0, (double)dy / m_ppm_avg, vp_proposed.clat, vp_proposed.clon, &new_lat, &new_lon);
+                                  fromSM(0, (double)dy / m_pi_ppm_avg, vp_proposed.clat, vp_proposed.clon, &new_lat, &new_lon);
                                     vp_proposed.clat = new_lat;
                                     ret_val++;
 
@@ -2565,7 +2575,7 @@ wxBitmap &ChartXTR1::RenderRegionView(const PlugIn_ViewPort& VPoint, const wxReg
 
       wxRect dest(0,0,VPoint.pix_width, VPoint.pix_height);
 //      double factor = ((double)Rsrc.width)/((double)dest.width);
-      double factor = m_raster_scale_factor;
+      double factor = m_piraster_scale_factor;
       if(m_b_cdebug)printf("%d RenderRegion  ScaleType:  %d   factor:  %g\n", s_dc++, RENDER_HIDEF, factor );
 
             //    Invalidate the cache if the scale has changed or the viewport size has changed....
@@ -2903,7 +2913,7 @@ bool ChartXTR1::GetAndScaleData(unsigned char *ppn, wxRect& source, int source_s
                   GetChartBits_Internal(source, s_data, 1);
 
 
-                  int s_data_offset = (int)(1./ m_raster_scale_factor);
+                  int s_data_offset = (int)(1./ m_piraster_scale_factor);
                   s_data_offset /= 2;
                   s_data_offset *= source.width * BPP/8;
 
@@ -2914,7 +2924,7 @@ bool ChartXTR1::GetAndScaleData(unsigned char *ppn, wxRect& source, int source_s
 
                   while( j < dest.y + dest.height)
                   {
-                        y_offset = (int)(j *m_raster_scale_factor) * source.width;
+                      y_offset = (int)(j *m_piraster_scale_factor) * source.width;
 
                         target_line_start = target_data + (j * dest_stride * BPP / 8);
                         target_data_x = target_line_start + (dest.x * BPP / 8);
@@ -2924,7 +2934,7 @@ bool ChartXTR1::GetAndScaleData(unsigned char *ppn, wxRect& source, int source_s
                         {
 
                               memcpy( target_data_x,
-                                    source_data + BPP/8*(y_offset + (int)(i * m_raster_scale_factor)),
+                                      source_data + BPP/8*(y_offset + (int)(i * m_piraster_scale_factor)),
                                     BPP/8 );
                               target_data_x += BPP/8;
 
@@ -3975,7 +3985,7 @@ int   ChartXTR1::AnalyzeRefpoints(void)
               double dn2 =  (northing1 - northing0) * (northing1 - northing0);
               double de2 =  (easting1 - easting0) * (easting1 - easting0);
 
-              m_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
+              m_pi_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
 
               //  Set up and solve polynomial solution for pix<->east/north as projected
               // Fill the cpoints structure with pixel points and transformed lat/lon
@@ -4021,14 +4031,14 @@ int   ChartXTR1::AnalyzeRefpoints(void)
              double dx =  (pRefTable[jmax].xr - pRefTable[imax].xr);
              double de =  (easting1 - easting0);
 
-             m_ppm_avg = fabs(dx / de);
+             m_pi_ppm_avg = fabs(dx / de);
 
              double dx2 =  (pRefTable[jmax].xr - pRefTable[imax].xr) *  (pRefTable[jmax].xr - pRefTable[imax].xr);
              double dy2 =  (pRefTable[jmax].yr - pRefTable[imax].yr) *  (pRefTable[jmax].yr - pRefTable[imax].yr);
              double dn2 =  (northing1 - northing0) * (northing1 - northing0);
              double de2 =  (easting1 - easting0) * (easting1 - easting0);
 
-             m_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
+             m_pi_ppm_avg = sqrt(dx2 + dy2) / sqrt(dn2 + de2);
 
 
               //  Set up and solve polynomial solution for pix<->east/north as projected
@@ -4080,13 +4090,13 @@ int   ChartXTR1::AnalyzeRefpoints(void)
              double dx =  (pRefTable[jmax].xr - pRefTable[imax].xr);
              double de =  (easting1 - easting0);
 
-             m_ppm_avg = fabs(dx / de);
+             m_pi_ppm_avg = fabs(dx / de);
 
              m_ExtraInfo = _("---<<< Warning:  Chart georef accuracy may be poor. >>>---");
        }
 
        else
-             m_ppm_avg = 1.0;                      // absolute fallback to prevent div-0 errors
+           m_pi_ppm_avg = 1.0;                      // absolute fallback to prevent div-0 errors
 
 
 /*
@@ -4103,7 +4113,7 @@ int   ChartXTR1::AnalyzeRefpoints(void)
         PlugIn_ViewPort vp;
         vp.clat = pRefTable[0].latr;
         vp.clon = pRefTable[0].lonr;
-        vp.view_scale_ppm = m_ppm_avg;
+        vp.view_scale_ppm = m_pi_ppm_avg;
         vp.skew = 0.;
         vp.pix_width = 1000;
         vp.pix_height = 1000;
