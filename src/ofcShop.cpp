@@ -1894,6 +1894,7 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                 chart->indexFileTmp = downloadIndexFile;
                 
                 // We parse the index file, building an array of useful information as chartMetaInfo ptrs.
+                chart->chartElementArray.Clear();
                 
                 unsigned char *readBuffer = NULL;
                 wxFile indexFile(downloadIndexFile.mb_str());
@@ -2627,8 +2628,10 @@ int shopPanel::checkUpdateStatus()
  
     for(unsigned int i=0 ; i < g_ChartArray.GetCount() ; i++){
         itemChart *c1 = g_ChartArray.Item(i);
-        if( STAT_CURRENT == c1->getChartStatus())
-            installedChartList.Add(c1);
+        if( STAT_CURRENT == c1->getChartStatus()){
+            if( (c1->installLocation.Len()) && (c1->chartInstallLocnFull.Len()) )
+                installedChartList.Add(c1);
+        }
     }
     
     // Presumably, the chartlist has been built once, so the URL of the index file is known
@@ -2678,6 +2681,7 @@ int shopPanel::checkUpdateStatus()
                 c1->indexFileTmp = downloadIndexFile;
                 
                 // We parse the index file, building an array of useful information as chartMetaInfo ptrs.
+                c1->chartElementArray.Clear();
                 
                 unsigned char *readBuffer = NULL;
                 wxFile indexFile(downloadIndexFile.mb_str());
@@ -2800,48 +2804,47 @@ int shopPanel::checkUpdateStatus()
                     
                     //  Now merge/compare the metaInfo arrays...
                     //  This will be a 2D search
-                    
-                    c1->updatedChartsURLArray.Clear();
-                    c1->deletedChartsNameArray.Clear();
-                    
-                    for(unsigned int i=0 ; i < c1->chartElementArray.GetCount() ; i++){
-                        chartMetaInfo *pnew_info = c1->chartElementArray.Item(i);
-
-                        wxString newTitleHash = pnew_info->title + pnew_info->bzb_name;
+                    if(installedMetaInfo.GetCount()){                   // old index present and populated?
+                        c1->updatedChartsURLArray.Clear();
+                        c1->deletedChartsNameArray.Clear();
                         
-                        bool bFound = false;
-                        for(unsigned int j=0 ; j < installedMetaInfo.GetCount() ; j++){
-                            chartMetaInfo *pold_info = installedMetaInfo.Item(j);
+                        for(unsigned int i=0 ; i < c1->chartElementArray.GetCount() ; i++){
+                            chartMetaInfo *pnew_info = c1->chartElementArray.Item(i);
 
-                            wxString oldTitleHash = pold_info->title + pold_info->bzb_name;
+                            wxString newTitleHash = pnew_info->title + pnew_info->bzb_name;
                             
-                            if(newTitleHash.IsSameAs(oldTitleHash)){
-                                pold_info->flag_found = true;           // Mark the installed array item to show that it exists in the new array
-                                bFound = true;
-                                if(!pnew_info->raster_edition.IsSameAs(pold_info->raster_edition)){      // An update to "raster_edition"
-                                    c1->updatedChartsURLArray.Add(pnew_info->bzb_name);
-                                    bUpdate = true;    
+                            bool bFound = false;
+                            for(unsigned int j=0 ; j < installedMetaInfo.GetCount() ; j++){
+                                chartMetaInfo *pold_info = installedMetaInfo.Item(j);
+
+                                wxString oldTitleHash = pold_info->title + pold_info->bzb_name;
+                                
+                                if(newTitleHash.IsSameAs(oldTitleHash)){
+                                    pold_info->flag_found = true;           // Mark the installed array item to show that it exists in the new array
+                                    bFound = true;
+                                    if(!pnew_info->raster_edition.IsSameAs(pold_info->raster_edition)){      // An update to "raster_edition"
+                                        c1->updatedChartsURLArray.Add(pnew_info->bzb_name);
+                                        bUpdate = true;    
+                                    }
+                                    break;
                                 }
-                                break;
+                            }
+                            if(!bFound){           // New chart was not found in the old list, so we add it to update array
+                                c1->updatedChartsURLArray.Add(pnew_info->bzb_name);
+                                bUpdate = true;    
                             }
                         }
-                        if(!bFound){           // New chart was not found in the old list, so we add it to update array
-                            c1->updatedChartsURLArray.Add(pnew_info->bzb_name);
-                            bUpdate = true;    
+                        
+                        // Check for deleted charts
+                        // indicated by charts in the installed array that have flag_found clear, meaning not found in new array
+                        
+                        for(unsigned int j=0 ; j < installedMetaInfo.GetCount() ; j++){
+                            chartMetaInfo *pold_info = installedMetaInfo.Item(j);
+                            if(!pold_info->flag_found){
+                                c1->deletedChartsNameArray.Add(pold_info->bzb_name);
+                            }
                         }
                     }
-                    
-                    // Check for deleted charts
-                    // indicated by charts in the installed array that have flag_found clear, meaning not found in new array
-                    
-                    for(unsigned int j=0 ; j < installedMetaInfo.GetCount() ; j++){
-                        chartMetaInfo *pold_info = installedMetaInfo.Item(j);
-                        if(!pold_info->flag_found){
-                            c1->deletedChartsNameArray.Add(pold_info->bzb_name);
-                        }
-                    }
-                    c1->deletedChartsNameArray.Add(_T("ddd.zip"));
-                    
                     // Post results
                     c1->pendingUpdateFlag = bUpdate;
                 }
