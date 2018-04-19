@@ -916,9 +916,9 @@
 			<key>CONCLUSION_ACTION</key>
 			<integer>0</integer>
 			<key>IDENTIFIER</key>
-			<string>org.opencpn.pkg.oesenc</string>
+			<string>org.opencpn.pkg.ofc</string>
 			<key>NAME</key>
-			<string>oesenc-Plugin_0.1</string>
+			<string>ofc-Plugin_0.1</string>
 			<key>OVERWRITE_PERMISSIONS</key>
 			<false/>
 			<key>USE_HFS+_COMPRESSION</key>
