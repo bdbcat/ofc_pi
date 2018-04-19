@@ -80,6 +80,7 @@ wxString g_statusOverride;
 wxString g_lastInstallDir;
 
 int g_downloadChainIdentifier;
+itemChart* g_chartProcessing;
 
 #define ID_CMD_BUTTON_INSTALL 7783
 #define ID_CMD_BUTTON_INSTALL_CHAIN 7784
@@ -235,6 +236,7 @@ itemChart::itemChart( wxString &product_sku, int index) {
     indexSKU = index; 
     m_status = STAT_UNKNOWN;
     pendingUpdateFlag = false;
+    thumbRetry = 0;
 }
 
 
@@ -425,9 +427,48 @@ wxString itemChart::getStatusString()
 
 wxBitmap& itemChart::GetChartThumbnail(int size)
 {
+    wxString fileKey = _T("ChartImage-");
+    fileKey += productSKU;
+    fileKey += _T(".jpg");
+    
+    wxString localFile = g_PrivateDataDir + fileKey;
+    
     if(!m_ChartImage.IsOk()){
         // Look for it
-        
+#if 1 
+        // Look for cached copy
+ 
+        if(::wxFileExists(localFile)){
+            m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
+        }
+        else{
+            thumbnailURL = _T("https://opencpn.org/OpenCPN/assets/img/thumbs/");
+            wxString urlOBF = _T("ChartImage-") + productSKU + _T(".fcdanbob");
+            thumbnailURL += urlOBF;
+            wxString fileOBF = g_PrivateDataDir + urlOBF;
+            
+            if(g_chartListUpdatedOK && thumbnailURL.Length() && (thumbRetry < 2)){  // Do not access network until after first "getList"
+                wxCurlHTTP get;
+                get.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
+                bool getResult = get.Get(fileOBF, thumbnailURL);
+
+            // get the response code of the server
+                int iResponseCode;
+                get.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
+            
+                if(iResponseCode == 200){
+                    if(::wxFileExists(fileOBF)){
+                        ::wxRenameFile( fileOBF, localFile);
+                    }
+                    
+                    if(::wxFileExists(localFile)){
+                        m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
+                    }
+                }
+            }
+        }
+
+#else           // embedded
         wxString s =wxFileName::GetPathSeparator();
         wxString dataDir = *GetpSharedDataLocation() + _T("plugins") + s;
         dataDir += _T("ofc_pi") + s + _T("data") + s;
@@ -436,10 +477,11 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
         fileKey += productSKU;
         fileKey += _T(".jpg");
  
-        wxString file = dataDir + fileKey;
-        if(::wxFileExists(file)){
-            m_ChartImage = wxImage( file, wxBITMAP_TYPE_ANY);
+        localFile = dataDir + fileKey;
+        if(::wxFileExists(localFile)){
+            m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
         }
+#endif        
      }
     
     if(m_ChartImage.IsOk()){
@@ -451,6 +493,9 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
         return m_bm;
     }
     else{
+        wxRemoveFile(localFile);                   // must be bad file download
+        thumbRetry++;
+        
         wxImage img(size, size);
         unsigned char *data = img.GetData();
         for(int i=0 ; i < size * size * 3 ; i++)
@@ -1831,6 +1876,8 @@ void shopPanel::downloadList(itemChart *chart, wxArrayString &targetURLArray)
     chart->indexFileArrayIndex = 0;
     chart->installLocation.Clear();  // Mark as not installed
     
+    g_chartProcessing = chart;
+    
     wxCommandEvent event_next(wxEVT_COMMAND_BUTTON_CLICKED);
     event_next.SetId( ID_CMD_BUTTON_DOWNLOADLIST_PROC );
     GetEventHandler()->AddPendingEvent(event_next);
@@ -1980,7 +2027,8 @@ void shopPanel::doFullSetDownload(itemChart *chart)
 
 void shopPanel::OnDownloadListProc( wxCommandEvent& event )
 {
-    itemChart *chart = m_ChartSelected->m_pChart;
+    //itemChart *chart = m_ChartSelected->m_pChart;
+    itemChart *chart = g_chartProcessing;
     if(!chart)
         return;
     
@@ -2037,7 +2085,8 @@ void shopPanel::advanceToNextChart(itemChart *chart)
 
 void shopPanel::OnDownloadListChain( wxCommandEvent& event )
 {
-    itemChart *chart = m_ChartSelected->m_pChart;
+    //itemChart *chart = m_ChartSelected->m_pChart;
+    itemChart *chart = g_chartProcessing;
     if(!chart)
         return;
 
@@ -2190,6 +2239,9 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
             AddChartDirectory( installDir );
         }
         
+        // Update the chart dB on options close
+        ForceChartDBUpdate();
+        
         // Clean up the UI
         g_dlStatPrefix.Clear();
         setStatusText( _("Status: Ready"));
@@ -2204,6 +2256,8 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
         UpdateChartList();
         
         saveShopConfig();
+        
+        g_chartProcessing = NULL;
         
         return;
     }
@@ -3079,7 +3133,7 @@ void xtr1Login::CreateControls(  )
     wxBoxSizer* itemBoxSizer2 = new wxBoxSizer( wxVERTICAL );
     itemDialog1->SetSizer( itemBoxSizer2 );
     
-    wxStaticBox* itemStaticBoxSizer4Static = new wxStaticBox( itemDialog1, wxID_ANY, _("Login to Fugawi Charts server") );
+    wxStaticBox* itemStaticBoxSizer4Static = new wxStaticBox( itemDialog1, wxID_ANY, _("Login to Fugawi.com shop") );
     
     wxStaticBoxSizer* itemStaticBoxSizer4 = new wxStaticBoxSizer( itemStaticBoxSizer4Static, wxVERTICAL );
     itemBoxSizer2->Add( itemStaticBoxSizer4, 0, wxEXPAND | wxALL, 5 );

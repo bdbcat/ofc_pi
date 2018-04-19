@@ -86,7 +86,7 @@ WX_DECLARE_OBJARRAY(chartMetaInfo *, ArrayOfchartMetaInfo);
 class itemChart
 {
 public:    
-    itemChart() { m_downloading = false; m_bEnabled = true; bActivated = false; device_ok = false; pendingUpdateFlag = false; }
+    itemChart() { m_downloading = false; m_bEnabled = true; bActivated = false; device_ok = false; pendingUpdateFlag = false; thumbRetry = 0;}
     itemChart( wxString &product_sku, int index);
     ~itemChart() {};
 
@@ -152,6 +152,7 @@ public:
     wxArrayString deletedChartsNameArray;
     bool pendingUpdateFlag;
     bool bSkipDuplicates;
+    int thumbRetry;
     
 };
 
