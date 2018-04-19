@@ -287,9 +287,9 @@
 																				<key>GID</key>
 																				<integer>80</integer>
 																				<key>PATH</key>
-																				<string>/Users/dsr/Projects/ofc_pi/build/TD-CHS-RM-ATL05.jpg</string>
+																				<string>TD-CHS-RM-ATL05.jpg</string>
 																				<key>PATH_TYPE</key>
-																				<integer>0</integer>
+																				<integer>1</integer>
 																				<key>PERMISSIONS</key>
 																				<integer>420</integer>
 																				<key>TYPE</key>
@@ -303,9 +303,9 @@
 																				<key>GID</key>
 																				<integer>80</integer>
 																				<key>PATH</key>
-																				<string>/Users/dsr/Projects/ofc_pi/build/TD-DK-S12.jpg</string>
+																				<string>TD-DK-S12.jpg</string>
 																				<key>PATH_TYPE</key>
-																				<integer>0</integer>
+																				<integer>1</integer>
 																				<key>PERMISSIONS</key>
 																				<integer>420</integer>
 																				<key>TYPE</key>
@@ -319,9 +319,9 @@
 																				<key>GID</key>
 																				<integer>80</integer>
 																				<key>PATH</key>
-																				<string>/Users/dsr/Projects/ofc_pi/build/TD-DK-S21.jpg</string>
+																				<string>TD-DK-S21.jpg</string>
 																				<key>PATH_TYPE</key>
-																				<integer>0</integer>
+																				<integer>1</integer>
 																				<key>PERMISSIONS</key>
 																				<integer>420</integer>
 																				<key>TYPE</key>
@@ -335,9 +335,9 @@
 																				<key>GID</key>
 																				<integer>80</integer>
 																				<key>PATH</key>
-																				<string>/Users/dsr/Projects/ofc_pi/build/TD-EXC-BAH.jpg</string>
+																				<string>TD-EXC-BAH.jpg</string>
 																				<key>PATH_TYPE</key>
-																				<integer>0</integer>
+																				<integer>1</integer>
 																				<key>PERMISSIONS</key>
 																				<integer>420</integer>
 																				<key>TYPE</key>
@@ -351,9 +351,9 @@
 																				<key>GID</key>
 																				<integer>80</integer>
 																				<key>PATH</key>
-																				<string>/Users/dsr/Projects/ofc_pi/build/TD-NV-KK-2015.jpg</string>
+																				<string>TD-NV-KK-2015.jpg</string>
 																				<key>PATH_TYPE</key>
-																				<integer>0</integer>
+																				<integer>1</integer>
 																				<key>PERMISSIONS</key>
 																				<integer>420</integer>
 																				<key>TYPE</key>
@@ -367,9 +367,9 @@
 																				<key>GID</key>
 																				<integer>80</integer>
 																				<key>PATH</key>
-																				<string>/Users/dsr/Projects/ofc_pi/build/TD-ST-HG.jpg</string>
+																				<string>TD-ST-HG.jpg</string>
 																				<key>PATH_TYPE</key>
-																				<integer>0</integer>
+																				<integer>1</integer>
 																				<key>PERMISSIONS</key>
 																				<integer>420</integer>
 																				<key>TYPE</key>
