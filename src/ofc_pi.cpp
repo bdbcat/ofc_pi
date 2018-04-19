@@ -209,14 +209,14 @@ wxString ofc_pi::GetCommonName()
 
 wxString ofc_pi::GetShortDescription()
 {
-    return _("Fugawi Charts PlugIn for OpenCPN");
+    return _("Fugawi.com Charts PlugIn for OpenCPN");
 }
 
 
 wxString ofc_pi::GetLongDescription()
 {
       return _("Fugawi Charts PlugIn for OpenCPN\n\
-      Provides support of Fugawi Charts RNCs.\n\n\
+Provides support for Fugawi.com raster charts.\n\n\
 ");
 
 }
