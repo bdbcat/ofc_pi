@@ -36,11 +36,11 @@ msgstr "PlugIn pro mapy Fugawi.com pro OpenCPN"
 msgid "Fugawi Charts PlugIn for OpenCPN\n"
 "Provides support for Fugawi.com raster charts.\n\n"
 msgstr "PlugIn pro mapy Fugawi pro OpenCPN\n"
-"    Poskytuje podporu pro rastrové mapy Fugawi.com            "
+"    Poskytuje podporu pro rastrové mapy Fugawi.com            \n\n"
 
 #: src/ofc_pi.cpp:311
 msgid "Cannot find the ofc server utility at \n"
-msgstr "Nelze najít nástroj ofc server na  "
+msgstr "Nelze najít nástroj ofc server na  \n"
 
 #: src/ofc_pi.cpp:315 src/ofc_pi.cpp:423 src/ofcShop.cpp:641
 #: src/ofcShop.cpp:660 src/ofcShop.cpp:989 src/ofcShop.cpp:2103
@@ -50,11 +50,11 @@ msgstr "ofc_pi zpráva"
 
 #: src/ofc_pi.cpp:418
 msgid "serverd utility at \n"
-msgstr "serverd nástroj na  "
+msgstr "serverd nástroj na  \n"
 
 #: src/ofc_pi.cpp:422
 msgid " could not be started.\n\n"
-msgstr " nelze spustit."
+msgstr " nelze spustit.\n\n"
 
 #: src/ofcShop.cpp:391
 msgid "Available."
