@@ -2799,7 +2799,8 @@ int shopPanel::checkUpdateStatus()
                     ArrayOfchartMetaInfo installedMetaInfo;
                     
                     wxString installedIndexName = c1->chartInstallLocnFull;
-                    installedIndexName += wxFileName::GetPathSeparator() + _T("index.xml");
+                    installedIndexName += wxFileName::GetPathSeparator();
+                    installedIndexName += _T("index.xml");
                     
                     if( wxFileExists(installedIndexName)){
                         wxFile indexFile(installedIndexName.mb_str());
