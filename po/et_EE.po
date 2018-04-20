@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: opencpn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-12 09:31-0400\n"
-"PO-Revision-Date: 2018-04-12 09:19-0400\n"
+"POT-Creation-Date: 2018-04-18 22:23-0400\n"
+"PO-Revision-Date: 2018-04-19 21:27-0400\n"
 "Last-Translator: nohal <pavel@kalian.cz>\n"
 "Language-Team: Estonian\n"
 "Language: et_EE\n"
@@ -14,631 +14,274 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: opencpn\n"
 "X-Crowdin-Language: et\n"
-"X-Crowdin-File: /plugins/oesenc_pi/po/oesenc_pi.pot\n"
-#
-msgid ""
-" could not be started.\n"
-"\n"
-msgstr ""
-" ei saa käivitada.\n"
-"\n"
-#
-msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
-msgstr ""
-#
+"X-Crowdin-File: /plugins/ofc_pi/po/ofc_pi.pot\n"
+
+#: src/chart.cpp:4095
 msgid "---<<< Warning:  Chart georef accuracy may be poor. >>>---"
-msgstr ""
-#
-msgid "Actions"
-msgstr "Tegevused"
-#
-#, fuzzy
-msgid "Activate Selected Chartset"
-msgstr "Uuenda valitud kaardid"
-#
-msgid "Activation succeeded.\n"
-msgstr ""
-#
+msgstr "---<<< Hoiatus: kaardi kalibreerimise täpsus võib olla madal. >>>---"
+
+#: src/chart.cpp:4178 src/chart.cpp:4242
+msgid "---<<< Warning:  Chart georef accuracy is poor. >>>---"
+msgstr "---<<< Hoiatus: kaardi kalibreerimise täpsus on madal. >>>---"
+
+#: src/ofc_pi.cpp:206 src/ofc_pi.cpp:232
+msgid "Fugawi Charts"
+msgstr "Fugawi kaardid"
+
+#: src/ofc_pi.cpp:212
+msgid "Fugawi.com Charts PlugIn for OpenCPN"
+msgstr "Fugawi.com kaartide plugIn OpenCPN'le"
+
+#: src/ofc_pi.cpp:218
+msgid "Fugawi Charts PlugIn for OpenCPN\n"
+"Provides support for Fugawi.com raster charts.\n\n"
+msgstr "Fugawi-kaartide plugIn OpenCPN'le\n"
+"Pakub toetust Fugawi-rasterkaartidele.\n\n"
+
+#: src/ofc_pi.cpp:311
+msgid "Cannot find the ofc server utility at \n"
+msgstr "Ei suuda leida ofc-serveri utiliiti asukohas\n"
+
+#: src/ofc_pi.cpp:315 src/ofc_pi.cpp:423 src/ofcShop.cpp:641
+#: src/ofcShop.cpp:660 src/ofcShop.cpp:989 src/ofcShop.cpp:2103
+#: src/ofcShop.cpp:2251 src/ofcShop.cpp:2451
+msgid "ofc_pi Message"
+msgstr "ofc_pi teade"
+
+#: src/ofc_pi.cpp:418
+msgid "serverd utility at \n"
+msgstr "ofc-serveri utiliit asukohas \n"
+
+#: src/ofc_pi.cpp:422
+msgid " could not be started.\n\n"
+msgstr " ei saa käivitada.\n\n"
+
+#: src/ofcShop.cpp:391
 msgid "Available."
 msgstr "Saadaval."
-#
-msgid "Cancel"
-msgstr "Loobu"
-#
-msgid "Cancel Operation"
-msgstr "Tühista toiming"
-#
-#, fuzzy
-msgid "Cannot find the ofc server utility at \n"
-msgstr "Ei suuda leida oeserverd'i utiliiti asukohas\n"
-#
-msgid "Chart download cancelled."
-msgstr "Kaardi allalaadimine tühistatud."
-#
-msgid "Chart installation complete."
-msgstr "Kaardi paigaldus on lõpetatud."
-#
-msgid "Check your configuration and try again."
-msgstr "Kontrolli oma sätteid ja proovi uuesti."
-#
-msgid "Check your connection and try again."
-msgstr "Kontrolli oma ühendust ja proovi uuesti."
-#
-msgid "Choose chart install location."
-msgstr "Vali kaardi paigalduskoht."
-#
-#, fuzzy
-msgid "Contacting Fugawi Charts server..."
-msgstr "O-charts serveriga ühenduse loomine..."
-#
-msgid "Dialog"
-msgstr "Dialoog"
-#
-#, fuzzy
-msgid "Download cancelled."
-msgstr "Kaardi allalaadimine tühistatud."
-#
-msgid "Downloaded:  "
-msgstr "Allalaetud:  "
-#
-#, fuzzy
-msgid "Downloading chart:"
-msgstr "Allalaadimas..."
-#
-msgid "Downloading..."
-msgstr "Allalaadimas..."
-#
-msgid "Expired."
-msgstr "Aegunud."
-#
-#, fuzzy
-msgid "Fugawi Charts"
-msgstr "Mu kaardid"
-#
-#, fuzzy
-msgid "Fugawi Charts PlugIn for OpenCPN"
-msgstr "oeSENC-plugIn OpenCPN'i jaoks"
-#
-#, fuzzy
-msgid ""
-"Fugawi Charts PlugIn for OpenCPN\n"
-"      Provides support of Fugawi Charts RNCs.\n"
-"\n"
-msgstr ""
-"OpenCPN'i plugin\n"
-"Tagab toe oeSENC kaartidele.\n"
-"\n"
-#
-msgid "Fugawi server error: "
-msgstr ""
-#
-msgid "Install Selected Chart"
-msgstr "Paigalda valitud kaardid"
-#
-#, fuzzy
-msgid "Install Selected Chartset"
-msgstr "Paigalda valitud kaardid"
-#
+
+#: src/ofcShop.cpp:395
 msgid "Installed, Up-to-date."
 msgstr "Paigaldatud, uuendatud."
-#
+
+#: src/ofcShop.cpp:399
 msgid "Installed, Update available."
 msgstr "Paigaldatud, uuendus saadaval."
-#
-msgid "Invalid Login."
-msgstr "Kehtetu sisselogimine."
-#
-#, fuzzy
-msgid "Invalid email name or password."
-msgstr "Vale kasutaja-/meilinimi või parool."
-#
-#, fuzzy
-msgid "Login to Fugawi Charts server"
-msgstr "O-charts serveriga ühenduse loomine..."
-#
-msgid "My Charts"
-msgstr "Mu kaardid"
-#
-msgid "OK"
-msgstr "OK"
-#
-msgid "Password:"
-msgstr "Salasõna:"
-#
+
+#: src/ofcShop.cpp:404
+msgid "Expired."
+msgstr "Aegunud."
+
+#: src/ofcShop.cpp:408
+msgid "Ready for download/install."
+msgstr "Allalaadimiseks/paigalduseks valmis."
+
+#: src/ofcShop.cpp:412
 msgid "Please update Chart List."
 msgstr "Palun uuenda kaartide nimekiri."
-#
-msgid "Proceed?"
-msgstr "Jätka?"
-#
-#, fuzzy
+
+#: src/ofcShop.cpp:416
 msgid "Ready for Activation Request."
-msgstr "Allalaadimise päringuks valmis."
-#
-#, fuzzy
-msgid "Ready for download/install."
-msgstr "Allalaadimiseks valmis."
-#
-msgid "Refresh Chart List"
-msgstr "Uuenda kaartide nimekirja"
-#
-#, fuzzy
-msgid "Reinstall Selected Chartset"
-msgstr "Paigalda valitud kaardid uuesti"
-#
-msgid "Status:"
-msgstr "Olek:"
-#
-msgid "Status: "
-msgstr "Olek: "
-#
-msgid "Status:  Activation FAILED."
-msgstr ""
-#
-#, fuzzy
-msgid "Status:  Cancelled."
-msgstr "Olek: valmis"
-#
-msgid "Status: BZB download FAILED after retry."
-msgstr ""
-#
-msgid "Status: Chart List Refresh required."
-msgstr "Olek: kaartide nimekirja uuendamine on nõutav."
-#
-msgid "Status: Communications error."
-msgstr "Olek: ühenduse viga."
-#
-#, fuzzy
-msgid "Status: Downloading index file..."
-msgstr "Olek: allalaadimine..."
-#
-msgid "Status: Downloading..."
-msgstr "Olek: allalaadimine..."
-#
-msgid "Status: Error parsing GetAccount results."
-msgstr ""
-#
-msgid "Status: Error parsing index file..."
-msgstr ""
-#
-msgid "Status: Error parsing index.xml."
-msgstr ""
-#
-msgid "Status: Error reading GetAccount results."
-msgstr ""
-#
-msgid "Status: OK"
-msgstr "Olek: OK"
-#
-msgid "Status: Ready"
-msgstr "Olek: valmis"
-#
-#, fuzzy
-msgid "Status: Server unavailable."
-msgstr ""
-" aruanded pole saadaval.\n"
-"\n"
-#
-#, fuzzy
-msgid "This action will PERMANENTLY assign the chartset:"
-msgstr "See toiming omistab PÜSIVALT kaardi:"
-#
-msgid "Unzipping chart files..."
-msgstr "Kaardifailide lahtipakkimine..."
-#
-#, fuzzy
-msgid "Update Selected Chartset"
-msgstr "Uuenda valitud kaardid"
-#
-msgid "You may now proceed to install the chartset"
-msgstr ""
-#
-msgid "email address:"
-msgstr "meiliaadress:"
-#
+msgstr "Valmis aktiveerimistaotluseks."
+
+#: src/ofcShop.cpp:627
+msgid "Fugawi server error: "
+msgstr "Fugawi serveri viga: "
+
+#: src/ofcShop.cpp:634
+msgid "Invalid email name or password."
+msgstr "Vale meilinimi või parool."
+
+#: src/ofcShop.cpp:637
+msgid "Check your configuration and try again."
+msgstr "Kontrolli oma sätteid ja proovi uuesti."
+
+#: src/ofcShop.cpp:655
 msgid "internet communications error code: "
 msgstr "internetiühenduse veakood: "
-#
-#, fuzzy
-msgid "ofc_pi Message"
-msgstr "oeSENC_pi teade"
-#
-#, fuzzy
-msgid "serverd utility at \n"
-msgstr "oeserverd utiliit asukohas \n"
-#
-#, fuzzy
+
+#: src/ofcShop.cpp:659
+msgid "Check your connection and try again."
+msgstr "Kontrolli oma ühendust ja proovi uuesti."
+
+#: src/ofcShop.cpp:682
+msgid "Invalid Login."
+msgstr "Kehtetu sisselogimine."
+
+#: src/ofcShop.cpp:981
+msgid "This action will PERMANENTLY assign the chartset:"
+msgstr "See toiming omistab PÜSIVALT kaardikomplekti:"
+
+#: src/ofcShop.cpp:985
 msgid "to this system."
-msgstr "sellisele nimega süsteemile:"
-#
-#
-#~ msgid ""
-#~ "\n"
-#~ "\n"
-#~ " Fingerprint file is also copied to desktop."
-#~ msgstr ""
-#~ "\n"
-#~ "\n"
-#~ "Sõrmejäljefail on samuti kopeeritud töölauale."
-#
-#
-#~ msgid " create a new System Name for this computer."
-#~ msgstr " loo uus süsteemi nime sellele arvutile."
-#
-#
-#~ msgid "A valid System Name is 3 to 15 characters in length."
-#~ msgstr "Kehtiv süsteemi nimi on 3 kuni 15 tähemärki pikk."
-#
-#
-#~ msgid ""
-#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
-#~ "EEEE-FF\n"
-#~ "\n"
-#~ "Your oeSENC UserKey may be obtained from your chart provider."
-#~ msgstr ""
-#~ "Kehtival oeSENC-kasutajavõtmel on tähtnumbriline formaat:  AAAA-BBBB-CCCC-"
-#~ "DDDD-EEEE-FF\n"
-#~ "\n"
-#~ "Sa võid saada oma oeSENC-kasutajavõtme oma kaartide edasimüüjalt."
-#
-#
-#~ msgid "Accept"
-#~ msgstr "Nõustun"
-#
-#
-#~ msgid "Add/Update oeSENC chartsets"
-#~ msgstr "Lisa/uuenda oeSENC-kaardikomplekte"
-#
-#
-#~ msgid ""
-#~ "Administrator priveleges are required to copy fpr.\n"
-#~ "  Please try again...."
-#~ msgstr ""
-#~ "Fpr kopeerimiseks on vaja administraatori õiguseid.\n"
-#~ "   Palun proovi uuesti...."
-#
-#
-#~ msgid ""
-#~ "After creating this file, you will need it to obtain your User Key at the "
-#~ "o-charts.org shop.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Kui oled selle faili loonud, siis on sul vaja saada oma kasutajavõti o-"
-#~ "charts.org poest.\n"
-#~ "\n"
-#
-#
-#~ msgid "Assigment 1"
-#~ msgstr "1. määrang"
-#
-#
-#~ msgid "Assigment 2"
-#~ msgstr "2. määrang"
-#
-#
-#~ msgid "Available Chart sets:"
-#~ msgstr "Saadaval kaardikomplektid:"
-#
-#
-#~ msgid "Building eSENC"
-#~ msgstr "Loon eSENC"
-#
-#
-#~ msgid "Chart Edition:"
-#~ msgstr "Kaardi väljaanne:"
-#
-#
-#~ msgid "Chart Edition: "
-#~ msgstr "Kaardi väljaanne: "
-#
-#
-#~ msgid "Chart download complete."
-#~ msgstr "Kaardi allalaadimine lõpetatud."
-#
-#
-#~ msgid "Chart download error, missing file."
-#~ msgstr "Kaardi allalaadimise viga, puuduv fail."
-#
-#
-#~ msgid "Chart set"
-#~ msgstr "Kaardikomplekt"
-#
-#
-#~ msgid "ChartTexts"
-#~ msgstr "Tekstid kaardil"
-#
-#
-#~ msgid "Checking oeserverd utility at "
-#~ msgstr "Oeserverd'i utiliidi kontroll "
-#
-#
-#~ msgid "Continue waiting?"
-#~ msgstr "Jätkad oodates?"
-#
-#
-#~ msgid "Could not open oesenc_pi EULA: "
-#~ msgstr "Ei suutnud oesenc_pi EULA't avada: "
-#
-#
-#~ msgid "Create System Identifier file..."
-#~ msgstr "Loo süsteemi tuvastusfaili..."
-#
-#
-#~ msgid "Download Selected Chart"
-#~ msgstr "Lae valitud kaart alla"
-#
-#
-#~ msgid ""
-#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
-#~ "\n"
-#~ "oeSENC charts will be disabled for this session.\n"
-#~ "Please verify your UserKey and restart OpenCPN.\n"
-#~ "\n"
-#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "VIGA: sisestatud kasutajavõti ei kehti selle oeSENC kaardikomplekti "
-#~ "jaoks.\n"
-#~ "\n"
-#~ "oeSENC-kaardid keelatakse selle seansi jaoks.\n"
-#~ "Palun kontrolli oma kasutjajavõti üle ja proovi uuesti.\n"
-#~ "\n"
-#~ "Sa võid saada oma oeSENC-kasutajavõtme oma kaartide edasimüüjalt.\n"
-#~ "\n"
-#
-#
-#~ msgid ""
-#~ "ERROR: The UserKey entered is not valid for this oeSENC chart set.\n"
-#~ "Please verify your UserKey and try again.\n"
-#~ "\n"
-#~ "A valid oeSENC UserKey has the alphanumeric format:  AAAA-BBBB-CCCC-DDDD-"
-#~ "EEEE-FF\n"
-#~ "Your oeSENC UserKey may be obtained from your chart provider.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "VIGA: sisestatud kasutajavõti ei kehti selle oeSENC kaardikomplekti "
-#~ "jaoks.\n"
-#~ "Palun kontrolli oma kasutjajavõti üle ja proovi uuesti.\n"
-#~ "\n"
-#~ "Kehtival oeSENC-kasutajavõtmel on tähtnumbriline formaat:  AAAA-BBBB-CCCC-"
-#~ "DDDD-EEEE-FF\n"
-#~ "Sa võid saada oma oeSENC-kasutajavõtme oma kaartide edasimüüjalt.\n"
-#~ "\n"
-#
-#
-#~ msgid "Enter New System Name"
-#~ msgstr "Sisesta uus süsteemi nimi"
-#
-#
-#~ msgid "Enter UserKey"
-#~ msgstr "Sisesta kasutajavõti"
-#
-#
-#~ msgid "Error extracting zip file"
-#~ msgstr "Viga zip-faili lahtipakkimisel"
-#
-#
-#~ msgid "Expiration date:"
-#~ msgstr "Aegumiskuupäev:"
-#
-#
-#~ msgid "Expiration date: "
-#~ msgstr "Aegumiskuupäev: "
-#
-#
-#~ msgid "Fingerprint file created.\n"
-#~ msgstr "Sõrmejäljefail on loodud.\n"
-#
-#
-#~ msgid "Here you may order new oeSENC chartsets."
-#~ msgstr "Siin võid tellida uusi oeSENC-kaardikomplekte."
-#
-#
-#~ msgid "Installed edition: "
-#~ msgstr "Paigaldatud versioon: "
-#
-#
-#~ msgid "Installing charts"
-#~ msgstr "Kaarte paigaldamas"
-#
-#
-#~ msgid "Invalid System Name"
-#~ msgstr "Sobimatu süsteemi nimi"
-#
-#
-#~ msgid "License"
-#~ msgstr "Litsents"
-#
-#
-#~ msgid "Login to o-charts.org"
-#~ msgstr "Logi o-charts.org'i sisse"
-#
-#
-#~ msgid "New OpenCPN oeSENC System Name"
-#~ msgstr "Uus OpenCPN oeSENC-süsteemi nimi"
-#
-#
-#~ msgid "No symbols or spaces are allowed."
-#~ msgstr "Sümbolid või tühikud pole lubatud."
-#
-#
-#~ msgid "OpenCPN SENC UserKey Required"
-#~ msgstr "OpenCPN'i SENC-kasutajavõti on nõutav"
-#
-#
-#~ msgid "OpenCPN oeSENC UserKey Required"
-#~ msgstr "OpenCPN'i oeSENC-kasutajavõti on nõutav"
-#
-#
-#~ msgid "Order Reference:"
-#~ msgstr "Tellimuse viide:"
-#
-#
-#~ msgid "Order Reference: "
-#~ msgstr "Tellimuse viide: "
-#
-#
-#~ msgid "PlugIn for OpenCPN oeSENC charts"
-#~ msgstr "PlugIn OpenCPN'i oeSENC-kaartidele"
-#
-#
-#~ msgid "Preparing your charts..."
-#~ msgstr "Su kaartide ettevalmistamine..."
-#
-#
-#~ msgid "Preparing your chartset."
-#~ msgstr "Su kaardikomplekti ettevalmistamine."
-#
-#
-#~ msgid "Proceed to create Fingerprint file?"
-#~ msgstr "Jätkata sõrmejälje faili loomisega?"
-#
-#
-#~ msgid "Proceed to install?"
-#~ msgstr "Jätka paigaldusega?"
-#
-#
-#~ msgid "Purchase date:"
-#~ msgstr "Ostu kuupäev:"
-#
-#
-#~ msgid "Purchase date: "
-#~ msgstr "Ostu kuupäev: "
-#
-#
-#~ msgid "Ready for unzipping chart files."
-#~ msgstr "Valmis kaardifailide lahtipakkimiseks."
-#
-#
-#~ msgid "Reject"
-#~ msgstr "Hülga"
-#
-#
-#~ msgid "Sector angles are True Bearings from Seaward"
-#~ msgstr "Sektori nurgad on tõelised peilingud mere poolt"
-#
-#
-#~ msgid "Select OpenCPN/oeSENC System Name"
-#~ msgstr "Vali OpenCPN oeSENC-süsteemi nimi"
-#
-#
-#~ msgid "Select your System Name from the following list, or "
-#~ msgstr "Vali järgmisest loendist süsteemi nimi või "
-#
-#
-#~ msgid "Show In Finder"
-#~ msgstr "Näita leidjas"
-#
-#
-#~ msgid "Show on disk"
-#~ msgstr "Näita kettal"
-#
-#
-#~ msgid "System Identification"
-#~ msgstr "Süsteemi tuvastamine"
-#
-#
-#~ msgid "System Name:"
-#~ msgstr "Süsteemi nimi:"
-#
-#
-#~ msgid "System Names"
-#~ msgstr "Süsteemi nimed"
-#
-#
-#~ msgid "System: "
-#~ msgstr "Süsteem: "
-#
-#
-#~ msgid ""
-#~ "The fingerprint file contains information to uniquely identifiy this "
-#~ "computer.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Sõrmejälje fail sisaldab informatsiooni selle kompuutri unikaalseks "
-#~ "identifitseerimiseks.\n"
-#~ "\n"
-#
-#
-#~ msgid "The following Chart sets are available:"
-#~ msgstr "Järgnevad kaardikomplektid on saadaval:"
-#
-#
-#~ msgid "This file is also known as a\"fingerprint\" file.\n"
-#~ msgstr "Seda faili tuntakse ka kui \"sõrmejälje\" faili.\n"
-#
-#
-#~ msgid ""
-#~ "To obtain a User Key, you must generate a unique System Identifier File.\n"
-#~ msgstr ""
-#~ "Kasutajavõtme saamiseks pead genereerima unikaalse süsteemi "
-#~ "tuvastusfaili.\n"
-#
-#
-#~ msgid ""
-#~ "UserKey accepted.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Kasutajavõti on aksepteeritud.\n"
-#~ "\n"
-#
-#
-#~ msgid "Valid until"
-#~ msgstr "Kehtiv kuni"
-#
-#
-#~ msgid "Version"
-#~ msgstr "Versioon"
-#
-#
-#~ msgid "Visit o-charts.org Website"
-#~ msgstr "Külasta o-charts.oeg veebilehte"
-#
-#
-#~ msgid ""
-#~ "You may continue to wait, or return to this screen later to complete the "
-#~ "download."
-#~ msgstr ""
-#~ "Võid jätkata ootamist või naasta hiljem selle kuva juurde allalaadimise "
-#~ "lõpetamiseks."
-#
-#
-#~ msgid ""
-#~ "You will receive an email message when preparation for download is complete"
-#~ msgstr "Saad e-kirjaga teate kui ettevalmistus allalaadimiseks on lõpetatud"
-#
-#
-#~ msgid "Your chart preparation is not complete."
-#~ msgstr "Su kaardi ettevalmistamine pole lõpetatud."
-#
-#
-#~ msgid "lower case letters and numbers only."
-#~ msgstr "kasuta ainult väiketähti ja numbreid."
-#
-#
-#~ msgid "new..."
-#~ msgstr "uus..."
-#
-#
-#~ msgid "o-charts API error code: "
-#~ msgstr "o-kaartide API-veakood: "
-#
-#
-#~ msgid "oeSENC"
-#~ msgstr "oeSENC"
-#
-#
-#~ msgid "oeSENC Charts"
-#~ msgstr "oeSENC kaardid"
-#
-#
-#~ msgid "oeSENC_PI Information"
-#~ msgstr "oeSENC_PI Informatsioon"
-#
-#
-#~ msgid "oeSENC_PI Message"
-#~ msgstr "oeSENC_PI teade"
-#
-#
-#~ msgid "oeSENC_PI Preferences"
-#~ msgstr "oeSENC_PI eelistused"
+msgstr "sellele süsteemile."
+
+#: src/ofcShop.cpp:987
+msgid "Proceed?"
+msgstr "Jätka?"
+
+#: src/ofcShop.cpp:1169
+msgid "Unzipping chart files..."
+msgstr "Kaardifailide lahtipakkimine..."
+
+#: src/ofcShop.cpp:1388 src/ofcShop.cpp:1495 src/ofcShop.cpp:3089
+#: src/ofcShop.cpp:3117
+msgid "Dialog"
+msgstr "Dialoog"
+
+#: src/ofcShop.cpp:1459
+msgid "Status:"
+msgstr "Olek:"
+
+#: src/ofcShop.cpp:1538
+msgid "Status: "
+msgstr "Olek: "
+
+#: src/ofcShop.cpp:1678
+msgid "My Charts"
+msgstr "Mu kaardid"
+
+#: src/ofcShop.cpp:1681
+msgid "Refresh Chart List"
+msgstr "Uuenda kaartide nimekirja"
+
+#: src/ofcShop.cpp:1700
+msgid "Actions"
+msgstr "Tegevused"
+
+#: src/ofcShop.cpp:1712
+msgid "Install Selected Chart"
+msgstr "Paigalda valitud kaardid"
+
+#: src/ofcShop.cpp:1715
+msgid "Cancel Operation"
+msgstr "Tühista toiming"
+
+#: src/ofcShop.cpp:1724
+msgid "Status: Chart List Refresh required."
+msgstr "Olek: kaartide nimekirja uuendamine on nõutav."
+
+#: src/ofcShop.cpp:1827 src/ofcShop.cpp:2423
+msgid "Contacting Fugawi Charts server..."
+msgstr "Fugawi kaartide serveriga ühenduse loomine..."
+
+#: src/ofcShop.cpp:1838 src/ofcShop.cpp:2434
+msgid "Status: Communications error."
+msgstr "Olek: ühenduse viga."
+
+#: src/ofcShop.cpp:1845
+msgid "Status: Checking for updates."
+msgstr "Olek: uuendusi kontrollimas."
+
+#: src/ofcShop.cpp:1852
+msgid "Status: Chartset index download failed."
+msgstr "Olek: kaardikomplekti indeksi allalaadimine nurjus."
+
+#: src/ofcShop.cpp:1856 src/ofcShop.cpp:2247 src/ofcShop.cpp:2441
+msgid "Status: Ready"
+msgstr "Olek: valmis"
+
+#: src/ofcShop.cpp:1933 src/ofcShop.cpp:2727
+msgid "Downloading index file"
+msgstr "Indeksfaili allalaadimine"
+
+#: src/ofcShop.cpp:1933 src/ofcShop.cpp:2727
+msgid "Reading Index: "
+msgstr "Indeksi lugemine: "
+
+#: src/ofcShop.cpp:2042
+msgid "Status: Error parsing index.xml."
+msgstr "Olek: Index.xml liigendmise viga."
+
+#: src/ofcShop.cpp:2103
+msgid "Chart download cancelled."
+msgstr "Kaardi allalaadimine tühistatud."
+
+#: src/ofcShop.cpp:2121
+msgid "Status: Server unavailable."
+msgstr "Olek: server pole saadaval."
+
+#: src/ofcShop.cpp:2173
+msgid "Status: BZB download FAILED after retry."
+msgstr "Olek: BZB allalaadimine NURJUS korduvkatse järel."
+
+#: src/ofcShop.cpp:2251
+msgid "Chart installation complete."
+msgstr "Kaardi paigaldus on lõpule viidud."
+
+#: src/ofcShop.cpp:2290
+msgid "Downloading chart:"
+msgstr "Kaardi allalaadimine:"
+
+#: src/ofcShop.cpp:2383
+msgid "Choose chart install location."
+msgstr "Vali kaardi paigalduskoht."
+
+#: src/ofcShop.cpp:2392
+msgid "Status:  Cancelled."
+msgstr "Olek: tühistatud."
+
+#: src/ofcShop.cpp:2411
+msgid "Status:  Activation FAILED."
+msgstr "Olek: aktiveerimine NURJUS."
+
+#: src/ofcShop.cpp:2449
+msgid "Activation succeeded.\n"
+msgstr "Aktiveerimine õnnestus.\n"
+
+#: src/ofcShop.cpp:2450
+msgid "You may now proceed to install the chartset"
+msgstr "Sa võid nüüd kaardikomplekti paigaldusega jätkata"
+
+#: src/ofcShop.cpp:2465
+msgid "Status: Downloading..."
+msgstr "Olek: allalaadimine..."
+
+#: src/ofcShop.cpp:2470
+msgid "Downloading..."
+msgstr "Allalaadimas..."
+
+#: src/ofcShop.cpp:2496 src/ofcShop.cpp:2521 src/ofcShop.cpp:2998
+msgid "Status: OK"
+msgstr "Olek: OK"
+
+#: src/ofcShop.cpp:2650 src/ofcShop.cpp:2662
+msgid "Install Selected Chartset"
+msgstr "Paigalda valitud kaardikomplekt"
+
+#: src/ofcShop.cpp:2654
+msgid "Reinstall Selected Chartset"
+msgstr "Paigalda valitud kaardikomplekt uuesti"
+
+#: src/ofcShop.cpp:2658
+msgid "Update Selected Chartset"
+msgstr "Uuenda valitud kaardikomplekt"
+
+#: src/ofcShop.cpp:2666
+msgid "Activate Selected Chartset"
+msgstr "Aktiveeri valitud kaardikomplekt"
+
+#: src/ofcShop.cpp:3055
+msgid "Downloaded:  "
+msgstr "Allalaetud:  "
+
+#: src/ofcShop.cpp:3136
+msgid "Login to Fugawi.com shop"
+msgstr "Logi Fugawi.com'i poodi sisse"
+
+#: src/ofcShop.cpp:3153
+msgid "email address:"
+msgstr "meiliaadress:"
+
+#: src/ofcShop.cpp:3160
+msgid "Password:"
+msgstr "Salasõna:"
+
+#: src/ofcShop.cpp:3170
+msgid "Cancel"
+msgstr "Tühista"
+
+#: src/ofcShop.cpp:3173
+msgid "OK"
+msgstr "OK"
+
