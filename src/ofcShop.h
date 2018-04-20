@@ -88,6 +88,7 @@ class itemChart
 public:    
     itemChart() { m_downloading = false; m_bEnabled = true; bActivated = false; device_ok = false; pendingUpdateFlag = false; thumbRetry = 0;}
     itemChart( wxString &product_sku, int index);
+    itemChart( wxString &product_sku);
     ~itemChart() {};
 
     void setDownloadPath(int slot, wxString path);
@@ -153,6 +154,7 @@ public:
     bool pendingUpdateFlag;
     bool bSkipDuplicates;
     int thumbRetry;
+    bool bRemove;
     
 };
 

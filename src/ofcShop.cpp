@@ -239,6 +239,17 @@ itemChart::itemChart( wxString &product_sku, int index) {
     thumbRetry = 0;
 }
 
+itemChart::itemChart( wxString &product_sku) {
+    productSKU = product_sku;
+    m_status = STAT_UNKNOWN;
+    m_downloading = false;
+    m_bEnabled = true;
+    bActivated = false;
+    device_ok = false;
+    pendingUpdateFlag = false;
+    thumbRetry = 0;
+}
+
 
 bool itemChart::isMatch(itemChart *thatItemChart)
 {
@@ -524,6 +535,109 @@ int findOrderRefChartId(wxString &SKU, int index)
     return -1;
 }
 
+int findChart(wxString &SKU, bool device_ok, bool activated)
+{
+    for(unsigned int i = 0 ; i < g_ChartArray.GetCount() ; i++){
+        itemChart *pchart = g_ChartArray.Item(i);
+        if(pchart->productSKU.IsSameAs(SKU) && (pchart->bActivated == activated) && (pchart->device_ok == device_ok)){
+            return (i);
+            }
+    }
+    return -1;
+    
+}
+
+
+bool scrubChartlist()
+{
+    for(unsigned int i = 0 ; i < g_ChartArray.GetCount() ; i++)
+        g_ChartArray.Item(i)->bRemove = false;
+        
+    for(unsigned int i = 0 ; i < g_ChartArray.GetCount() ; i++){
+        itemChart *pchartA = g_ChartArray.Item(i);
+        
+        for(unsigned int j = 0 ; j < g_ChartArray.GetCount() ; j++){
+            itemChart *pchartB = g_ChartArray.Item(j);
+            
+            if(i == j)
+                continue;
+            
+            if(pchartA->bRemove || pchartB->bRemove)
+                continue;
+
+            // Looking for duplicates
+            if(pchartA->productSKU.IsSameAs(pchartB->productSKU) || pchartA->productName.IsSameAs(pchartB->productName)){
+                
+                // Which one to keep?
+                
+                // Both un-activated, choose either
+                if(!pchartA->bActivated && !pchartB->bActivated){
+                    pchartB->bRemove = true;
+                    continue;
+                }
+ 
+                // Both activated for me, keep one if it has an install directory set
+                if(pchartA->bActivated && pchartA->device_ok && pchartB->bActivated && pchartB->device_ok){
+                    if(pchartA->installLocation.Len() && !pchartB->installLocation.Len() ){
+                        pchartB->bRemove = true;
+                        continue;
+                    }
+                    else if(pchartB->installLocation.Len() && !pchartA->installLocation.Len()){
+                        pchartA->bRemove = true;
+                        continue;
+                    }
+                }
+                    
+                // One activated for me, keep it for sure
+                if(pchartA->bActivated && pchartA->device_ok){
+                    pchartB->bRemove = true;
+                    continue;
+                }
+                if(pchartB->bActivated && pchartB->device_ok){
+                    pchartA->bRemove = true;
+                    continue;
+                }
+                
+                //  One activated, and the other not, decide
+                // If activated one is for me, keep it.  Otherwise remove it and keep the other.    
+                 if(pchartA->bActivated && !pchartB->bActivated){
+                     if(pchartA->device_ok){
+                         pchartB->bRemove = true;
+                         continue;
+                     }
+                     else{
+                         pchartA->bRemove = true;
+                         continue;
+                     }
+                 }
+                        
+                 if(pchartB->bActivated && !pchartA->bActivated){
+                     if(pchartB->device_ok){
+                         pchartA->bRemove = true;
+                         continue;
+                     }
+                     else{
+                         pchartB->bRemove = true;
+                         continue;
+                     }
+                 }
+                    
+            }
+        }
+    }
+    
+    bool retval = false;
+    //    List is marked, so remove the offenders...
+    for(unsigned int i = 0 ; i < g_ChartArray.GetCount() ; i++){
+        if(g_ChartArray.Item(i)->bRemove){
+            g_ChartArray.RemoveAt(i);
+            retval = true;
+        }
+    }
+        
+    return retval;    
+}
+
 
 void loadShopConfig()
 {
@@ -548,21 +662,16 @@ void loadShopConfig()
             pConf->Read( strk, &kval );
             
             // Parse the key
-            // Remove the last two characters (the SKU index)
-            wxString SKU = strk.Mid(0, strk.Length() - 2);
-            wxString sindex = strk.Right(1);
-            long lidx = 0;
-            sindex.ToLong(&lidx);
+            wxString SKU = strk;
             
-            // Add a chart if necessary
-            int index = -1; //findOrderRefChartId(order, id, qty);
-            itemChart *pItem;
-            if(index < 0){
-                pItem = new itemChart(SKU, lidx);
-                g_ChartArray.Add(pItem);
-            }
-            else
-                pItem = g_ChartArray.Item(index);
+            // Remove the last two characters (the SKU index)
+//            wxString SKU = strk.Mid(0, strk.Length() - 2);
+//            wxString sindex = strk.Right(1);
+//            long lidx = 0;
+//            sindex.ToLong(&lidx);
+            
+            itemChart *pItem = new itemChart(SKU);
+            g_ChartArray.Add(pItem);
 
             // Parse the value
             wxStringTokenizer tkz( kval, _T(";") );
@@ -570,7 +679,9 @@ void loadShopConfig()
             wxString installDir = tkz.GetNextToken();
             
             pItem->productName = name;
-            if(pItem->chartInstallLocnFull.IsEmpty())   pItem->chartInstallLocnFull = installDir;
+            pItem->chartInstallLocnFull = installDir;
+            pItem->bActivated = true;
+            pItem->device_ok = true;
             
             //  Extract the parent of the full location
             wxFileName fn(installDir);
@@ -579,6 +690,8 @@ void loadShopConfig()
             bContk = pConf->GetNextEntry( strk, dummyval );
         }
     }
+    
+    scrubChartlist();
 }
 
 void saveShopConfig()
@@ -601,9 +714,9 @@ void saveShopConfig()
       for(unsigned int i = 0 ; i < g_ChartArray.GetCount() ; i++){
           itemChart *chart = g_ChartArray.Item(i);
           if(chart->bActivated && chart->device_ok){            // Mine...
-            wxString idx;
-            idx.Printf(_T("%d"), chart->indexSKU);
-            wxString key = chart->productSKU + _T("-") + idx;
+//            wxString idx;
+//            idx.Printf(_T("%d"), chart->indexSKU);
+            wxString key = chart->productSKU; // + _T("-") + idx;
             
             wxString val = chart->productName + _T(";");
             val += chart->chartInstallLocnFull + _T(";");
@@ -806,7 +919,6 @@ wxString ProcessResponse(std::string body)
             if(!root){
                 return _T("50");                              // undetermined error??
             }
-            //g_ChartArray.Clear();
             
             wxString rootName = wxString::FromUTF8( root->Value() );
             TiXmlNode *child;
@@ -848,8 +960,50 @@ wxString ProcessResponse(std::string body)
                             app_id_ok = wxString( product->Attribute( "app_id_ok" ), wxConvUTF8 );
                             device_id_ok = wxString( product->Attribute( "device_id_ok" ), wxConvUTF8 );
                             product_key = wxString( product->Attribute( "product_key" ), wxConvUTF8 );
- 
+
+                            itemChart *pItem = NULL;
                             
+#if 1
+                            bool device_ok = device_id_ok.IsSameAs(_T("TRUE"), false);
+                            bool bActivated = activated.IsSameAs(_T("TRUE"), false);
+                            
+                            bool bSkip = false;
+                            bool bUpdate = false;
+                            
+                            // Is the exact same chartset SKU, with same conditions, already in the array?
+                            // If so, just update the info
+                            int dupIndex = findChart(product_sku, device_ok, bActivated);
+                            if(dupIndex >= 0){                                   // found
+                                 bUpdate = true;
+                            }
+                            
+                            //  If this set is not activated, and I already have an activated copy for me, skip it 
+                            if(!bActivated){
+                                int ck1Index = findChart(product_sku, true, true);
+                                if(ck1Index >= 0){
+                                    bSkip = true;
+                                    bUpdate = true;
+                                }
+                            }
+
+                            // If this set is activated, but not for me, then skip it
+                            if(bActivated && !device_ok)
+                                bSkip = true;
+                            
+                            if(!bSkip){
+                                if(bUpdate)
+                                    pItem = g_ChartArray.Item(dupIndex);
+                                else{
+                                    pItem = new itemChart(product_sku);
+                                    g_ChartArray.Add(pItem);
+                                }
+                            }
+                                
+                                
+                            
+                                
+                            
+#else                            
                             int index = 0;
                             //  Has this product sku been seen yet?
                             if(psi.find( product_sku ) == psi.end()){           // first one
@@ -869,7 +1023,6 @@ wxString ProcessResponse(std::string body)
                             
                             // As identified uniquely by Sku and index....
                             // Does this chart already exist in the table?
-                             itemChart *pItem;
                              int indexChart = findOrderRefChartId(product_sku, index);
                              if(indexChart < 0){
                                  pItem = new itemChart(product_sku, index);
@@ -877,18 +1030,21 @@ wxString ProcessResponse(std::string body)
                              }
                              else
                                  pItem = g_ChartArray.Item(indexChart);
-                            
+#endif
+                                 
                             // Populate in the rest of "item"
-                            pItem->productName = product_name;
-                            pItem->expDate = expiry;
-                            pItem->fileDownloadURL = purchase_url;
-                            pItem->productType = product_type;
-                            pItem->productKey = product_key;
-                            pItem->productBody = product_body;
-                            pItem->device_ok = device_id_ok.IsSameAs(_T("TRUE"), false);
-                            pItem->bActivated = activated.IsSameAs(_T("TRUE"), false);
+                            if(pItem){     
+                                pItem->productName = product_name;
+                                pItem->expDate = expiry;
+                                pItem->fileDownloadURL = purchase_url;
+                                pItem->productType = product_type;
+                                pItem->productKey = product_key;
+                                pItem->productBody = product_body;
+                                pItem->device_ok = device_id_ok.IsSameAs(_T("TRUE"), false);
+                                pItem->bActivated = activated.IsSameAs(_T("TRUE"), false);
                             
-                            processBody(pItem);
+                                processBody(pItem);
+                            }
                         }
                     }
                     
@@ -896,6 +1052,7 @@ wxString ProcessResponse(std::string body)
                 }
             }
         
+        scrubChartlist();
         
         return queryResult;
 }
