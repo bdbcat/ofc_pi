@@ -139,6 +139,10 @@ public:
    bool Post(wxInputStream& buffer, const wxString& szRemoteFile /*= wxEmptyString*/);
    bool Post(const char* buffer, size_t size, const wxString& szRemoteFile /*= wxEmptyString*/);
    std::string GetResponseBody() const;
+   
+   bool Get(const wxString& szFilePath, const wxString& szRemoteFile /*= wxEmptyString*/);
+   bool Get(wxOutputStream& buffer, const wxString& szRemoteFile /*=wxEmptyString*/);
+   
 protected:
     void SetCurlHandleToDefaults(const wxString& relativeURL);
     
@@ -224,6 +228,35 @@ std::string wxCurlHTTPNoZIP::GetResponseBody() const
     return std::string((const char *)m_szResponseBody);
 #endif
     
+}
+
+bool wxCurlHTTPNoZIP::Get(const wxString& szFilePath, const wxString& szRemoteFile /*= wxEmptyString*/)
+{
+    wxFFileOutputStream outStream(szFilePath);
+    
+    return Get(outStream, szRemoteFile);
+}
+
+bool wxCurlHTTPNoZIP::Get(wxOutputStream& buffer, const wxString& szRemoteFile /*=wxEmptyString*/)
+{
+    if(m_pCURL && buffer.IsOk())
+    {
+        SetCurlHandleToDefaults(szRemoteFile);
+        
+        curl_easy_setopt(m_pCURL, CURLOPT_SSL_VERIFYPEER, FALSE);
+        
+        SetHeaders();
+        SetOpt(CURLOPT_HTTPGET, TRUE);
+        SetStreamWriteFunction(buffer);
+        
+        if(Perform())
+        {
+            ResetHeaders();
+            return IsResponseOk();
+        }
+    }
+    
+    return false;
 }
 
 // itemChart
@@ -459,14 +492,45 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
             wxString fileOBF = g_PrivateDataDir + urlOBF;
             
             if(g_chartListUpdatedOK && thumbnailURL.Length() && (thumbRetry < 2)){  // Do not access network until after first "getList"
-                wxCurlHTTP get;
-                get.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
-                bool getResult = get.Get(fileOBF, thumbnailURL);
 
+#if 0
+            _OCPN_DLStatus ret = OCPN_downloadFile( thumbnailURL, fileOBF, _("Downloading thumbnail file"), _("Reading thumbnail: "), wxNullBitmap, g_shopPanel,
+                OCPN_DLDS_ELAPSED_TIME|OCPN_DLDS_ESTIMATED_TIME|OCPN_DLDS_REMAINING_TIME|OCPN_DLDS_SPEED|OCPN_DLDS_SIZE|OCPN_DLDS_URL|OCPN_DLDS_CAN_PAUSE|OCPN_DLDS_CAN_ABORT|OCPN_DLDS_AUTO_CLOSE,
+                10);
+            
+            
+                if(OCPN_DL_NO_ERROR == ret){
+                    if(::wxFileExists(fileOBF)){
+                        ::wxRenameFile( fileOBF, localFile);
+                    }
+                    
+                    if(::wxFileExists(localFile)){
+                        m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
+                    }
+                }
+                
+#else            
+                wxCurlHTTPNoZIP get;
+                //get.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
+            //wxCharBuffer buf = fileKey.ToUTF8();
+            //printf("thumb download %s\n", buf.data());
+                wxLogMessage(_T("download thumbnail: ") + thumbnailURL);
+
+                ::wxBeginBusyCursor();
+                bool getResult = get.Get(fileOBF, thumbnailURL);
+                ::wxEndBusyCursor();
+                
             // get the response code of the server
                 int iResponseCode;
                 get.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
             
+                
+            //printf("thumb response: %d\n", iResponseCode);
+                
+                wxString msg;
+                msg.Printf(_T("thumbnail file response: %d"), iResponseCode);
+                wxLogMessage(msg);
+                
                 if(iResponseCode == 200){
                     if(::wxFileExists(fileOBF)){
                         ::wxRenameFile( fileOBF, localFile);
@@ -476,6 +540,13 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
                         m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
                     }
                 }
+                else{
+                    if(::wxFileExists(fileOBF))
+                        wxRemoveFile(fileOBF);                   // must be bad file download
+                }
+                        
+                    
+#endif                
             }
         }
 
@@ -504,7 +575,8 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
         return m_bm;
     }
     else{
-        wxRemoveFile(localFile);                   // must be bad file download
+        if(::wxFileExists(localFile))
+            wxRemoveFile(localFile);                   // must be bad file download
         thumbRetry++;
         
         wxImage img(size, size);
