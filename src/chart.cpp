@@ -499,11 +499,19 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       ifs_hdr = new xtr1_inStream(name, key);          // open the file server
 
       if(!ifs_hdr->Ok()){
-          wxString msg(_T("   OFC_PI: chart local server error: "));
+          wxString msg(_T("   OFC_PI: chart local server error, retrying: "));
           msg.Append(m_FullPath);
           wxLogMessage(msg);
-          
-          return INIT_FAIL_REMOVE;
+
+          validate_server();
+
+          ifs_hdr = new xtr1_inStream(name, key);          // open the file server
+          if(!ifs_hdr->Ok()){
+              wxString msg(_T("   OFC_PI: chart local server error, final: "));
+              msg.Append(m_FullPath);
+              wxLogMessage(msg);
+              return INIT_FAIL_REMOVE;
+          }
       }
 
       
@@ -912,7 +920,7 @@ void ChartXTR1::ChartBaseBSBDTOR()
       {
             wxString msg(_T("OFC_PI:  Closing chart "));
             msg += m_FullPath;
-            wxLogMessage(msg);
+            //wxLogMessage(msg);
       }
 
       if(pBitmapFilePath)

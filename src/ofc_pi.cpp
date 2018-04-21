@@ -263,14 +263,14 @@ bool validate_server(void)
     
     
     if(g_debugLevel)printf("\n-------validate_server\n");
-    wxLogMessage(_T("validate_server"));
+    //wxLogMessage(_T("validate_server"));
     
     if(1 /*g_serverProc*/){
         // Check to see if the server is already running, and available
         //qDebug() << "Check running server Proc";
         xtr1_inStream testAvail;
         if(testAvail.isAvailable(wxEmptyString)){
-            wxLogMessage(_T("Available TRUE"));
+            //wxLogMessage(_T("Available TRUE"));
             return true;
         }
         
@@ -279,11 +279,11 @@ bool validate_server(void)
         while(nLoop < 2){
             tmsg.Printf(_T(" nLoop: %d"), nLoop);
             if(g_debugLevel)printf("      validate_server, retry: %d \n", nLoop);
-            wxLogMessage(_T("Available FALSE, retry...") + tmsg);
+            wxLogMessage(_T("Available FALSE, retrying...") + tmsg);
             wxMilliSleep(500);
             xtr1_inStream testAvailRetry;
             if(testAvailRetry.isAvailable(wxEmptyString)){
-                wxLogMessage(_T("Available TRUE"));
+                wxLogMessage(_T("Available TRUE on retry."));
                 return true;
             }
             nLoop++;
