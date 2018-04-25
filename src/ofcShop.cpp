@@ -281,6 +281,7 @@ itemChart::itemChart( wxString &product_sku) {
     device_ok = false;
     pendingUpdateFlag = false;
     thumbRetry = 0;
+    indexSKU = 0;
 }
 
 
