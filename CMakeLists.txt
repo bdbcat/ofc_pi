@@ -330,23 +330,23 @@ INSTALL(FILES "buildosx/ofcserverd/ofcserverd"
 configure_file(${PROJECT_SOURCE_DIR}/buildosx/ofcserverd/ofcserverd
             ${CMAKE_CURRENT_BINARY_DIR}/ofcserverd COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/data/TD-CHS-RM-ATL05.jpg
-            ${CMAKE_CURRENT_BINARY_DIR}/TD-CHS-RM-ATL05.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/data/TD-CHS-RM-ATL05.jpg
+#            ${CMAKE_CURRENT_BINARY_DIR}/TD-CHS-RM-ATL05.jpg COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/data/TD-EXC-BAH.jpg
-            ${CMAKE_CURRENT_BINARY_DIR}/TD-EXC-BAH.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/data/TD-EXC-BAH.jpg
+#            ${CMAKE_CURRENT_BINARY_DIR}/TD-EXC-BAH.jpg COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/data/TD-DK-S12.jpg
-            ${CMAKE_CURRENT_BINARY_DIR}/TD-DK-S12.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/data/TD-DK-S12.jpg
+#            ${CMAKE_CURRENT_BINARY_DIR}/TD-DK-S12.jpg COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/data/TD-DK-S21.jpg
-            ${CMAKE_CURRENT_BINARY_DIR}/TD-DK-S21.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/data/TD-DK-S21.jpg
+#            ${CMAKE_CURRENT_BINARY_DIR}/TD-DK-S21.jpg COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/data/TD-NV-KK-2015.jpg
-            ${CMAKE_CURRENT_BINARY_DIR}/TD-NV-KK-2015.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/data/TD-NV-KK-2015.jpg
+#            ${CMAKE_CURRENT_BINARY_DIR}/TD-NV-KK-2015.jpg COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/data/TD-ST-HG.jpg
-            ${CMAKE_CURRENT_BINARY_DIR}/TD-ST-HG.jpg COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/data/TD-ST-HG.jpg
+#            ${CMAKE_CURRENT_BINARY_DIR}/TD-ST-HG.jpg COPYONLY)
 
 
 ENDIF(APPLE)
@@ -359,6 +359,3 @@ INCLUDE("cmake/PluginLocalization.cmake")
 INCLUDE("cmake/PluginInstall.cmake")
 INCLUDE("cmake/PluginPackage.cmake")
 
-IF(WIN32)
-SET(CMAKE_INSTALL_PREFIX "c:/Projects/opencpn/build_482")
-ENDIF(WIN32)
