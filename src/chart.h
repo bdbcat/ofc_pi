@@ -366,6 +366,7 @@ protected:
       InitReturn PostInit(void);
       wxString getKeyAsciiHex(const wxString &name);
       
+      void FreeLineCacheRows(int start=0, int end=-1);
 
 
 //    Protected Data
@@ -402,7 +403,6 @@ protected:
 
 
       int         nColorSize;
-      //int         *pline_table;           // pointer to Line offset table
 
       CachedLine  *pLineCache;
 

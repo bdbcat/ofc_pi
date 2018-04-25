@@ -454,10 +454,24 @@ ChartXTR1::~ChartXTR1()
       ChartBaseBSBDTOR();
 }
 
-
-
-
-
+void ChartXTR1::FreeLineCacheRows(int start, int end)
+{
+    if(pLineCache)
+    {
+        if(end < 0)
+            end = Size_Y;
+        else
+            end = wxMin(end, Size_Y);
+        for(int ylc = start ; ylc < end ; ylc++) {
+            CachedLine *pt = &pLineCache[ylc];
+            if(pt->bValid) {
+                free (pt->pTileOffset);
+                free (pt->pPix);
+                pt->bValid = false;
+            }
+        }
+    }
+}
 
 
 #define BUF_LEN_MAX 4000
@@ -957,19 +971,9 @@ void ChartXTR1::ChartBaseBSBDTOR()
 
 //    Free the line cache
 
-      if(pLineCache)
-      {
-            CachedLine *pt;
-            for(int ylc = 0 ; ylc < Size_Y ; ylc++)
-            {
-                  pt = &pLineCache[ylc];
-                  if(pt->pPix)
-                        free (pt->pPix);
-            }
-            free (pLineCache);
-      }
-
-
+      FreeLineCacheRows();
+      free (pLineCache);
+      
 
       delete pPixCache;
 

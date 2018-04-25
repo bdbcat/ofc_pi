@@ -199,6 +199,18 @@ void xtr1_inStream::Close()
     if(m_uncrypt_stream){
         delete m_uncrypt_stream;
     }
+
+    free(phdr);
+    free(pPalleteBlock);
+    free(pRefBlock);
+    free(pPlyBlock);
+    free(pline_table);
+    
+    phdr = 0;
+    pPalleteBlock = 0;
+    pRefBlock = 0;
+    pPlyBlock = 0;
+    pline_table = NULL;           // pointer to Line offset table
     
     Init();             // In case it want to be used again
     
@@ -674,22 +686,19 @@ void xtr1_inStream::Init()
 
 void xtr1_inStream::Close()
 {
-#if 0    
-    if(-1 != privatefifo){
-        if(g_debugLevel)printf("   Close private fifo: %s \n", privatefifo_name);
-        close(privatefifo);
-        if(g_debugLevel)printf("   unlink private fifo: %s \n", privatefifo_name);
-        unlink(privatefifo_name);
-    }
+    free(phdr);
+    free(pPalleteBlock);
+    free(pRefBlock);
+    free(pPlyBlock);
+    free(pline_table);
     
-    if(-1 != publicfifo)
-        close(publicfifo);
+    phdr = 0;
+    pPalleteBlock = 0;
+    pRefBlock = 0;
+    pPlyBlock = 0;
+    pline_table = NULL;           // pointer to Line offset table
     
-    if(m_uncrypt_stream){
-        delete m_uncrypt_stream;
-    }
-    
-#endif    
+
     Init();             // In case it want to be used again
     
 }
