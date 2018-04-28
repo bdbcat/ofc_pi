@@ -474,12 +474,11 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
 {
     wxString fileKey = _T("ChartImage-");
     fileKey += productSKU;
-    fileKey += _T(".jpg");
+    fileKey += _T(".png");
     
     wxString localFile = g_PrivateDataDir + fileKey;
     
     if(!m_ChartImage.IsOk()){
-        // Look for it
 #if 1 
         // Look for cached copy
  
@@ -487,67 +486,35 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
             m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
         }
         else{
-            thumbnailURL = _T("https://opencpn.org/OpenCPN/assets/img/thumbs/");
-            wxString urlOBF = _T("ChartImage-") + productSKU + _T(".fcdanbob");
-            thumbnailURL += urlOBF;
-            wxString fileOBF = g_PrivateDataDir + urlOBF;
+            thumbnailURL = _T("http://o-charts.org/ofc/");
+            thumbnailURL += productSKU + _T(".png");
             
             if(g_chartListUpdatedOK && thumbnailURL.Length() && (thumbRetry < 2)){  // Do not access network until after first "getList"
 
-#if 0
-            _OCPN_DLStatus ret = OCPN_downloadFile( thumbnailURL, fileOBF, _("Downloading thumbnail file"), _("Reading thumbnail: "), wxNullBitmap, g_shopPanel,
-                OCPN_DLDS_ELAPSED_TIME|OCPN_DLDS_ESTIMATED_TIME|OCPN_DLDS_REMAINING_TIME|OCPN_DLDS_SPEED|OCPN_DLDS_SIZE|OCPN_DLDS_URL|OCPN_DLDS_CAN_PAUSE|OCPN_DLDS_CAN_ABORT|OCPN_DLDS_AUTO_CLOSE,
-                10);
-            
-            
-                if(OCPN_DL_NO_ERROR == ret){
-                    if(::wxFileExists(fileOBF)){
-                        ::wxRenameFile( fileOBF, localFile);
-                    }
-                    
-                    if(::wxFileExists(localFile)){
-                        m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
-                    }
-                }
-                
-#else            
                 wxCurlHTTPNoZIP get;
-                //get.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
-            //wxCharBuffer buf = fileKey.ToUTF8();
-            //printf("thumb download %s\n", buf.data());
                 wxLogMessage(_T("download thumbnail: ") + thumbnailURL);
 
                 ::wxBeginBusyCursor();
-                bool getResult = get.Get(fileOBF, thumbnailURL);
+                bool getResult = get.Get(localFile, thumbnailURL);
                 ::wxEndBusyCursor();
                 
             // get the response code of the server
                 int iResponseCode;
                 get.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
-            
-                
-            //printf("thumb response: %d\n", iResponseCode);
                 
                 wxString msg;
                 msg.Printf(_T("thumbnail file response: %d"), iResponseCode);
                 wxLogMessage(msg);
                 
                 if(iResponseCode == 200){
-                    if(::wxFileExists(fileOBF)){
-                        ::wxRenameFile( fileOBF, localFile);
-                    }
-                    
                     if(::wxFileExists(localFile)){
                         m_ChartImage = wxImage( localFile, wxBITMAP_TYPE_ANY);
                     }
                 }
                 else{
-                    if(::wxFileExists(fileOBF))
-                        wxRemoveFile(fileOBF);                   // must be bad file download
+                    if(::wxFileExists(localFile))
+                        wxRemoveFile(localFile);                   // must be bad file download
                 }
-                        
-                    
-#endif                
             }
         }
 
