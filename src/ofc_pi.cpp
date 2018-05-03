@@ -39,6 +39,19 @@
 #include "xtr1_inStream.h"
 #include "ofcShop.h"
 
+#ifdef __OCPN__ANDROID__
+#include <QtAndroidExtras/QAndroidJniObject>
+#include "qdebug.h"
+//wxString callActivityMethod_vs(const char *method);
+//wxString callActivityMethod_ss(const char *method, wxString parm);
+wxString callActivityMethod_s4s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4);
+//wxString callActivityMethod_s5s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4, wxString parm5);
+//wxString callActivityMethod_s6s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4, wxString parm5, wxString parm6);
+//wxString callActivityMethod_s2s(const char *method, wxString parm1, wxString parm2);
+//void androidShowBusyIcon();
+//void androidHideBusyIcon();
+#endif
+
 // the class factories, used to create and destroy instances of the PlugIn
 
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
@@ -445,3 +458,86 @@ bool shutdown_server( void )
     }
 }
 
+#ifdef __OCPN__ANDROID__
+
+extern JavaVM *java_vm;         // found in androidUtil.cpp, accidentally exported....
+
+bool CheckPendingJNIException()
+{
+    JNIEnv* jenv;
+    
+    if (java_vm->GetEnv( (void **) &jenv, JNI_VERSION_1_6) != JNI_OK) 
+        return true;
+    
+    if( (jenv)->ExceptionCheck() == JNI_TRUE ) {
+        
+        // Handle exception here.
+        (jenv)->ExceptionDescribe(); // writes to logcat
+        (jenv)->ExceptionClear();
+        
+        return false;           // There was a pending exception, but cleared OK
+        // interesting discussion:  http://blog.httrack.com/blog/2013/08/23/catching-posix-signals-on-android/
+    }
+    
+    return false;
+    
+}
+
+
+wxString callActivityMethod_s4s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4)
+{
+    if(CheckPendingJNIException())
+        return _T("NOK");
+    JNIEnv* jenv;
+    
+    wxString return_string;
+    QAndroidJniObject activity = QAndroidJniObject::callStaticObjectMethod("org/qtproject/qt5/android/QtNative",
+                                                                           "activity", "()Landroid/app/Activity;");
+    if(CheckPendingJNIException())
+        return _T("NOK");
+    
+    if ( !activity.isValid() ){
+        return return_string;
+    }
+    
+    //  Need a Java environment to decode the resulting string
+    if (java_vm->GetEnv( (void **) &jenv, JNI_VERSION_1_6) != JNI_OK) {
+        return _T("jenv Error");
+    }
+    
+    wxCharBuffer p1b = parm1.ToUTF8();
+    jstring p1 = (jenv)->NewStringUTF(p1b.data());
+    
+    wxCharBuffer p2b = parm2.ToUTF8();
+    jstring p2 = (jenv)->NewStringUTF(p2b.data());
+    
+    wxCharBuffer p3b = parm3.ToUTF8();
+    jstring p3 = (jenv)->NewStringUTF(p3b.data());
+    
+    wxCharBuffer p4b = parm4.ToUTF8();
+    jstring p4 = (jenv)->NewStringUTF(p4b.data());
+    
+    QAndroidJniObject data = activity.callObjectMethod(method, "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
+                                                       p1, p2, p3, p4);
+    (jenv)->DeleteLocalRef(p1);
+    (jenv)->DeleteLocalRef(p2);
+    (jenv)->DeleteLocalRef(p3);
+    (jenv)->DeleteLocalRef(p4);
+    
+    if(CheckPendingJNIException())
+        return _T("NOK");
+    
+    //qDebug() << "Back from method_s4s";
+        
+        jstring s = data.object<jstring>();
+        
+        if( (jenv)->GetStringLength( s )){
+            const char *ret_string = (jenv)->GetStringUTFChars(s, NULL);
+            return_string = wxString(ret_string, wxConvUTF8);
+        }
+        
+        return return_string;
+        
+}
+
+#endif

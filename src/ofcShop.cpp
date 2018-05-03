@@ -37,8 +37,6 @@
 #include <wx/dir.h>
 #include "ofcShop.h"
 #include "ocpn_plugin.h"
-#include "wxcurl/wx/curl/http.h"
-#include "wxcurl/wx/curl/thread.h"
 #include <tinyxml.h>
 #include "wx/wfstream.h"
 #include <wx/zipstrm.h>
@@ -47,6 +45,11 @@
 #include "xtr1_inStream.h"
 #include "ofc_pi.h"
 #include "version.h"
+
+#ifdef __OCPN_USE_CURL__
+    #include "wxcurl/wx/curl/http.h"
+    #include "wxcurl/wx/curl/thread.h"
+#endif    
 
 #include <wx/arrimpl.cpp> 
 WX_DEFINE_OBJARRAY(ArrayOfCharts);
@@ -57,6 +60,7 @@ WX_DECLARE_STRING_HASH_MAP( int, ProdSKUIndexHash );
 
 
 //  Static variables
+extern int g_debugLevel;
 ArrayOfCharts g_ChartArray;
 
 int g_timeout_secs = 10;
@@ -72,8 +76,12 @@ wxString g_dlStatPrefix;
 extern wxString  g_versionString;
 
 shopPanel *g_shopPanel;
+
+#ifdef __OCPN_USE_CURL__
 OESENC_CURL_EvtHandler *g_CurlEventHandler;
 wxCurlDownloadThread *g_curlDownloadThread;
+#endif
+
 wxFFileOutputStream *downloadOutStream;
 bool g_chartListUpdatedOK;
 wxString g_statusOverride;
@@ -89,6 +97,8 @@ itemChart* g_chartProcessing;
 #define ID_CMD_BUTTON_DOWNLOADLIST_PROC 7787
 
 // Private class implementations
+
+#ifdef __OCPN_USE_CURL__
 
 size_t wxcurl_string_write_UTF8(char* ptr, size_t size, size_t nmemb, void* pcharbuf)
 {
@@ -258,6 +268,8 @@ bool wxCurlHTTPNoZIP::Get(wxOutputStream& buffer, const wxString& szRemoteFile /
     
     return false;
 }
+
+#endif
 
 // itemChart
 //------------------------------------------------------------------------------------------
@@ -479,7 +491,7 @@ wxBitmap& itemChart::GetChartThumbnail(int size)
     wxString localFile = g_PrivateDataDir + fileKey;
     
     if(!m_ChartImage.IsOk()){
-#if 1 
+#ifndef __OCPN__ANDROID__ 
         // Look for cached copy
  
         if(::wxFileExists(localFile)){
@@ -1125,8 +1137,9 @@ int getChartList( bool bShowErrorDialogs = true){
     loginParms += _T("&device_id=");
     loginParms += kk;
 
-    //wxLogMessage(_T("getChartList Login Parms: ") + loginParms);
+    if(g_debugLevel) wxLogMessage(_T("getChartList Login Parms: ") + loginParms);
     
+#ifndef __OCPN__ANDROID__    
     wxCurlHTTPNoZIP post;
     //wxCurlHTTP post;
     post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
@@ -1162,6 +1175,9 @@ int getChartList( bool bShowErrorDialogs = true){
      else{
          return iResponseCode; //checkResponseCode(iResponseCode);
      }
+#else
+    return 53;
+#endif    
 }
 
 
@@ -1210,6 +1226,7 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     loginParms += _T("&product_sku=");
     loginParms += chart->productSKU;
     
+#ifndef __OCPN__ANDROID__    
     wxCurlHTTPNoZIP post;
     post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
     
@@ -1237,7 +1254,9 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     }
     else
         return iResponseCode; //checkResponseCode(iResponseCode);
-
+#else
+    return 51;
+#endif
 
 }
 
@@ -1256,6 +1275,7 @@ int doPrepare(oeSencChartPanel *chartPrepare, int slot)
 
 int doDownload(oeSencChartPanel *chartDownload)
 {
+#ifndef __OCPN__ANDROID__    
     itemChart *chart = chartDownload->m_pChart;
 
     //  Create a destination file name for the download.
@@ -1279,7 +1299,7 @@ int doDownload(oeSencChartPanel *chartDownload)
     g_curlDownloadThread->SetURL(downloadURL);
     g_curlDownloadThread->SetOutputStream(downloadOutStream);
     g_curlDownloadThread->Download();
- 
+#endif
 
     return 0;
 }
@@ -1849,7 +1869,9 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
 {
     loadShopConfig();
     
+#ifdef __OCPN_USE_CURL__    
     g_CurlEventHandler = new OESENC_CURL_EvtHandler;
+#endif    
     
     g_shopPanel = this;
     m_bcompleteChain = false;
@@ -2489,12 +2511,14 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
         g_dlStatPrefix = statIncremental + i1;
                 
         m_buttonCancelOp->Show();
-                
+
+#ifndef __OCPN__ANDROID__        
         g_downloadChainIdentifier = ID_CMD_BUTTON_DOWNLOADLIST_CHAIN;
         g_curlDownloadThread = new wxCurlDownloadThread(g_CurlEventHandler);
         g_curlDownloadThread->SetURL(tUrl);
         g_curlDownloadThread->SetOutputStream(downloadOutStream);
         g_curlDownloadThread->Download();
+#endif        
                 
         return;
     }
@@ -2679,7 +2703,7 @@ int shopPanel::doDownloadGui()
 
 void shopPanel::OnButtonCancelOp( wxCommandEvent& event )
 {
-    
+#ifndef __OCPN__ANDROID__    
     if(g_curlDownloadThread){
         m_bAbortingDownload = true;
         g_curlDownloadThread->Abort();
@@ -2697,12 +2721,14 @@ void shopPanel::OnButtonCancelOp( wxCommandEvent& event )
     m_buttonInstall->Enable();
     
     UpdateChartList();
+#endif
     
 }
 
 
 void shopPanel::StopAllDownloads()
 {
+#ifndef __OCPN__ANDROID__    
     if(g_curlDownloadThread){
         m_bAbortingDownload = true;
         
@@ -2722,6 +2748,8 @@ void shopPanel::StopAllDownloads()
     m_buttonInstall->Enable();
     
     UpdateChartList();
+#endif
+    
 }
 
 
@@ -3168,6 +3196,8 @@ void InProgressIndicator::Reset()
     SetValue(0);
 }
 
+#ifdef __OCPN_USE_CURL__
+
 //-------------------------------------------------------------------------------------------
 OESENC_CURL_EvtHandler::OESENC_CURL_EvtHandler()
 {
@@ -3265,6 +3295,9 @@ void OESENC_CURL_EvtHandler::onProgressEvent(wxCurlDownloadEvent &evt)
     }
     
 }
+
+#endif
+
 
 IMPLEMENT_DYNAMIC_CLASS( xtr1Login, wxDialog )
 BEGIN_EVENT_TABLE( xtr1Login, wxDialog )
