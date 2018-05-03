@@ -181,8 +181,10 @@ SET(SRC_OFC
 
 
 
-OPTION(OCPN_USE_CURL "Use Curl libraries" ON)
-ADD_DEFINITIONS(-D__OCPN_USE_CURL__)
+IF(NOT QT_ANDROID)
+    OPTION(OCPN_USE_CURL "Use Curl libraries" ON)
+    ADD_DEFINITIONS(-D__OCPN_USE_CURL__)
+ENDIF(NOT QT_ANDROID)
 
 IF(WIN32)
     OPTION(OCPN_USE_EXTERN_CURL "Use external libcurl" OFF)
@@ -356,6 +358,10 @@ ENDIF(APPLE)
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "dsr")
 
 INCLUDE("cmake/PluginLocalization.cmake")
+
+IF(NOT QT_ANDROID)
 INCLUDE("cmake/PluginInstall.cmake")
 INCLUDE("cmake/PluginPackage.cmake")
+ENDIF(NOT QT_ANDROID)
+
 
