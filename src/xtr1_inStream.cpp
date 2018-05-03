@@ -87,6 +87,572 @@ int makeAddr(const char* name, struct sockaddr_un* pAddr, socklen_t* pSockLen)
 
 #endif
 
+#ifdef __OCPN__ANDROID__
+#include "qdebug.h"
+
+//--------------------------------------------------------------------------
+//      xtr1_inStream implementation as Kernel Socket
+//--------------------------------------------------------------------------
+
+int makeAddr(const char* name, struct sockaddr_un* pAddr, socklen_t* pSockLen)
+{
+    // consider this:
+    //http://stackoverflow.com/questions/11640826/can-not-connect-to-linux-abstract-unix-socket
+    
+    int nameLen = strlen(name);
+    if (nameLen >= (int) sizeof(pAddr->sun_path) -1)  /* too long? */
+        return -1;
+    pAddr->sun_path[0] = '\0';  /* abstract namespace */
+    strcpy(pAddr->sun_path+1, name);
+    pAddr->sun_family = AF_LOCAL;
+    *pSockLen = 1 + nameLen + offsetof(struct sockaddr_un, sun_path);
+    return 0;
+}
+
+xtr1_inStream::xtr1_inStream()
+{
+    Init();
+    
+}
+
+xtr1_inStream::xtr1_inStream( const wxString &file_name, const wxString &crypto_key )
+{
+    Init();
+    
+    m_fileName = file_name;
+    m_cryptoKey = crypto_key;
+    
+    m_OK = Open( );
+    if(m_OK){
+        if(!Load()){
+            printf("%s\n", err);
+            m_OK = false;
+        }
+    }
+    
+    
+    if(-1 != publicSocket){
+        //qDebug() << "Close() Close Socket" << publicSocket;
+        close( publicSocket );
+        publicSocket = -1;
+    }
+    
+    // Done with the private FIFO
+    
+/*    if(-1 != privatefifo){
+        if(g_debugLevel)printf("   Close private fifo: %s \n", privatefifo_name);
+        close(privatefifo);
+        if(g_debugLevel)printf("   unlink private fifo: %s \n", privatefifo_name);
+        unlink(privatefifo_name);
+    }
+ */   
+    privatefifo = -1;
+    m_lastBytesRead = 0;
+    m_lastBytesReq = 0;
+    m_uncrypt_stream = 0;
+    
+    
+   
+}
+
+xtr1_inStream::~xtr1_inStream()
+{
+    Close();
+    if(publicSocket > 0){
+        // qDebug() << "dtor Close Socket" << publicSocket;
+        close( publicSocket );
+        publicSocket = -1;
+    }
+    
+}
+
+void xtr1_inStream::Init()
+{
+    phdr = 0;
+    pPalleteBlock = 0;
+    pRefBlock = 0;
+    pPlyBlock = 0;
+    pline_table = NULL;           // pointer to Line offset table
+    
+    privatefifo = -1;
+    publicfifo = -1;
+    m_OK = true;
+    m_lastBytesRead = 0;
+    m_lastBytesReq = 0;
+    m_uncrypt_stream = 0;
+    publicSocket = -1;
+    
+    strcpy(publicsocket_name,"com.whoever.xfer");
+    
+    if (makeAddr(publicsocket_name, &sockAddr, &sockLen) < 0){
+        wxLogMessage(_T("ofc_pi: Could not makeAddr for PUBLIC socket"));
+    }
+    
+    publicSocket = socket(AF_LOCAL, SOCK_STREAM, PF_UNIX);
+    if (publicSocket < 0) {
+        wxLogMessage(_T("ofc_pi: Could not make PUBLIC socket"));
+    }
+    
+}
+
+
+void xtr1_inStream::Close()
+{
+    wxLogMessage(_T("xtr1_inStream::Close()"));
+    qDebug() << "xtr1_inStream::Close()";
+    
+    if(-1 != privatefifo){
+        if(g_debugLevel)printf("   Close private fifo: %s \n", privatefifo_name);
+        close(privatefifo);
+        if(g_debugLevel)printf("   unlink private fifo: %s \n", privatefifo_name);
+        unlink(privatefifo_name);
+    }
+    
+    if(-1 != publicfifo)
+        close(publicfifo);
+    
+    if(m_uncrypt_stream){
+        delete m_uncrypt_stream;
+    }
+    
+    if(-1 != publicSocket){
+        //qDebug() << "Close() Close Socket" << publicSocket;
+        close( publicSocket );
+        publicSocket = -1;
+    }
+    
+    
+    free(phdr);
+    free(pPalleteBlock);
+    free(pRefBlock);
+    free(pPlyBlock);
+    free(pline_table);
+    
+    phdr = 0;
+    pPalleteBlock = 0;
+    pRefBlock = 0;
+    pPlyBlock = 0;
+    pline_table = NULL;           // pointer to Line offset table
+    
+    Init();             // In case it want to be used again
+    
+}
+
+
+bool xtr1_inStream::Open( )
+{
+    wxLogMessage(_T("xtr1_inStream::Open()"));
+    qDebug() << "xtr1_inStream::Open()";
+    qDebug() << publicSocket;
+    
+    if (connect(publicSocket, (const struct sockaddr*) &sockAddr, sockLen) < 0) {
+        wxLogMessage(_T("ofc_pi: Could not connect to PUBLIC socket"));
+        qDebug() << "ofc_pi: Could not connect to PUBLIC socket";
+        return false;
+    }
+    
+    return true;
+}
+
+bool xtr1_inStream::Load( )
+{ 
+    //printf("LOAD()\n");
+    //wxLogMessage(_T("ofc_pi: LOAD"));
+    
+    if(m_cryptoKey.Length() && m_fileName.length()){
+        
+        fifo_msg msg;
+        //  Build a message for the public pipe
+        
+        wxCharBuffer buf = m_fileName.ToUTF8();
+        if(buf.data()) 
+            strncpy(msg.file_name, buf.data(), sizeof(msg.file_name));
+        
+        strncpy(msg.fifo_name, privatefifo_name, sizeof(privatefifo_name));
+        
+        buf = m_cryptoKey.ToUTF8();
+        if(buf.data()) 
+            strncpy(msg.crypto_key, buf.data(), sizeof(msg.crypto_key));
+        
+        msg.cmd = CMD_OPEN;
+        
+        write(publicSocket, (char*) &msg, sizeof(msg));
+        
+       
+        // Read response, by steps...
+        
+        // 1.  Compressed Header
+        if(NULL == phdr){
+            phdr = (compressedHeader *)calloc(1, sizeof(compressedHeader));
+            if(NULL == phdr){
+                strncpy(err, "Load:  cannot allocate memory", sizeof(err));
+                return false;
+            }
+        }
+        if(!Read(phdr, sizeof(compressedHeader)).IsOk()){
+            strncpy(err, "Load:  READ error chdr", sizeof(err));
+            return false;
+        }
+        
+        // 2.  Palette Block
+        if(phdr->nPalleteLines){
+            pPalleteBlock = (char *)calloc( phdr->nPalleteLines,  PALLETE_LINE_SIZE);
+            if(!Read(pPalleteBlock, phdr->nPalleteLines * PALLETE_LINE_SIZE).IsOk()){
+                strncpy(err, "Load:  READ error pal", sizeof(err));
+                return false;
+            }
+        }
+        
+        for(int i=0 ; i < phdr->nPalleteLines ; i++){
+            char *pl = &pPalleteBlock[i * PALLETE_LINE_SIZE];
+            int yyp = 4;
+            //              printf("Offset %d:   %d\n", i, pline_table[i]);
+        }
+        
+        // 3.  Ref Block
+        if(phdr->nRefLines){
+            pRefBlock = (char *)calloc( phdr->nRefLines,  REF_LINE_SIZE);
+            if(!Read(pRefBlock, phdr->nRefLines * REF_LINE_SIZE).IsOk()){
+                strncpy(err, "Load:  READ error ref", sizeof(err));
+                return false;
+            }
+        }
+        
+        // 4.  Ply Block
+        if(phdr->nPlyLines){
+            pPlyBlock = (char *)calloc( phdr->nPlyLines,  PLY_LINE_SIZE);
+            if(!Read(pPlyBlock, phdr->nPlyLines * PLY_LINE_SIZE).IsOk()){
+                strncpy(err, "Load:  READ error ply", sizeof(err));
+                return false;
+            }
+        }
+        
+        // 5.  Line offset Block
+        pline_table = NULL;
+        pline_table = (int *)malloc((phdr->Size_Y+1) * sizeof(int) );               
+        if(!pline_table){
+            strncpy(err, "Load:  cannot allocate memory, pline", sizeof(err));
+            return false;
+        }
+        if(!Read(pline_table, (phdr->Size_Y+1) * sizeof(int)).IsOk()){
+            strncpy(err, "Load:  READ error off", sizeof(err));
+            return false;
+        }
+        
+        //          for(int i=0 ; i < phdr->Size_Y+1 ; i++)
+        //              printf("Offset %d:   %d\n", i, pline_table[i]);
+        
+        
+        return true;
+    }
+    
+    return false;
+}
+
+bool xtr1_inStream::SendServerCommand( unsigned char cmd )
+{
+    fifo_msg msg;
+    
+    strncpy(msg.fifo_name, privatefifo_name, sizeof(msg.fifo_name));
+    
+    wxCharBuffer buf = m_fileName.ToUTF8();
+    if(buf.data()) 
+        strncpy(msg.file_name, buf.data(), sizeof(msg.file_name));
+    else
+        strncpy(msg.file_name, "?", sizeof(msg.file_name));
+    
+    
+    buf = m_cryptoKey.ToUTF8();
+    if(buf.data()) 
+        strncpy(msg.crypto_key, buf.data(), sizeof(msg.crypto_key));
+    else
+        strncpy(msg.crypto_key, "??", sizeof(msg.crypto_key));
+    
+    msg.cmd = cmd;
+    
+    write(publicSocket, (char*) &msg, sizeof(msg));
+    
+     return true;
+}
+
+
+bool xtr1_inStream::IsOk()
+{
+    return m_OK;
+}
+
+bool xtr1_inStream::Ok()
+{
+    return m_OK;
+}
+
+
+bool xtr1_inStream::isAvailable(wxString user_key)
+{
+    if(g_debugLevel)qDebug() << "TestAvail\n";
+                        
+                        if(m_uncrypt_stream){
+                            return m_uncrypt_stream->IsOk();
+                        }
+                        else{
+                            if(!Open()){
+                                if(g_debugLevel)qDebug() << "TestAvail Open FAILED\n";
+                        return false;
+                            }
+                            
+                            if( SendServerCommand(CMD_TEST_AVAIL) ){
+                                if(g_debugLevel)qDebug() << "TestAvail Open OK\n" ;
+                        char response[8];
+                        memset( response, 0, 8);
+                        int nTry = 5;
+                        do{
+                            if( Read(response, 2).IsOk() ){
+                                if(g_debugLevel)qDebug() << "TestAvail Response OK\n" ;
+                        return( !strncmp(response, "OK", 2) );
+                            }
+                            
+                            if(g_debugLevel)qDebug() << "Sleep on TestAvail: %d\n", nTry;
+                        wxMilliSleep(100);
+                        nTry--;
+                        }while(nTry);
+                        
+                        return false;
+                            }
+                            else{
+                                if(g_debugLevel)qDebug() << "TestAvail Open Error\n" ;
+                        return false;
+                            }
+                        }
+                        
+                        return false;
+}
+
+wxString xtr1_inStream::getHK()
+{
+    //wxLogMessage(_T("hk0"));
+    
+    if(!Open()){
+        if(g_debugLevel)printf("getHK Open FAILED\n");
+                               wxLogMessage(_T("hk1"));
+        return wxEmptyString;
+    }
+    
+    if( SendServerCommand(CMD_GET_HK) ){
+        char response[9];
+        memset( response, 0, 9);
+        strcpy( response, "testresp"); 
+        int nTry = 5;
+        do{
+            if( Read(response, 8).IsOk() ){
+                if(g_debugLevel)wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
+                return( wxString( response, wxConvUTF8 ));
+            }
+            
+            if(g_debugLevel)printf("Sleep on getHK: %d\n", nTry);
+               wxLogMessage(_T("hk2"));
+            
+            wxMilliSleep(100);
+            nTry--;
+        }while(nTry);
+        
+        if(g_debugLevel)printf("getHK Response Timeout nTry\n");
+                               wxLogMessage(_T("hk3"));
+        
+        return wxEmptyString;
+    }
+    else{
+        if(g_debugLevel)printf("getHK SendServer Error\n");
+                            wxLogMessage(_T("hk4"));
+    }
+    return wxEmptyString;
+}
+
+
+
+bool xtr1_inStream::decryptBZB(wxString &inFile, wxString outFile)
+{
+    {
+        if(!Open()){
+            if(g_debugLevel)printf("decryptBZB Open FAILED\n");
+                            return false;
+        }
+        
+        //  Create the server command
+        fifo_msg msg;
+        
+        strncpy(msg.fifo_name, privatefifo_name, sizeof(msg.fifo_name));
+        
+        wxCharBuffer buf = inFile.ToUTF8();
+        if(buf.data()) 
+            strncpy(msg.file_name, buf.data(), sizeof(msg.file_name));
+        else
+            strncpy(msg.file_name, "?", sizeof(msg.file_name));
+        
+        
+        // Using the crypto_key field in the msg structure to send output file name
+            buf = outFile.ToUTF8();
+            if(buf.data()) 
+                strncpy(msg.crypto_key, buf.data(), sizeof(msg.crypto_key));
+            else
+                strncpy(msg.crypto_key, "??", sizeof(msg.crypto_key));
+            
+            msg.cmd = CMD_DECRYPT_BZB;
+            
+            write(publicSocket, (char*) &msg, sizeof(msg));
+            
+            
+            if(1){
+                if(g_debugLevel)printf("decryptBZB Open OK\n");
+                        char response[8];
+                memset( response, 0, 8);
+                int nTry = 5;
+                do{
+                    if( Read(response, 2).IsOk() ){
+                        if(g_debugLevel)printf("decryptBZB Response OK\n");
+                     return( !strncmp(response, "KO", 2) );
+                    }
+                    
+                    if(g_debugLevel)printf("Sleep on decryptBZB: %d\n", nTry);
+        wxMilliSleep(100);
+        nTry--;
+                }while(nTry);
+                
+                return false;
+            }
+            else{
+                if(g_debugLevel)printf("decryptBZB SendServerCommand Error\n");
+                return false;
+            }
+    }
+    
+    return false;
+}
+
+void xtr1_inStream::Shutdown()
+{
+    if(!Open()){
+        if(g_debugLevel)printf("Shutdown Open FAILED\n");
+        return;
+    }
+    
+    if(SendServerCommand(CMD_EXIT)) {
+        char response[8];
+        memset( response, 0, 8);
+        Read(response, 3);
+    }
+}
+
+compressedHeader *xtr1_inStream::GetCompressedHeader()
+{
+    return phdr;
+}
+
+char *xtr1_inStream::GetPalleteBlock()
+{ 
+    return pPalleteBlock;
+}
+
+char *xtr1_inStream::GetRefBlock()
+{ 
+    return pRefBlock;
+}
+
+char *xtr1_inStream::GetPlyBlock()
+{ 
+    return pPlyBlock;
+}
+
+off_t xtr1_inStream::GetBitmapOffset( unsigned int y )
+{
+    return pline_table[y];
+}
+
+xtr1_inStream &xtr1_inStream::Read(void *buffer, size_t size)
+{
+    #define READ_SIZE 64000;
+    #define MAX_TRIES 100;
+    if(!m_uncrypt_stream){
+        size_t max_read = READ_SIZE;
+        
+        if( -1 != publicSocket){
+            
+            int remains = size;
+            char *bufRun = (char *)buffer;
+            int totalBytesRead = 0;
+            int nLoop = MAX_TRIES;
+            do{
+                int bytes_to_read = wxMin(remains, max_read);
+                if(bytes_to_read > 10000)
+                    int yyp = 2;
+                
+                int bytesRead;
+                
+                #if 1
+                struct pollfd fd;
+                int ret;
+                
+                fd.fd = publicSocket; // your socket handler 
+                fd.events = POLLIN;
+                ret = poll(&fd, 1, 100); // 1 second for timeout
+                switch (ret) {
+                    case -1:
+                        // Error
+                        bytesRead = 0;
+                        break;
+                    case 0:
+                        // Timeout 
+                        bytesRead = -1;
+                        break;
+                    default:
+                        bytesRead = read(publicSocket, bufRun, bytes_to_read );
+                        break;
+                }
+                
+                #else                
+                bytesRead = read(publicSocket, bufRun, bytes_to_read );
+                #endif                
+                
+                // Server may not have opened the Write end of the FIFO yet
+                if(bytesRead == 0){
+                    //                    printf("miss %d %d %d\n", nLoop, bytes_to_read, size);
+                    nLoop --;
+                    wxMilliSleep(1);
+                }
+                else if(bytesRead == -1)
+                    nLoop = 0;
+                else
+                    nLoop = MAX_TRIES;
+                
+                remains -= bytesRead;
+                bufRun += bytesRead;
+                totalBytesRead += bytesRead;
+            } while( (remains > 0) && (nLoop) );
+            
+            m_OK = ((size_t)totalBytesRead == size);
+            if(!m_OK)
+                int yyp = 4;
+            m_lastBytesRead = totalBytesRead;
+            m_lastBytesReq = size;
+        }
+        
+        return *this;
+    }
+    else{
+        if(m_uncrypt_stream->IsOk())
+            m_uncrypt_stream->Read(buffer, size);
+        m_OK = m_uncrypt_stream->IsOk();
+        return *this;
+    }
+}
+
+
+
+
+
+
+
+
+#endif  //__OCPN__ANDROID__
 
 #if !defined(__WXMSW__) && !defined( __OCPN__ANDROID__)   // i.e. linux and Mac
 
@@ -221,30 +787,32 @@ bool xtr1_inStream::Open( )
         
     //printf("OPEN()\n");
     //wxLogMessage(_T("ofc_pi: OPEN"));
+
+    // Open the well known public FIFO for writing
+    if( (publicfifo = open(PUBLIC, O_WRONLY | O_NDELAY) ) == -1) {
+        wxLogMessage(_T("ofc_pi: Could not open PUBLIC pipe"));
+        
+        return false;
+    }
     
              
-        wxString tmp_file = wxFileName::CreateTempFileName( _T("") );
-        wxCharBuffer bufn = tmp_file.ToUTF8();
-        if(bufn.data()) 
-            strncpy(privatefifo_name, bufn.data(), sizeof(privatefifo_name));
+    wxString tmp_file = wxFileName::CreateTempFileName( _T("") );
+    unlink(tmp_file);
+        
+    wxCharBuffer bufn = tmp_file.ToUTF8();
+    if(bufn.data()) 
+        strncpy(privatefifo_name, bufn.data(), sizeof(privatefifo_name));
             
             // Create the private FIFO
-        if(-1 == mkfifo(privatefifo_name, 0666)){
-            if(g_debugLevel)printf("   mkfifo private failed: %s\n", privatefifo_name);
-        }
-        else{
-            if(g_debugLevel)printf("   mkfifo OK: %s\n", privatefifo_name);
-        }
+    if(-1 == mkfifo(privatefifo_name, 0666)){
+        if(g_debugLevel)printf("   mkfifo private failed: %s\n", privatefifo_name);
+        return false;
+    }
+    else{
+        if(g_debugLevel)printf("   mkfifo OK: %s\n", privatefifo_name);
+    }
                 
-                
-                
-        // Open the well known public FIFO for writing
-        if( (publicfifo = open(PUBLIC, O_WRONLY | O_NDELAY) ) == -1) {
-                    wxLogMessage(_T("ofc_pi: Could not open PUBLIC pipe"));
-                    return false;
-                    //if( errno == ENXIO )
-        }
-        return true;
+    return true;
 }
 
 bool xtr1_inStream::Load( )
@@ -583,7 +1151,7 @@ off_t xtr1_inStream::GetBitmapOffset( unsigned int y )
 xtr1_inStream &xtr1_inStream::Read(void *buffer, size_t size)
 {
     #define READ_SIZE 64000;
-    #define MAX_TRIES 100;
+    #define MAX_TRIES 5;
     if(!m_uncrypt_stream){
         size_t max_read = READ_SIZE;
         //    bool blk = fcntl(privatefifo, F_GETFL) & O_NONBLOCK;
@@ -604,7 +1172,7 @@ xtr1_inStream &xtr1_inStream::Read(void *buffer, size_t size)
                 if(bytesRead == 0){
                     //                    printf("miss %d %d %d\n", nLoop, bytes_to_read, size);
                     nLoop --;
-                    wxMilliSleep(100);
+                    wxMilliSleep(20);
                 }
                 else
                     nLoop = MAX_TRIES;
