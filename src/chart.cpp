@@ -512,6 +512,8 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
       
       ifs_hdr = new xtr1_inStream(name, key);          // open the file server
 
+      ifs_hdr->getHK();
+      
       if(!ifs_hdr->Ok()){
           wxString msg(_T("   OFC_PI: chart local server error, retrying: "));
           msg.Append(m_FullPath);

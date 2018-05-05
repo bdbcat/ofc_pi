@@ -1004,7 +1004,7 @@ bool xtr1_inStream::isAvailable(wxString user_key)
 
 wxString xtr1_inStream::getHK()
 {
-    //wxLogMessage(_T("hk0"));
+    wxLogMessage(_T("hk0"));
     
     if(!Open()){
             if(g_debugLevel)printf("getHK Open FAILED\n");
@@ -1019,7 +1019,7 @@ wxString xtr1_inStream::getHK()
             int nTry = 5;
             do{
                 if( Read(response, 8).IsOk() ){
-                    //wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
+                    wxLogMessage(_T("hks") + wxString( response, wxConvUTF8 ));
                     return( wxString( response, wxConvUTF8 ));
                 }
                 
