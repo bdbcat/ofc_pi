@@ -177,6 +177,8 @@ SET(SRC_OFC
             src/ellipse.c
             src/ofcShop.cpp
             src/ofcShop.h
+            src/base64.h
+            src/base64.c
      )
 
 

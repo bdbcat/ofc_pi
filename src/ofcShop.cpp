@@ -871,25 +871,33 @@ device_id_ok="false">
 
 void processBody(itemChart *chart){
     // Decode the productBody from MIME64 block in GetAccount.XML response
-    
     if(!chart->productBody.Len())
         return;
     
-    int flen;
-    unsigned char *decodedBody = unbase64( chart->productBody.mb_str(),  chart->productBody.Len(), &flen );
+    size_t buf_size = chart->productBody.Len() * 2;
+    unsigned char *decodedBody = (unsigned char *)malloc( buf_size);
+    
+    chart->productBody.Replace(_T(" "), _T(""));
+    wxCharBuffer Str = chart->productBody.ToUTF8();
+    
+    size_t olen;
+    int result = mbedtls_base64_decode( decodedBody, buf_size, &olen,  (const unsigned char *)Str.data(), chart->productBody.Len() );
     
     //printf("%s\n", decodedBody);
+    //wxLogMessage(_T("decodedBody:"));               
+    //wxString db = wxString( decodedBody, wxConvUTF8 );
+    //wxLogMessage(db);
     
     // Parse the xml
     
     TiXmlDocument * doc = new TiXmlDocument();
     doc->Parse( (const char *)decodedBody );
-    
+    free(decodedBody);
     
     TiXmlElement * root = doc->RootElement();
     if(!root)
         return;
-    
+   
     wxString code;
     wxString compilation_date;
     wxString name;
@@ -899,7 +907,7 @@ void processBody(itemChart *chart){
     wxString rootName = wxString::FromUTF8( root->Value() );
     TiXmlNode *child;
     for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
-        
+
         if(!strcmp(child->Value(), "maplib")){
             TiXmlElement *product = child->ToElement();
             code = wxString( product->Attribute( "code" ), wxConvUTF8 );
@@ -909,24 +917,22 @@ void processBody(itemChart *chart){
             indexFileURL = wxString( product->Attribute( "index" ), wxConvUTF8 );
         }
     }
-    
+
     if(!indexFileURL.Len())
         return;
     
     if(!basedir.Len())
         return;
     
-    if(!indexFileURL.Len())
-        return;
-    
+
     // Sometimes the baseDir has trailing "/", sometimes not...
         //  Let us be sure that it does.    
-        if(basedir.Last() != '/')    
-            basedir += _T("/");
+    if(basedir.Last() != '/')    
+        basedir += _T("/");
         
-        chart->indexBaseDir = basedir;
-        chart->shortSetName = code;
-        chart->indexFileURL = indexFileURL;
+    chart->indexBaseDir = basedir;
+    chart->shortSetName = code;
+    chart->indexFileURL = indexFileURL;
 }
 
 
@@ -975,7 +981,8 @@ wxString ProcessResponse(std::string body)
             wxString rootName = wxString::FromUTF8( root->Value() );
             TiXmlNode *child;
             for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
-                wxString s = wxString::FromUTF8(child->Value());
+                
+                 wxString s = wxString::FromUTF8(child->Value());
                 
                 if(!strcmp(child->Value(), "status")){
                     TiXmlNode *childResult = child->FirstChild();
@@ -993,6 +1000,8 @@ wxString ProcessResponse(std::string body)
                         
                         if(!strcmp(childacct->Value(), "product")){
                             TiXmlElement *product = childacct->ToElement();
+ 
+                            product_body.Clear();
                             
                             TiXmlNode *productBody64 = childacct->FirstChild();
                             if(productBody64)
@@ -1039,12 +1048,16 @@ wxString ProcessResponse(std::string body)
                             }
 
                             // If this set is activated, but not for me, then skip it
-                            if(bActivated && !device_ok)
+                            if(bActivated && !device_ok){
+                                
                                 bSkip = true;
+                            }
                             
                             if(!bSkip){
-                                if(bUpdate)
+                                
+                                if(bUpdate){
                                     pItem = g_ChartArray.Item(dupIndex);
+                                }
                                 else{
                                     pItem = new itemChart(product_sku);
                                     g_ChartArray.Add(pItem);
@@ -2117,11 +2130,10 @@ void shopPanel::doFullSetDownload(itemChart *chart)
         return;
     
     //  Get the full list of download URLs from the index file
-        
+
     if(!chart->chartElementArray.GetCount()){           //nead to download the index file, and create the URL list, etc
-    
+     
         if(chart->indexFileURL.Len()){
-            
             bool bUpdate = false;    
             
             //  Create a destination file name for the download.
@@ -2155,7 +2167,6 @@ void shopPanel::doFullSetDownload(itemChart *chart)
             
             
             if(OCPN_DL_NO_ERROR == ret){
-                
                 // save a reference to the downloaded index file, will be relocated and cleared later
                 chart->indexFileTmp = downloadIndexFile;
                 
@@ -2180,7 +2191,6 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                             TiXmlElement * root = doc->RootElement();
                             if(root){
                                 
-                                
                                 TiXmlNode *child;
                                 for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
                                     const char * t = child->Value();
@@ -2198,6 +2208,7 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                                             if(!strcmp(s, "title")){
                                                 TiXmlNode *title = chartx->FirstChild();
                                                 pinfo->title =  wxString::FromUTF8(title->Value());
+                                                
                                             }
                                             if(!strcmp(s, "x_fugawi_bzb_name")){
                                                 TiXmlNode *bzbName = chartx->FirstChild();
