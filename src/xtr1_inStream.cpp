@@ -886,8 +886,6 @@ bool xtr1_inStream::Load( )
         }
         
         // 4.  Ply Block
-        printf("xtr1_inStream nPLYLines: %d\n", phdr->nPlyLines);
-        
         if(phdr->nPlyLines){
             pPlyBlock = (char *)calloc( phdr->nPlyLines,  PLY_LINE_SIZE);
             if(!Read(pPlyBlock, phdr->nPlyLines * PLY_LINE_SIZE).IsOk()){
