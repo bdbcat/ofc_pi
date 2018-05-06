@@ -740,11 +740,16 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
     
      
     // Now the PlyPoint entries
+    printf("chart nPLYLines: %d\n", pHeader->nPlyLines);
+        
     if(pHeader->nPlyLines){
         char *pPly = ifs_hdr->GetPlyBlock();
         if(pPly){
+            printf("chart plyblockOK\n");
+            
             for(int i = 0; i < pHeader->nPlyLines ; i++){
                 char *pLine = pPly + (i * PLY_LINE_SIZE);
+                printf("chart plyline %s\n", pLine);
                 if (!strncmp(pLine, "PLY", 3)){
                     int i;
                     float ltp,lnp;
@@ -784,6 +789,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
 
 //    Validate some of the header data
 
+      printf("Final nPlyPoint: %d\n", nPlypoint);      
       if(nPlypoint < 3)
       {
             wxString msg(_T("   Chart File contains less than 3 PLY points: "));
