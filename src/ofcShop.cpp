@@ -2572,12 +2572,37 @@ void shopPanel::OnButtonUpdate( wxCommandEvent& event )
         targetURLArray.Add( fullBZBUrl );
     }
     
-    // Use existing install location
-    chart->installLocationTentative = chart->installLocation;
-    
+    // Use existing install location, if not empty
+    if(chart->installLocation.Len()){
+        chart->installLocationTentative = chart->installLocation;
+    }
+    else{               // Otherwise, prompt for a new install directory
+
+        wxString installLocn = g_PrivateDataDir;
+        if(g_lastInstallDir.Length())
+            installLocn = g_lastInstallDir;
+            
+        wxDirDialog dirSelector( NULL, _("Choose chart install location."), installLocn, wxDD_DEFAULT_STYLE  );
+        int result = dirSelector.ShowModal();
+            
+        if(result == wxID_OK){
+            wxString chosenInstallDir = dirSelector.GetPath();
+            chart->installLocationTentative = chosenInstallDir;
+            g_lastInstallDir = chosenInstallDir;
+        }
+        else{
+            setStatusText( _("Status:  Cancelled."));
+            m_buttonCancelOp->Hide();
+            GetButtonUpdate()->Enable();
+                
+            g_statusOverride.Clear();
+            UpdateChartList();
+                
+            return;
+        }
+    }
     
     return downloadList(chart, targetURLArray);
-    
     
 }
 
