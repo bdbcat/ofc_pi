@@ -77,7 +77,7 @@ wxString  g_deviceInfo;
 wxString  g_loginUser;
 wxString  g_PrivateDataDir;
 wxString  g_versionString;
-
+bool g_bNoFindMessageShown;
 
 //---------------------------------------------------------------------------------------------------------
 //
@@ -321,13 +321,16 @@ bool validate_server(void)
     
     
     if(!::wxFileExists(bin_test)){
-        wxString msg = _("Cannot find the ofc server utility at \n");
-        msg += _T("{");
-        msg += bin_test;
-        msg += _T("}");
-        OCPNMessageBox_PlugIn(NULL, msg, _("ofc_pi Message"),  wxOK, -1, -1);
-        wxLogMessage(_T("ofc_pi: ") + msg);
+        if(!g_bNoFindMessageShown){
+            wxString msg = _("Cannot find the ofc server utility at \n");
+            msg += _T("{");
+            msg += bin_test;
+            msg += _T("}");
+            OCPNMessageBox_PlugIn(NULL, msg, _("ofc_pi Message"),  wxOK, -1, -1);
+            wxLogMessage(_T("ofc_pi: ") + msg);
         
+            g_bNoFindMessageShown = true;
+        }
         g_server_bin.Clear();
         return false;
     }
