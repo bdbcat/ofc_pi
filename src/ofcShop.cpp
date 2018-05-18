@@ -2592,7 +2592,6 @@ void shopPanel::doFullSetDownload(itemChart *chart)
             
             
             if(OCPN_DL_NO_ERROR == ret){
-                qDebug() << "A";
                 // save a reference to the downloaded index file, will be relocated and cleared later
                 chart->indexFileTmp = downloadIndexFile;
                 
@@ -2602,18 +2601,13 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                 unsigned char *readBuffer = NULL;
                 wxFFile indexFile(downloadIndexFile.mb_str());
                 if(indexFile.IsOpened()){
-                    qDebug() << "B";
                     wxFileOffset lenIndex = indexFile.Length();
                     unsigned int flen = wx_truncate_cast(unsigned int, lenIndex);
-                    qDebug() << "B+ " << flen;
                     if(( flen > 0 )  && (flen < 1e7 ) ){                      // Place 10 Mb upper bound on index size 
-                        qDebug() << "C";
                         readBuffer = (unsigned char *)malloc( 2 * flen);     // be conservative
                         
                         size_t nRead = indexFile.Read(readBuffer, flen);
-                        qDebug() << "C+ " << nRead;
                         if(nRead == flen){
-                            qDebug() << "D";
                             indexFile.Close();
                             
                             // Good Read, so parse the XML 
@@ -2622,12 +2616,10 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                             
                             TiXmlElement * root = doc->RootElement();
                             if(root){
-                                qDebug() << "E";
                                 
                                 TiXmlNode *child;
                                 for ( child = root->FirstChild(); child != 0; child = child->NextSibling()){
                                     const char * t = child->Value();
-                                    qDebug() << "F " << child->Value();
                                     
                                     chartMetaInfo *pinfo = new chartMetaInfo();
                                     
@@ -2635,7 +2627,6 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                                         TiXmlNode *chartx;
                                         for ( chartx = child->FirstChild(); chartx != 0; chartx = chartx->NextSibling()){
                                             const char * s = chartx->Value();
-                                            qDebug() << "G " << s;
                                             
                                             if(!strcmp(s, "raster_edition")){
                                                 TiXmlNode *re = chartx->FirstChild();
@@ -2654,8 +2645,6 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                                         }
                                         
                                         // Got everything we need, so add the element
-                                        qDebug() << "H";
-                                        
                                         chart->chartElementArray.Add(pinfo);
                                         
                                     }
@@ -2717,8 +2706,6 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
     
     // Advance to the next required download
     
-    qDebug() << "ODLP";
-    
     if(chart->bSkipDuplicates)
         advanceToNextChart(chart);
 
@@ -2755,7 +2742,6 @@ void shopPanel::advanceToNextChart(itemChart *chart)
 
 void shopPanel::OnDownloadListChain( wxCommandEvent& event )
 {
-    qDebug() << "ODLChain";
     //itemChart *chart = m_ChartSelected->m_pChart;
     itemChart *chart = g_chartProcessing;
     if(!chart)
@@ -2763,7 +2749,6 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
 
     // Chained through from download end event
     if(m_bcompleteChain){
-        qDebug() << "ODLChain Completion";
         
 #ifndef __OCPN__ANDROID__        
         wxFileName fn(chart->downloadingFile);
@@ -2822,8 +2807,6 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             }
         }
  
-        qDebug() << "Success1: " << bSuccess;
-        
         if(!bSuccess){
             setStatusText( _("BZB Decrypt failed.") );
             m_buttonCancelOp->Hide();
@@ -2846,8 +2829,6 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
         //::wxRemoveFile(fn.GetFullPath());               // the decrypted zip file
         //::wxRemoveFile(chart->downloadingFile);         // the downloaded BZB file
  
-        qDebug() << "Success2: " << bSuccess;
-        
 //         if( 1 ){
 //             setStatusText( _("OK Early stop 1.") );
 //             m_buttonCancelOp->Hide();
@@ -2889,8 +2870,6 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
 
 void shopPanel::chainToNextChart(itemChart *chart, int ntry)
 {
-    qDebug() << "CTNC " << chart->urlArray.GetCount();
-    
     bool bContinue = chart->indexFileArrayIndex < chart->urlArray.GetCount();
     
     //bool bContinue = chart->indexFileArrayIndex < 1;        /// testing
@@ -3696,7 +3675,6 @@ void shopPanel::onDLEvent(OCPN_downloadEvent &evt)
     switch(evt.getDLEventCondition()){
         case OCPN_DL_EVENT_TYPE_END:
         {
-            qDebug() << "Event END";
             m_bTransferComplete = true;
             m_bTransferSuccess = (evt.getDLEventStatus() == OCPN_DL_NO_ERROR) ? true : false;
             
@@ -3736,12 +3714,10 @@ void shopPanel::onDLEvent(OCPN_downloadEvent &evt)
 
             dl_now = evt.getTransferred();
             dl_total = evt.getTotal();
-            qDebug() << "Event PROGRESS: " << dl_now << dl_total;
             
             // Calculate the gauge value
             if(dl_total > 0){
                 float progress = dl_now/dl_total;
-                qDebug() << "Event PROGRESS percent: " << progress;
                 
                 getInProcessGuage()->SetValue(progress * 100);
                 getInProcessGuage()->Refresh();
