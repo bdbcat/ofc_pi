@@ -43,7 +43,9 @@
 #include <wx/msw/registry.h>
 #endif
 
-
+#ifdef __OCPN__ANDROID__
+#include "qdebug.h"
+#endif
 
 
 
@@ -499,7 +501,9 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
           return INIT_FAIL_REMOVE;
       }
       
+      qDebug() << "\nCall ValidateServer";
       validate_server();
+      qDebug() << "Call ValidateServerBack";
       
       wxString key = getKeyAsciiHex(name);
       if(!key.Len()){
@@ -510,19 +514,25 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
           return INIT_FAIL_REMOVE;
       }
       
+      qDebug() << "\nCall Server ctor(name/key)";
       ifs_hdr = new xtr1_inStream(name, key);          // open the file server
 
+      qDebug() << "\nCall getHK";
       ifs_hdr->getHK();
       
       if(!ifs_hdr->Ok()){
+          qDebug() << "   OFC_PI: chart local server error, retrying. ";
           wxString msg(_T("   OFC_PI: chart local server error, retrying: "));
           msg.Append(m_FullPath);
           wxLogMessage(msg);
 
+          qDebug() << "Retry Call ValidateServer";
           validate_server();
-
+          qDebug() << "Retry Call ValidateServerBack";
+          
           ifs_hdr = new xtr1_inStream(name, key);          // open the file server
           if(!ifs_hdr->Ok()){
+              qDebug() << "   OFC_PI: chart local server error, final. ";
               wxString msg(_T("   OFC_PI: chart local server error, final: "));
               msg.Append(m_FullPath);
               wxLogMessage(msg);
