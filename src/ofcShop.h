@@ -58,6 +58,7 @@ wxString ProcessResponse(std::string);
 
 class shopPanel;
 class InProgressIndicator;
+class OCPN_downloadEvent;
 
 enum{
         STAT_UNKNOWN = 0,
@@ -94,7 +95,7 @@ WX_DECLARE_OBJARRAY(chartMetaInfo *, ArrayOfchartMetaInfo);
 class itemChart
 {
 public:    
-    itemChart() { m_downloading = false; m_bEnabled = true; bActivated = false; device_ok = false; pendingUpdateFlag = false; thumbRetry = 0;}
+    itemChart(); 
     itemChart( wxString &product_sku, int index);
     itemChart( wxString &product_sku);
     ~itemChart() {};
@@ -113,7 +114,8 @@ public:
     wxString getStatusString();
     int getChartStatus();
     wxBitmap& GetChartThumbnail(int size);
-
+    bool downloadThumbnail();
+    
     //xtr
     wxString productSKU;
     int indexSKU;
@@ -161,7 +163,7 @@ public:
     wxArrayString deletedChartsNameArray;
     bool pendingUpdateFlag;
     bool bSkipDuplicates;
-    int thumbRetry;
+    int m_thumbRetry;
     bool bRemove;
     
 };
@@ -306,14 +308,15 @@ public:
     void doFullSetDownload(itemChart *chart);
     
     int doDownloadGui();
+    void onDLEvent(OCPN_downloadEvent &ev);
     
-    void UpdateChartList();
+    void UpdateChartList( bool bDownloadThumbs= false );
     int checkUpdateStatus();
         
     //void OnGetNewSystemName( wxCommandEvent& event );
     //void OnChangeSystemName( wxCommandEvent& event );
     void UpdateActionControls();
-    void setStatusText( const wxString &text ){ m_staticTextStatus->SetLabel( text );  m_staticTextStatus->Refresh(); }
+    void setStatusText( const wxString &text ){ m_staticTextStatus->Wrap(-1); m_staticTextStatus->SetLabel( text );  m_staticTextStatus->Refresh(); }
     void setStatusTextProgress( const wxString &text ){ m_staticTextStatus/*m_staticTextStatusProgress*/->SetLabel( text );  /*m_staticTextStatusProgress->Refresh();*/ }
     InProgressIndicator *getInProcessGuage() {return m_ipGauge; }
     void MakeChartVisible(oeSencChartPanel *chart);
@@ -331,6 +334,11 @@ public:
     bool m_bAbortingDownload;
     bool m_startedDownload;
     int dlTryCount;
+    
+    bool m_bTransferComplete;
+    bool m_bTransferSuccess;
+    bool m_bconnected;
+    
 };
 
 
