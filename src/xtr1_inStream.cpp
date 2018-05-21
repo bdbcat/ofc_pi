@@ -188,7 +188,7 @@ void xtr1_inStream::Init()
     m_uncrypt_stream = 0;
     publicSocket = -1;
     
-    strcpy(publicsocket_name,"com.whoever.xfer");
+    strcpy(publicsocket_name,"com.opencpn.ofc_pi");
     
     if (makeAddr(publicsocket_name, &sockAddr, &sockLen) < 0){
         wxLogMessage(_T("ofc_pi: Could not makeAddr for PUBLIC socket"));
