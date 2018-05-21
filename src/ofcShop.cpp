@@ -53,6 +53,7 @@
 #endif    
 
 #ifdef __OCPN__ANDROID__
+#include "androidSupport.h"
 #include "qdebug.h"
 #include <QtWidgets/QScroller>
 #endif
@@ -2288,6 +2289,7 @@ shopPanel::shopPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
     g_shopPanel = this;
     m_bcompleteChain = false;
     m_bAbortingDownload = false;
+    m_bconnected = false;
     
     m_ChartSelected = NULL;
     m_choiceSystemName = NULL;
@@ -2794,6 +2796,8 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             
         }
         
+        qDebug() << "bSuccess After download: " << bSuccess;
+        
         if(bSuccess){
             // location for decrypted BZB file
             
@@ -2807,6 +2811,8 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             }
         }
  
+        qDebug() << "bSuccess After decrypt: " << bSuccess;
+        
         if(!bSuccess){
             setStatusText( _("BZB Decrypt failed.") );
             m_buttonCancelOp->Hide();
@@ -2818,13 +2824,19 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
  
         if(bSuccess){
             // Unzip and extract the .BAP file to target location
+#ifndef __OCPN__ANDROID__
             bool zipret = ExtractZipFiles( fn.GetFullPath(), installDir, false, wxDateTime::Now(), false);
+#else
+            bool zipret = AndroidUnzip( fn.GetFullPath(), installDir, false, false);
+#endif            
             
             if(!zipret){
                 bSuccess = false;
             }
         }
-         
+
+        qDebug() << "bSuccess After unzip: " << bSuccess;
+        
         // clean up
         //::wxRemoveFile(fn.GetFullPath());               // the decrypted zip file
         //::wxRemoveFile(chart->downloadingFile);         // the downloaded BZB file
@@ -2883,21 +2895,43 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
  
         
         //  Create the chartInfo file
-        wxString infoFile = installDir + wxFileName::GetPathSeparator() + _T("chartInfo.txt");
-        if(wxFileExists( infoFile ))
-            ::wxRemoveFile(infoFile);
+        wxString infoDirTemp = g_PrivateDataDir + _T("tmp") + wxFileName::GetPathSeparator();
+        infoDirTemp += chart->shortSetName + wxFileName::GetPathSeparator();
+        wxString infoFileTemp = infoDirTemp + _T("chartInfo.txt");
+        if(wxFileExists( infoFileTemp ))
+            ::wxRemoveFile(infoFileTemp);
+        
         
         wxTextFile info;
-        info.Create(infoFile);
+        info.Create(infoFileTemp);
         info.AddLine(_T("productSKU=") + chart->productSKU);
         info.AddLine(_T("productKey=") + chart->productKey);
         info.Write();
         info.Close();
+
+        // Save a copy of the chartInfo file
+        wxString infoFile = installDir + wxFileName::GetPathSeparator() + _T("chartInfo.txt");
+#ifndef __OCPN__ANDROID__            
+        ::wxCopyFile(infoFileTemp, infoFile);
+#else
+        bool bCopyResult1 = AndroidSecureCopyFile(infoFileTemp, infoFile);
+        qDebug() << "bCopyResult1: " << bCopyResult1;
+            
+#endif
+        if(wxFileExists( infoFileTemp ))
+            ::wxRemoveFile(infoFileTemp);
         
         // Save a copy of the index file
         if(chart->indexFileTmp.Len()){
             wxString indexFile = installDir + wxFileName::GetPathSeparator() + _T("index.xml");
+#ifndef __OCPN__ANDROID__            
             ::wxCopyFile(chart->indexFileTmp, indexFile);
+#else
+            bool bCopyResult2 = AndroidSecureCopyFile(chart->indexFileTmp, indexFile);
+            qDebug() << "bCopyResult2: " << bCopyResult2;
+            
+#endif            
+            
         }
         ::wxRemoveFile(chart->indexFileTmp);
         
@@ -3943,14 +3977,24 @@ xtr1Login::xtr1Login( wxWindow* parent, wxWindowID id, const wxString& caption,
     
     long wstyle = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER;
 
+    m_bCompact = false;
+    wxSize sz = ::wxGetDisplaySize();
+    if((sz.x < 500) | (sz.y < 500))
+        m_bCompact = true;
+    
     wxFont *qFont = GetOCPNScaledFont_PlugIn(_("Dialog"));
     
 #ifndef __OCPN__ANDROID__
     SetFont( *qFont );
-#else    
-    double font_size = qFont->GetPointSize() * 1.20;
-    wxFont *dFont = wxTheFontList->FindOrCreateFont( font_size, qFont->GetFamily(), qFont->GetStyle(),  qFont->GetWeight());
-    SetFont( *dFont );
+#else
+    if(m_bCompact){
+        SetFont( *qFont );
+    }
+    else{
+        double font_size = qFont->GetPointSize() * 1.20;
+        wxFont *dFont = wxTheFontList->FindOrCreateFont( font_size, qFont->GetFamily(), qFont->GetStyle(),  qFont->GetWeight());
+        SetFont( *dFont );
+    }
 #endif
     
     wxDialog::Create( parent, id, caption, pos, size, wstyle );
@@ -4086,30 +4130,38 @@ void xtr1Login::CreateControls(  )
     
     boxSizercPanel->Add(flexGridSizerActionStatus, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
     
+    int item_space = 50;
+    if(m_bCompact)
+        item_space = 10;
+    
     wxStaticText* itemStaticText5 = new wxStaticText( loginPanel, wxID_STATIC, _("email:"), wxDefaultPosition, wxDefaultSize, 0 );
-    flexGridSizerActionStatus->Add( itemStaticText5, 0, wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 50 );
+    flexGridSizerActionStatus->Add( itemStaticText5, 0, wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, item_space );
     
     m_UserNameCtl = new wxTextCtrl( loginPanel, ID_GETIP_IP, _T(""), wxDefaultPosition, wxSize( ref_len * 10, -1 ), 0 );
-    flexGridSizerActionStatus->Add( m_UserNameCtl, 0,  wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP , 50 );
+    flexGridSizerActionStatus->Add( m_UserNameCtl, 0,  wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP , item_space );
     
     wxStaticText* itemStaticText6 = new wxStaticText( loginPanel, wxID_STATIC, _("pass:"), wxDefaultPosition, wxDefaultSize, 0 );
-    flexGridSizerActionStatus->Add( itemStaticText6, 0, wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, 50 );
+    flexGridSizerActionStatus->Add( itemStaticText6, 0, wxALIGN_LEFT | wxLEFT | wxRIGHT | wxTOP | wxADJUST_MINSIZE, item_space );
     
     m_PasswordCtl = new wxTextCtrl( loginPanel, ID_GETIP_IP, _T(""), wxDefaultPosition, wxSize( ref_len * 10, -1 ), wxTE_PASSWORD );
     m_PasswordCtl->SetBackgroundColour(wxColour(0, 192, 192));
-    flexGridSizerActionStatus->Add( m_PasswordCtl, 0,  wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP , 50 );
+    flexGridSizerActionStatus->Add( m_PasswordCtl, 0,  wxALIGN_CENTER | wxLEFT | wxRIGHT | wxTOP , item_space );
     
+ 
+    int button_space = 100;
+    if(m_bCompact)
+        button_space = 20;
     
     wxBoxSizer* itemBoxSizer16 = new wxBoxSizer( wxHORIZONTAL );
     boxSizercPanel->Add( itemBoxSizer16, 0, wxALIGN_RIGHT | wxALL, 5 );
     
     m_CancelButton = new wxButton( loginPanel, ID_GETIP_CANCEL, _("Cancel"), wxDefaultPosition, wxDefaultSize, 0 );
-    itemBoxSizer16->Add( m_CancelButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 100 );
+    itemBoxSizer16->Add( m_CancelButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, button_space );
     
     m_OKButton = new wxButton( loginPanel, ID_GETIP_OK, _("OK"), wxDefaultPosition, wxDefaultSize, 0 );
     m_OKButton->SetDefault();
     
-    itemBoxSizer16->Add( m_OKButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 100 );
+    itemBoxSizer16->Add( m_OKButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, button_space );
 #endif    
     
 }

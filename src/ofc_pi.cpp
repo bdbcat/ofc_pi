@@ -40,16 +40,8 @@
 #include "ofcShop.h"
 
 #ifdef __OCPN__ANDROID__
-#include <QtAndroidExtras/QAndroidJniObject>
+#include "androidSupport.h"
 #include "qdebug.h"
-//wxString callActivityMethod_vs(const char *method);
-//wxString callActivityMethod_ss(const char *method, wxString parm);
-wxString callActivityMethod_s4s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4);
-//wxString callActivityMethod_s5s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4, wxString parm5);
-//wxString callActivityMethod_s6s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4, wxString parm5, wxString parm6);
-//wxString callActivityMethod_s2s(const char *method, wxString parm1, wxString parm2);
-//void androidShowBusyIcon();
-//void androidHideBusyIcon();
 #endif
 
 // the class factories, used to create and destroy instances of the PlugIn
@@ -461,6 +453,7 @@ bool shutdown_server( void )
     }
 }
 
+#if 0
 #ifdef __OCPN__ANDROID__
 
 extern JavaVM *java_vm;         // found in androidUtil.cpp, accidentally exported....
@@ -543,4 +536,5 @@ wxString callActivityMethod_s4s(const char *method, wxString parm1, wxString par
         
 }
 
+#endif
 #endif

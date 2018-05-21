@@ -423,6 +423,7 @@ public:
     wxTextCtrl*   m_PasswordCtl;
     wxButton*     m_CancelButton;
     wxButton*     m_OKButton;
+    bool          m_bCompact;
     
     
 };
