@@ -236,7 +236,7 @@ OFCMessageDialog::OFCMessageDialog( wxWindow *parent,
     messagePanel->SetSizer(boxSizercPanel);
     
     messagePanel->SetBackgroundColour(ANDROID_DIALOG_BODY_COLOR);
-    
+
     
     m_style = style;
     wxFont *qFont = GetOCPNScaledFont_PlugIn(_("Dialog"));
@@ -2751,6 +2751,8 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
 
     // Chained through from download end event
     if(m_bcompleteChain){
+        
+        setStatusText( _("Processing chart...") );
         
 #ifndef __OCPN__ANDROID__        
         wxFileName fn(chart->downloadingFile);
