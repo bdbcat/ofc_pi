@@ -2795,9 +2795,9 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             }
             
         }
-        
+        #ifdef __OCPN__ANDROID__
         qDebug() << "bSuccess After download: " << bSuccess;
-        
+        #endif        
         if(bSuccess){
             // location for decrypted BZB file
             
@@ -2810,9 +2810,9 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
                 bSuccess = false;
             }
         }
- 
+        #ifdef __OCPN__ANDROID__
         qDebug() << "bSuccess After decrypt: " << bSuccess;
-        
+        #endif
         if(!bSuccess){
             setStatusText( _("BZB Decrypt failed.") );
             m_buttonCancelOp->Hide();
@@ -2834,9 +2834,9 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
                 bSuccess = false;
             }
         }
-
+        #ifdef __OCPN__ANDROID__
         qDebug() << "bSuccess After unzip: " << bSuccess;
-        
+        #endif
         // clean up
         //::wxRemoveFile(fn.GetFullPath());               // the decrypted zip file
         //::wxRemoveFile(chart->downloadingFile);         // the downloaded BZB file
