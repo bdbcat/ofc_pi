@@ -1459,7 +1459,15 @@ int getChartList( bool bShowErrorDialogs = true){
     loginParms += _T("&device_id=");
     loginParms += kk;
 
-    if(g_debugLevel) wxLogMessage(_T("getChartList Login Parms: ") + loginParms);
+    wxString parms = loginParms;
+    int idd = parms.Find(_T("password"));
+    if(idd != wxNOT_FOUND){
+        idd += 9;
+        for(int i=0 ; i < g_loginPass.Length() ; i++)
+            parms[idd + i] = 'X';
+    }
+        
+    wxLogMessage(_T("getChartList Login Parms: ") + parms);
     
 #ifndef __OCPN__ANDROID__    
     wxCurlHTTPNoZIP post;
@@ -1586,7 +1594,15 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     
 #ifndef __OCPN__ANDROID__ 
     
-    wxLogMessage(_T("loginParms: ") + loginParms);
+    wxString parms = loginParms;
+    int idd = parms.Find(_T("password"));
+    if(idd != wxNOT_FOUND){
+        idd += 9;
+        for(int i=0 ; i < g_loginPass.Length() ; i++)
+            parms[idd + i] = 'X';
+    }
+    
+    wxLogMessage(_T("doActivate Login Parms: ") + parms);
     
     wxCurlHTTPNoZIP post;
     post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
