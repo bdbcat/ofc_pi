@@ -1114,6 +1114,8 @@ int checkResult(wxString &result, bool bShowErrorDialog = true)
                         msg += _("Check your internet configuration.");
                         break;
                     case 400:
+                        msg += _("Invalid parameters.");
+                        break;
                     case 403:    
                         msg += _("Invalid email name or password.");
                         break;
@@ -1168,24 +1170,12 @@ bool doLogin()
         return false;
     }
     
-    g_loginUser = login.m_UserNameCtl->GetValue();
-    g_loginPass = login.m_PasswordCtl->GetValue();
+    g_loginUser = login.m_UserNameCtl->GetValue().Trim( true).Trim( false );
+    g_loginPass = login.m_PasswordCtl->GetValue().Trim( true).Trim( false );
     
     return true;
 }
 
-/*
-<product
-product_sku="TD-ST-HG"
-product_name="Swedish Marine including Hydrographica charts - 2018 edition"
-product_type="Touratel"
-expiry="0000-00-00T00:00:00Z"
-purchase_url="https://fugawi.com/store/product/TD-ST-HG"
-activated="false"
-app_id_ok="false"
-device_id_ok="false">
-</product>
-*/
 
 
 void processBody(itemChart *chart){
@@ -1496,8 +1486,8 @@ int getChartList( bool bShowErrorDialogs = true){
     
     //printf("%s", post.GetResponseBody().c_str());
     
-     //wxString tt(post.GetResponseBody().data(), wxConvUTF8);
-     //wxLogMessage( _T("Response: \n") + tt);
+     wxString tt(post.GetResponseBody().data(), wxConvUTF8);
+     wxLogMessage( _T("Response: \n") + tt);
     
      if(iResponseCode == 200){
          wxString result = ProcessResponse(post.GetResponseBody());
@@ -1594,7 +1584,10 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     loginParms += _T("&product_sku=");
     loginParms += chart->productSKU;
     
-#ifndef __OCPN__ANDROID__    
+#ifndef __OCPN__ANDROID__ 
+    
+    wxLogMessage(_T("loginParms: ") + loginParms);
+    
     wxCurlHTTPNoZIP post;
     post.SetOpt(CURLOPT_TIMEOUT, g_timeout_secs);
     
@@ -1605,8 +1598,8 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     post.GetInfo(CURLINFO_RESPONSE_CODE, &iResponseCode);
     
     
-    //wxString tt(post.GetResponseBody().data(), wxConvUTF8);
-    //wxLogMessage(tt);
+    wxString tt(post.GetResponseBody().data(), wxConvUTF8);
+    wxLogMessage(tt);
     
     if(iResponseCode == 200){
         wxString result = ProcessResponse(post.GetResponseBody());
@@ -2632,7 +2625,10 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                                             
                                             if(!strcmp(s, "raster_edition")){
                                                 TiXmlNode *re = chartx->FirstChild();
-                                                pinfo->raster_edition =  wxString::FromUTF8(re->Value());
+                                                if(re)
+                                                    pinfo->raster_edition =  wxString::FromUTF8(re->Value());
+                                                else
+                                                    pinfo->raster_edition =  _("01");
                                             }
                                             if(!strcmp(s, "title")){
                                                 TiXmlNode *title = chartx->FirstChild();
@@ -2798,7 +2794,7 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             
         }
         
-        qDebug() << "bSuccess After download: " << bSuccess;
+        //qDebug() << "bSuccess After download: " << bSuccess;
         
         if(bSuccess){
             // location for decrypted BZB file
@@ -2813,7 +2809,7 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             }
         }
  
-        qDebug() << "bSuccess After decrypt: " << bSuccess;
+        //qDebug() << "bSuccess After decrypt: " << bSuccess;
         
         if(!bSuccess){
             setStatusText( _("BZB Decrypt failed.") );
@@ -2837,7 +2833,7 @@ void shopPanel::OnDownloadListChain( wxCommandEvent& event )
             }
         }
 
-        qDebug() << "bSuccess After unzip: " << bSuccess;
+        //qDebug() << "bSuccess After unzip: " << bSuccess;
         
         // clean up
         //::wxRemoveFile(fn.GetFullPath());               // the decrypted zip file
