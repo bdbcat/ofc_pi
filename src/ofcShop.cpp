@@ -1463,7 +1463,7 @@ int getChartList( bool bShowErrorDialogs = true){
     int idd = parms.Find(_T("password"));
     if(idd != wxNOT_FOUND){
         idd += 9;
-        for(int i=0 ; i < g_loginPass.Length() ; i++)
+        for(unsigned int i=0 ; i < g_loginPass.Length() ; i++)
             parms[idd + i] = 'X';
     }
         
@@ -1598,7 +1598,7 @@ int doActivate(itemChart *chart, bool bShowErrorDialogs = true)
     int idd = parms.Find(_T("password"));
     if(idd != wxNOT_FOUND){
         idd += 9;
-        for(int i=0 ; i < g_loginPass.Length() ; i++)
+        for(unsigned int i=0 ; i < g_loginPass.Length() ; i++)
             parms[idd + i] = 'X';
     }
     

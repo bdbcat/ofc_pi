@@ -1230,11 +1230,16 @@ private:
 
 //extern WXDLLIMPEXP_CORE const wxEventType wxEVT_DOWNLOAD_EVENT;
 
+#ifdef __WXMSW__
 #ifdef MAKING_PLUGIN
 extern   DECL_IMP wxEventType wxEVT_DOWNLOAD_EVENT;
 #else
 extern   DECL_EXP wxEventType wxEVT_DOWNLOAD_EVENT;
 #endif
+#else
+extern   wxEventType wxEVT_DOWNLOAD_EVENT;
+#endif
+
 
 // API 1.14 Extra canvas Support
 
