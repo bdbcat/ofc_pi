@@ -40,16 +40,8 @@
 #include "ofcShop.h"
 
 #ifdef __OCPN__ANDROID__
-#include <QtAndroidExtras/QAndroidJniObject>
+#include "androidSupport.h"
 #include "qdebug.h"
-//wxString callActivityMethod_vs(const char *method);
-//wxString callActivityMethod_ss(const char *method, wxString parm);
-wxString callActivityMethod_s4s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4);
-//wxString callActivityMethod_s5s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4, wxString parm5);
-//wxString callActivityMethod_s6s(const char *method, wxString parm1, wxString parm2, wxString parm3, wxString parm4, wxString parm5, wxString parm6);
-//wxString callActivityMethod_s2s(const char *method, wxString parm1, wxString parm2);
-//void androidShowBusyIcon();
-//void androidHideBusyIcon();
 #endif
 
 // the class factories, used to create and destroy instances of the PlugIn
@@ -77,7 +69,7 @@ wxString  g_deviceInfo;
 wxString  g_loginUser;
 wxString  g_PrivateDataDir;
 wxString  g_versionString;
-
+bool g_bNoFindMessageShown;
 
 //---------------------------------------------------------------------------------------------------------
 //
@@ -321,13 +313,16 @@ bool validate_server(void)
     
     
     if(!::wxFileExists(bin_test)){
-        wxString msg = _("Cannot find the ofc server utility at \n");
-        msg += _T("{");
-        msg += bin_test;
-        msg += _T("}");
-        OCPNMessageBox_PlugIn(NULL, msg, _("ofc_pi Message"),  wxOK, -1, -1);
-        wxLogMessage(_T("ofc_pi: ") + msg);
+        if(!g_bNoFindMessageShown){
+            wxString msg = _("Cannot find the ofc server utility at \n");
+            msg += _T("{");
+            msg += bin_test;
+            msg += _T("}");
+            OCPNMessageBox_PlugIn(NULL, msg, _("ofc_pi Message"),  wxOK, -1, -1);
+            wxLogMessage(_T("ofc_pi: ") + msg);
         
+            g_bNoFindMessageShown = true;
+        }
         g_server_bin.Clear();
         return false;
     }
@@ -458,6 +453,7 @@ bool shutdown_server( void )
     }
 }
 
+#if 0
 #ifdef __OCPN__ANDROID__
 
 extern JavaVM *java_vm;         // found in androidUtil.cpp, accidentally exported....
@@ -540,4 +536,5 @@ wxString callActivityMethod_s4s(const char *method, wxString parm1, wxString par
         
 }
 
+#endif
 #endif

@@ -117,11 +117,15 @@ xtr1_inStream::xtr1_inStream()
 
 xtr1_inStream::xtr1_inStream( const wxString &file_name, const wxString &crypto_key )
 {
+    qDebug() << "xtr1_inStream::ctor()";
+    
     Init();
+    qDebug() << "xtr1_inStream::init back";
     
     m_fileName = file_name;
     m_cryptoKey = crypto_key;
     
+    qDebug() << "xtr1_inStream::calling open()";
     m_OK = Open( );
     if(m_OK){
         if(!Load()){
@@ -168,6 +172,8 @@ xtr1_inStream::~xtr1_inStream()
 
 void xtr1_inStream::Init()
 {
+    qDebug() << "xtr1_inStream::Init()";
+    
     phdr = 0;
     pPalleteBlock = 0;
     pRefBlock = 0;
@@ -182,7 +188,7 @@ void xtr1_inStream::Init()
     m_uncrypt_stream = 0;
     publicSocket = -1;
     
-    strcpy(publicsocket_name,"com.whoever.xfer");
+    strcpy(publicsocket_name,"com.opencpn.ofc_pi");
     
     if (makeAddr(publicsocket_name, &sockAddr, &sockLen) < 0){
         wxLogMessage(_T("ofc_pi: Could not makeAddr for PUBLIC socket"));
@@ -243,11 +249,11 @@ bool xtr1_inStream::Open( )
 {
     wxLogMessage(_T("xtr1_inStream::Open()"));
     qDebug() << "xtr1_inStream::Open()";
-    qDebug() << publicSocket;
+    //qDebug() << publicSocket;
     
     if (connect(publicSocket, (const struct sockaddr*) &sockAddr, sockLen) < 0) {
         wxLogMessage(_T("ofc_pi: Could not connect to PUBLIC socket"));
-        qDebug() << "ofc_pi: Could not connect to PUBLIC socket";
+        qDebug() << "ofc_pi::Open() Could not connect to PUBLIC socket";
         return false;
     }
     
@@ -258,6 +264,7 @@ bool xtr1_inStream::Load( )
 { 
     //printf("LOAD()\n");
     //wxLogMessage(_T("ofc_pi: LOAD"));
+    qDebug() << "ofc_pi: LOAD";
     
     if(m_cryptoKey.Length() && m_fileName.length()){
         
@@ -389,29 +396,29 @@ bool xtr1_inStream::Ok()
 
 bool xtr1_inStream::isAvailable(wxString user_key)
 {
-    if(g_debugLevel)qDebug() << "TestAvail\n";
+    qDebug() << "\nTestAvail";
                         
                         if(m_uncrypt_stream){
                             return m_uncrypt_stream->IsOk();
                         }
                         else{
                             if(!Open()){
-                                if(g_debugLevel)qDebug() << "TestAvail Open FAILED\n";
+                                qDebug() << "TestAvail Open FAILED\n";
                         return false;
                             }
                             
                             if( SendServerCommand(CMD_TEST_AVAIL) ){
-                                if(g_debugLevel)qDebug() << "TestAvail Open OK\n" ;
+                                qDebug() << "TestAvail SendServerCommand OK" ;
                         char response[8];
                         memset( response, 0, 8);
                         int nTry = 5;
                         do{
                             if( Read(response, 2).IsOk() ){
-                                if(g_debugLevel)qDebug() << "TestAvail Response OK\n" ;
+                                qDebug() << "TestAvail Response Got" << response ;
                         return( !strncmp(response, "OK", 2) );
                             }
                             
-                            if(g_debugLevel)qDebug() << "Sleep on TestAvail: %d\n", nTry;
+                            qDebug() << "Sleep on TestAvail: %d", nTry;
                         wxMilliSleep(100);
                         nTry--;
                         }while(nTry);
@@ -419,7 +426,7 @@ bool xtr1_inStream::isAvailable(wxString user_key)
                         return false;
                             }
                             else{
-                                if(g_debugLevel)qDebug() << "TestAvail Open Error\n" ;
+                                qDebug() << "TestAvail Open Error" ;
                         return false;
                             }
                         }
@@ -430,10 +437,11 @@ bool xtr1_inStream::isAvailable(wxString user_key)
 wxString xtr1_inStream::getHK()
 {
     //wxLogMessage(_T("hk0"));
+    qDebug() << "\ngetHK";
     
     if(!Open()){
-        if(g_debugLevel)printf("getHK Open FAILED\n");
-                               wxLogMessage(_T("hk1"));
+        qDebug() << "getHK Open FAILED";
+        wxLogMessage(_T("hk1"));
         return wxEmptyString;
     }
     
@@ -476,7 +484,9 @@ bool xtr1_inStream::decryptBZB(wxString &inFile, wxString outFile)
             if(g_debugLevel)printf("decryptBZB Open FAILED\n");
                             return false;
         }
-        
+ 
+        qDebug() << "decryptBZB Open OK";
+ 
         //  Create the server command
         fifo_msg msg;
         
@@ -495,27 +505,38 @@ bool xtr1_inStream::decryptBZB(wxString &inFile, wxString outFile)
                 strncpy(msg.crypto_key, buf.data(), sizeof(msg.crypto_key));
             else
                 strncpy(msg.crypto_key, "??", sizeof(msg.crypto_key));
-            
+
             msg.cmd = CMD_DECRYPT_BZB;
+            
+            qDebug() << msg.file_name;
+            qDebug() << msg.crypto_key;
             
             write(publicSocket, (char*) &msg, sizeof(msg));
             
-            
             if(1){
                 if(g_debugLevel)printf("decryptBZB Open OK\n");
-                        char response[8];
+                char response[8];
                 memset( response, 0, 8);
                 int nTry = 5;
                 do{
                     if( Read(response, 2).IsOk() ){
                         if(g_debugLevel)printf("decryptBZB Response OK\n");
-                     return( !strncmp(response, "KO", 2) );
+                        wxString resp = wxString(response, wxConvUTF8);
+                        if( !resp.IsSameAs(_T("KO")))
+                            wxLogMessage( _T("decryptBZB Response: ") + resp);
+                            
+                        qDebug() << "decryptBZB Response OK: " << response;
+                        return( !strncmp(response, "KO", 2) );
                     }
                     
                     if(g_debugLevel)printf("Sleep on decryptBZB: %d\n", nTry);
-        wxMilliSleep(100);
-        nTry--;
+                    wxMilliSleep(100);
+                    nTry--;
+                    qDebug() << "decryptBZB nTry:" << nTry;
+                    
                 }while(nTry);
+                qDebug() << "decryptBZB nTry expire";
+                
                 
                 return false;
             }
@@ -601,7 +622,7 @@ xtr1_inStream &xtr1_inStream::Read(void *buffer, size_t size)
                         break;
                     case 0:
                         // Timeout 
-                        bytesRead = -1;
+                        bytesRead = 0;
                         break;
                     default:
                         bytesRead = read(publicSocket, bufRun, bytes_to_read );
@@ -612,25 +633,28 @@ xtr1_inStream &xtr1_inStream::Read(void *buffer, size_t size)
                 bytesRead = read(publicSocket, bufRun, bytes_to_read );
                 #endif                
                 
+                qDebug() << "Bytes Read " << bytesRead;
+                
                 // Server may not have opened the Write end of the FIFO yet
                 if(bytesRead == 0){
-                    //                    printf("miss %d %d %d\n", nLoop, bytes_to_read, size);
                     nLoop --;
-                    wxMilliSleep(1);
+                    wxMilliSleep(2);
                 }
-                else if(bytesRead == -1)
-                    nLoop = 0;
+//                 else if(bytesRead == -1){
+//                     nLoop = 0;                          // Breaks the loop on error
+//                 }
                 else
                     nLoop = MAX_TRIES;
                 
-                remains -= bytesRead;
-                bufRun += bytesRead;
-                totalBytesRead += bytesRead;
+                if(bytesRead > 0){
+                    remains -= bytesRead;
+                    bufRun += bytesRead;
+                    totalBytesRead += bytesRead;
+                }
             } while( (remains > 0) && (nLoop) );
             
             m_OK = ((size_t)totalBytesRead == size);
-            if(!m_OK)
-                int yyp = 4;
+
             m_lastBytesRead = totalBytesRead;
             m_lastBytesReq = size;
         }

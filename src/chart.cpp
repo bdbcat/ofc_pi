@@ -43,7 +43,9 @@
 #include <wx/msw/registry.h>
 #endif
 
-
+#ifdef __OCPN__ANDROID__
+#include "qdebug.h"
+#endif
 
 
 
@@ -520,7 +522,7 @@ int ChartXTR1::Init( const wxString& name, int init_flags )
           wxLogMessage(msg);
 
           validate_server();
-
+          
           ifs_hdr = new xtr1_inStream(name, key);          // open the file server
           if(!ifs_hdr->Ok()){
               wxString msg(_T("   OFC_PI: chart local server error, final: "));

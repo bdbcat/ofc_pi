@@ -181,6 +181,9 @@ SET(SRC_OFC
             src/base64.c
      )
 
+IF(QT_ANDROID)
+    SET( SRC_OFC ${SRC_OFC} src/androidSupport.cpp )
+ENDIF(QT_ANDROID)
 
 
 IF(NOT QT_ANDROID)
