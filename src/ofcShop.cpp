@@ -2610,15 +2610,22 @@ void shopPanel::doFullSetDownload(itemChart *chart)
                 chart->chartElementArray.Clear();
                 
                 unsigned char *readBuffer = NULL;
-                wxFFile indexFile(downloadIndexFile.mb_str());
+                wxFFile indexFile(downloadIndexFile.mb_str(), _T("rb"));
                 if(indexFile.IsOpened()){
                     wxFileOffset lenIndex = indexFile.Length();
                     unsigned int flen = wx_truncate_cast(unsigned int, lenIndex);
                     if(( flen > 0 )  && (flen < 1e7 ) ){                      // Place 10 Mb upper bound on index size 
                         readBuffer = (unsigned char *)malloc( 2 * flen);     // be conservative
                         
-                        size_t nRead = indexFile.Read(readBuffer, flen);
-                        if(nRead == flen){
+                        size_t tRead = 0;
+                        unsigned char *pRead = readBuffer;
+                        size_t nRead;
+                        while(nRead = indexFile.Read(pRead, flen)){
+                            tRead += nRead;
+                            pRead += nRead;
+                        }
+                              
+                        if(tRead == flen){
                             indexFile.Close();
                             
                             // Good Read, so parse the XML 
@@ -2709,6 +2716,10 @@ void shopPanel::OnDownloadListProc( wxCommandEvent& event )
     m_bAbortingDownload = false;
     
     // the target url
+    wxString msg;
+    msg.Printf(_T(" indexFileArrayIndex: %d   arrayCount: %d"), chart->indexFileArrayIndex, chart->urlArray.GetCount());
+    wxLogMessage(msg);
+    
     if(chart->indexFileArrayIndex >= chart->urlArray.GetCount() ){               // some counting error
         setStatusText( _("Status: Error parsing index.xml."));
         m_buttonCancelOp->Hide();
@@ -3016,7 +3027,8 @@ void shopPanel::chainToNextChart(itemChart *chart, int ntry)
                 
                 
         wxString statIncremental =_("Downloading chart:") + _T(" ") + fn.GetName() + _T(" ");
-        wxString i1;  i1.Printf(_T("(%d/%d) "), chart->indexFileArrayIndex + 1, chart->urlArray.GetCount());
+        wxString i1;
+        i1.Printf(_T("(%d/%d) "), chart->indexFileArrayIndex + 1, chart->urlArray.GetCount());
         g_dlStatPrefix = statIncremental + i1;
                 
         m_buttonCancelOp->Show();
